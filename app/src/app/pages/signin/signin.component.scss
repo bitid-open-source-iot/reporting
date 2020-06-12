@@ -1,0 +1,63 @@
+mat-toolbar {
+	.label {
+		width: 			100%;
+		text-align: 	center;
+		text-transform: uppercase;
+	}
+}
+.forgot {
+    cursor: pointer;
+}
+.forgot:hover,
+.forgot:focus {
+    color:  #3F51B5;
+}
+form {
+	width: 				500px;
+	margin: 			auto;
+	padding: 			10px 15px;
+	position: 			relative;
+	overflow: 			hidden;
+	border-radius: 		5px;
+	mat-form-field {
+		width: 100%;
+	}
+	.loading-overlay {
+		top: 				0px;
+		left: 				0px;
+		right: 				0px;
+		bottom: 			0px;
+		z-index: 			2;
+		opacity: 			0.3;
+		position: 			absolute;
+		background-color: 	#000;
+	}
+}
+button {
+	width: 			100%;
+	margin-bottom: 	15px;
+}
+button:last-child {
+	margin-bottom: 0px;
+}
+.logo {
+	height: 		100px;
+	display: 		block;
+	margin-top: 	30px;
+	margin-left: 	auto;
+	margin-right: 	auto;
+	margin-bottom: 	30px;
+}
+.login-container {
+	height: 			calc(100% - 64px);
+	padding-top: 		100px;
+	background-color: 	#212121;
+}
+@media screen and (max-width: 600px) {
+	.login-container {
+		height: calc(100% - 56px);
+	}
+	form {
+		width: 100%;
+	}
+}

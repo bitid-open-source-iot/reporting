@@ -1,0 +1,131 @@
+body {
+    height:         100%;
+    margin:         0;
+    font-family:    Roboto, "Helvetica Neue", sans-serif;
+}
+* {
+    user-select:            none;
+    -o-user-select:         none;
+    -moz-user-select:       -moz-none;
+    -webkit-user-select:    none;
+}
+[spacer] {
+    flex: 1 auto;
+}
+.mat-progress-bar-fill::after {
+    background-color: #C8E6C9 !important;
+}
+.mat-progress-bar-buffer {
+    background: #4CAF50 !important;
+}
+.mat-progress-bar {
+    margin-top: -4px !important;
+}
+button[color="positive"] {
+	color: #4CAF50 !important;
+}
+.page-label {
+    margin-left: 	15px;
+    line-height:    32px;
+    vertical-align: middle;
+    text-transform: uppercase;
+}
+.mat-toolbar-search {
+    height:             40px;
+    position:           relative;
+    overflow:           hidden;
+    border-radius:      40px;
+    input {
+        width:          calc(100% - 70px);
+        border:         none;
+        height:         20px;
+        outline:        none;
+        line-height:    20px;
+        margin-left:    20px;
+        margin-right:   10px;
+    }
+}
+.mat-toolbar-search.active {
+    background-color: #FFF;
+}
+mat-toolbar,
+mat-toolbar mat-toolbar-row {
+    text-transform: uppercase;
+}
+[matTooltip],
+form mat-label {
+    text-transform: capitalize;
+}
+button[mat-flat-button],
+button[mat-stroked-button] {
+    text-transform: uppercase;
+}
+.mat-dialog-fullscreen {
+    top:            0px !important;
+    left:           0px !important;
+    width:          100% !important;
+    right:          0px !important;
+    bottom:         0px !important;
+    position:       fixed !important;
+    max-width:      100% !important;
+    border-radius:  0px !important;
+    mat-dialog-container {
+        padding:        0px !important;
+        overflow-y:     hidden;
+        border-radius:  0px !important;
+    }
+    .mat-dialog-fullscreen-body {
+        top:            64px;
+        left:           0px;
+        right:          0px;
+        width:          100%;
+        bottom:         64px;
+        position:       fixed;
+        overflow-y:     auto;
+        border-radius:  0px !important;
+    }
+    .extended-body {
+        bottom: 0px;
+    }
+    .bottom-bar {
+        left:       0px;
+        right:      0px;
+        bottom:     0px;
+        position:   fixed;
+    }
+}
+.share-dialog,
+.delete-dialog,
+.subscribers-dialog,
+.unsubscribe-dialog {
+    width: 500px !important;
+    .mat-dialog-container {
+        padding: 0px !important;
+        mat-toolbar {
+            color: #4CAF50;
+        }
+    }
+}
+@media screen and (max-width: 600px) {
+    .mat-dialog-fullscreen-body {
+        top:    56px;
+        bottom: 56px;
+    }
+    .share-dialog,
+    .delete-dialog,
+    .subscribers-dialog,
+    .unsubscribe-dialog,
+    .group-editor-dialog {
+        top:            0px !important;
+        left:           0px !important;
+        width:          100% !important;
+        right:          0px !important;
+        bottom:         0px !important;
+        position:       fixed !important;
+        max-width:      100% !important;
+        border-radius:  0px !important;
+        .mat-dialog-container {
+            border-radius:  0px !important;
+        }
+    }
+}

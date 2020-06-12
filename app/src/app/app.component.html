@@ -1,0 +1,51 @@
+<mat-sidenav-container [hasBackdrop]="mode == 'large' ? true : false">
+    <mat-sidenav #sidemenu mode="side" [class.small]="mode == 'small'" [disableClose]="true">
+        <mat-toolbar>
+            <mat-toolbar-row>
+                <img class="logo" [src]="brand.icon ? brand.icon : './assets/icon-512.png'" (click)="menu.toggle()" [matTooltip]="'toggle menu' | translate : language | async" matTooltipPosition="after">
+
+                <label *ngIf="mode == 'large'">
+                    {{ brand.name ? brand.name : 'Reporting' }}
+                </label>
+
+                <div spacer *ngIf="mode == 'large'"></div>
+
+                <button mat-icon-button (click)="menu.toggle()" *ngIf="mode == 'large'">
+                    <mat-icon>
+                        close
+                    </mat-icon>
+                </button>
+            </mat-toolbar-row>
+        </mat-toolbar>
+
+        <mat-list>
+            <mat-list-item routerLinkActive="active current" routerLink="reports" (click)="menu.changeRoute()" [matTooltip]="'reports' | translate : language | async" matTooltipPosition="after" bit-branding bit-color-hover bit-color-active bit-background-class-active>
+                <mat-icon>
+                    data_usage
+                </mat-icon>
+
+                <span *ngIf="mode == 'large'">
+                    {{ 'reports' | translate : language | async }}
+                </span>
+            </mat-list-item>
+
+            <mat-list-item (click)="logout()" [matTooltip]="'sign out' | translate : language | async" matTooltipPosition="after" bit-branding bit-color-hover bit-color-active bit-background-class-active>
+                <mat-icon>
+                    exit_to_app
+                </mat-icon>
+                
+                <span *ngIf="mode == 'large'">
+                    {{ 'sign out' | translate : language | async }}
+                </span>
+            </mat-list-item>
+        </mat-list>
+    </mat-sidenav>
+
+    <mat-sidenav-content [class.licenced]="licenced">
+        <router-outlet></router-outlet>
+    </mat-sidenav-content>
+</mat-sidenav-container>
+
+<app-branding-loading></app-branding-loading>
+
+<app-powered-by-footer [application]="brand.name"></app-powered-by-footer>

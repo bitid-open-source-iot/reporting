@@ -1,0 +1,35 @@
+<mat-toolbar>
+    <mat-toolbar-row>
+        <button mat-icon-button (click)="close()" color="accent" bit-branding bit-color>
+            <mat-icon>
+                arrow_back
+            </mat-icon>
+        </button>
+        
+        <div class="page-label" bit-branding bit-color>
+            {{ 'delete' | translate : language | async }}
+        </div>
+    </mat-toolbar-row>
+</mat-toolbar>
+
+<form [formGroup]="form" (ngSubmit)="form.status == 'VALID' && submit()">
+    <mat-form-field appearance="outline">
+        <mat-label>
+            {{ ('delete' | translate : language | async) + ' ' + title }}
+        </mat-label>
+
+        <mat-select name="confirm" formControlName="confirm" [placeholder]="('delete' | translate : language | async) + ' ' + title" required>
+            <mat-option *ngFor="let option of options" [value]="option.value">
+                {{ option.description | translate : language | async }}
+            </mat-option>
+        </mat-select>
+
+        <mat-error align="start" *ngIf="errors.confirm" class="form__error">
+            {{ errors.confirm | translate : language | async }}
+        </mat-error>
+    </mat-form-field>
+
+    <button type="submit" mat-raised-button color="warn" [disabled]="!form.value.confirm" bit-branding bit-background>
+        {{ 'submit' | translate : language | async }}
+    </button>
+</form>

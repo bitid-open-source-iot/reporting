@@ -1,0 +1,47 @@
+<mat-toolbar>
+    <mat-toolbar-row>
+        <div class="label" bit-branding bit-color>
+            {{ 'sign in' | translate : language | async }}
+        </div>
+    </mat-toolbar-row>
+</mat-toolbar>
+
+<mat-progress-bar mode="indeterminate" *ngIf="loading"></mat-progress-bar>
+
+<img class="logo" [src]="brand.icon ? brand.icon : './assets/icon-512.png'">
+
+<form [formGroup]="form" (ngSubmit)="!form.invalid && submit()">
+    <mat-form-field appearance="outline">
+        <mat-label>
+            {{ 'email' | translate : language | async }}
+        </mat-label>
+
+        <input type="email" name="email" matInput placeholder="Email" formControlName="email" required>
+        
+        <mat-error align="start" *ngIf="errors.email" class="form__error">
+            {{ errors.email | translate : language | async }}
+        </mat-error>
+    </mat-form-field>
+
+    <mat-form-field appearance="outline">
+        <mat-label>
+            {{ 'password' | translate : language | async }}
+        </mat-label>
+
+        <input type="password" name="password" matInput placeholder="Password" formControlName="password" required>
+
+        <button type="button" mat-icon-button matSuffix color="primary">
+            <mat-icon>
+                help
+            </mat-icon>
+        </button>
+        
+        <mat-error align="start" *ngIf="errors.password" class="form__error">
+            {{ errors.password | translate : language | async }}
+        </mat-error>
+    </mat-form-field>
+
+    <button type="submit" mat-flat-button color="accent" bit-branding bit-background>
+        {{ 'sign in' | translate : language | async }}
+    </button>
+</form>

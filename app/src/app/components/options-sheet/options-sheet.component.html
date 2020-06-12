@@ -1,0 +1,13 @@
+<div class="label">
+    {{ description }}
+</div>
+
+<mat-nav-list>
+    <mat-list-item *ngFor="let item of items" (click)="(item.role >= item.scope) && select(item)" [class.disabled]="!(item.role >= item.scope)">
+        <mat-icon [color]="item.color">
+            {{ item.icon }}
+        </mat-icon>
+
+        {{ item.title | translate : language | async }}
+    </mat-list-item>
+</mat-nav-list>

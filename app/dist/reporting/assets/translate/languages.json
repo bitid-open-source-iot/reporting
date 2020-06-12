@@ -1,0 +1,18 @@
+[
+    {
+        "code":         "eng",
+        "description":  "Engilsh"
+    },
+    {
+        "code":         "afr",
+        "description":  "Afrikaans"
+    },
+    {
+        "code":         "zul",
+        "description":  "Zulu"
+    },
+    {
+        "code":         "xho",
+        "description":  "Xhosa"
+    }
+]

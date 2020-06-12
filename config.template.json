@@ -1,0 +1,39 @@
+{
+    "production":       false,
+    "authentication":   false,
+    "showConsoleLogs":  1,
+    "authServer": {
+        "host":             "http://127.0.0.1",
+        "port":             9000,
+        "path":             "/auth/auth",
+        "token":            "xxx",
+        "authEmail":        "xxx@xxx.co.za",
+        "appId":     "xxx"
+    },
+    "localwebserver": {
+        "port": 2000
+    },
+    "mongodb": {
+        "url":      "xxx",
+        "database": "xxx"
+    },
+    "logger": {
+        "appenders": {
+            "reporting": {
+                "type":         "file",
+                "backups":      10,
+                "filename":     "./logs/reporting.log",
+                "absolute":     true,
+                "maxLogSize":   102400
+            }
+        },
+        "categories": {
+            "default": {
+                "appenders": [
+                    "reporting"
+                ],
+                "level": "error"
+            }
+        }
+    }
+}
