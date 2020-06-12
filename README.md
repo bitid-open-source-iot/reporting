@@ -78,7 +78,6 @@ For the versions available, see the [tags on this repository](https://github.com
 ## Authors
 
 * [Shane Bowyer](https://github.com/shanebowyer)
-* [Derek Dhoenix](https://github.com/derekphoenix)
 * [Clayton Constant](https://github.com/claytoncc)
 
 ## License
