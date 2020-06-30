@@ -46,6 +46,20 @@ try {
 
                 if (args.settings.authentication) {
                     app.use((req, res, next) => {
+                        /* --- THIS WILL CATER FOR APPS UNTIL WE UPDATE THERE API SERVICES --- */
+                        if (typeof(req.body) != "undefined") {
+                            if (typeof(req.body.header) != "undefined") {
+                                if (typeof(req.body.header.clientIdAuth) != "undefined") {
+                                    req.body.header.appId = req.body.header.clientIdAuth;
+                                    delete req.body.header.clientIdAuth;
+                                };
+                            };
+                            Object.keys(req.body).map(key => {
+                                if (key == "clientId") {
+                                    req.body.appId = req.body[key];
+                                };
+                            });
+                        };
                         if (req.method != 'GET' && req.method != 'PUT') {
                             auth.authenticate({
                                 'req': req,

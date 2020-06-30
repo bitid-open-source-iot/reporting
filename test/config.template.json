@@ -1,6 +1,6 @@
 {
 	"token": 		{},
 	"email": 		"xxx@xxx.co.za",
-	"appId": 		"xxx",
-	"reporting": 	"http://127.0.0.1:2000"
+	"appId":		"xxx",
+	"reporting":	"http://127.0.0.1:2000"
 }
