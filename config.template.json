@@ -1,14 +1,11 @@
 {
     "production":       false,
     "authentication":   false,
-    "showConsoleLogs":  1,
-    "authServer": {
-        "host":             "http://127.0.0.1",
-        "port":             9000,
-        "path":             "/auth/auth",
-        "token":            "xxx",
-        "authEmail":        "xxx@xxx.co.za",
-        "appId":     "xxx"
+    "auth": {
+        "host":     "http://127.0.0.1:9000",
+        "token":    "xxx",
+        "email":    "xxx@xxx.co.za",
+        "appId":    "xxx"
     },
     "localwebserver": {
         "port": 2000
