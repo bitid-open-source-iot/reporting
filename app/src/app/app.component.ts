@@ -3,7 +3,6 @@ import { Router } from '@angular/router';
 import { MatSidenav } from '@angular/material';
 import { AuthService } from './services/auth/auth.service';
 import { MenuService } from './services/menu/menu.service';
-import { BrandingService } from '@bitid/branding';
 import { TranslateService } from '@bitid/translate';
 import { OnInit, ViewChild, Component } from '@angular/core';
 
@@ -15,7 +14,7 @@ import { OnInit, ViewChild, Component } from '@angular/core';
 
 export class AppComponent implements OnInit {
 
-	constructor(public menu: MenuService, private auth: AuthService, private title: Title, private router: Router, private branding: BrandingService, private translate: TranslateService) {
+	constructor(public menu: MenuService, private auth: AuthService, private title: Title, private router: Router, private translate: TranslateService) {
 		this.translate.directory = './assets/translate/';
 	};
 
@@ -34,23 +33,6 @@ export class AppComponent implements OnInit {
 	};
 
     ngOnInit() {
-		this.translate.language.subscribe(language => {
-			this.language = language;
-		});
-
-        this.branding.branding.subscribe(brand => {
-			if (brand.name) {
-				this.brand = brand;
-				let favicon: any = document.getElementById('favicon');
-					favicon.href = this.brand.icon;
-				this.title.setTitle(this.brand.name);
-			};
-		});
-
-		this.branding.licenced.subscribe((licenced: boolean) => {
-			this.licenced = licenced;
-		});
-
         this.menu.change.subscribe((mode: string) => {
         	this.mode = mode;
         });
