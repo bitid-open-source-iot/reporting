@@ -3,14 +3,13 @@ var db          = require('./db/mongo');
 var cors        = require('cors');
 var http        = require('http');
 var chalk       = require('chalk');
-var logger      = require('./lib/logger');
 var express     = require('express');
-var request     = require('request');
 var responder   = require('./lib/responder');
 var bodyParser  = require('body-parser');
+var healthcheck = require('@bitid/health-check');
 
 global.__base       = __dirname + '/';
-global.__logger     = new logger.module();
+global.__logger     = require('./lib/logger');
 global.__settings   = require('./config.json');
 global.__responder  = new responder.module();
 
@@ -48,18 +47,19 @@ try {
                 if (args.settings.authentication) {
                     app.use((req, res, next) => {
                         if (req.method != 'GET' && req.method != 'PUT') {
-                            __logger.LogData('', 'authCheck');
-                            __logger.LogData('', req.originalUrl);
-                            __logger.LogData('', req.body);
-                            tools.authenticate(req)
+                            auth.authenticate({
+                                'req': req,
+                                'res': res
+                            })
                             .then(result => {
                                 next(); 
                             }, err => {
-                                var error = {"error":err};
-                                __logger.LogData('authCheck error: ' +  JSON.stringify(err));
+                                var error = {
+                                    "error": err
+                                };
                                 error.error.code             = 401;
                                 error.error.errors[0].code   = 401;
-                                __responder.errorResponse(req, res, error);
+                                __responder.error(req, res, error);
                             });
                         } else {
                             next();
@@ -74,11 +74,14 @@ try {
 
                 var reports = require('./api/reports');
                 app.use('/reporting/reports', reports);
-                __logger.LogData('','Loaded ./api/reporting/reports');
+                __logger.info('Loaded: ./api/reporting/reports');
 
                 var schedule = require('./api/schedule');
                 app.use('/reporting/schedule', schedule);
-                __logger.LogData('','Loaded ./api/reporting/schedule');
+                __logger.info('Loaded: ./api/reporting/schedule');
+
+                app.use('/health-check', healthcheck);
+                __logger.info('Loaded: ./api/health-check');
 
                 app.use((err, req, res, next) => {
                     portal.errorResponse.error.code               = 500;
@@ -94,7 +97,7 @@ try {
 
                 deferred.resolve(args);
             } catch(e) {
-                __logger.LogData('initAPI catch error: ' +  e);
+                __logger.error('initAPI catch error: ' +  e);
                 deferred.reject(e)
             };
 
@@ -140,13 +143,8 @@ try {
         logger: (args) => {
             var deferred    = Q.defer();
 
-            try {
-                __logger.init(args.settings.logger);
-                __logger.LogData('','Logger Init');
-                deferred.resolve(args);
-            } catch(err) {
-                deferred.reject(err);
-            };
+            __logger.init();
+            deferred.resolve(args);
 
             return deferred.promise;
         },
@@ -158,7 +156,7 @@ try {
                 global.__database = database;
                 deferred.resolve(args);
             }, err => {
-                __logger.LogData('Database Connection Error: ' +  err);
+                __logger.error('Database Connection Error: ' +  err);
                 deferred.reject(err);
             });
 
@@ -169,61 +167,6 @@ try {
             var deferred = Q.defer();
 
             deferred.resolve(args);
-
-            return deferred.promise;
-        }
-    };
-
-    var tools = {
-        authenticate: function(req) {
-            var deferred = Q.defer();
-
-            var email           = req.body.header.email;
-            var token           = req.headers.authorization;
-            var appId    = req.body.header.appId;
-
-            if (typeof(token) == 'undefined') {
-                __logger.LogData('tools.authenticate. token undefined');
-
-                deferred.reject(portal.errorResponse);
-                
-                return deferred.promise;
-            };
-
-            var DTO = JSON.stringify(
-                {
-                    "header":{
-                        "email":email, 
-                        "appId": appId
-                    },
-                    "reqURI":req.originalUrl
-                });
-
-
-            var url = __settings.authServer.host + ':' + __settings.authServer.port + __settings.authServer.path;
-            request({
-                url: url,
-                method: "POST",
-                headers: {
-                    'Authorization': token,
-                    'Content-Type': 'application/json; charset=utf-8',
-                    'Content-Length': DTO.length,
-                    'accept': '*/*'
-                },
-                body: DTO
-            }, function (error, response, body) {
-                if (error) {
-                    __logger.LogData('tools.authenticate error: ' +  error);
-                    deferred.reject(portal.errorResponse);
-                } else {
-                    var myResult = JSON.parse(response.body);
-                    if (typeof myResult.errors == 'undefined') {
-                        deferred.resolve(myResult);
-                    } else {
-                        deferred.reject(myResult);
-                    };
-                };
-            });
 
             return deferred.promise;
         }

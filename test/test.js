@@ -1,16 +1,15 @@
-var chai            = require('chai');
-var chaiSubset      = require('chai-subset');
-chai.use(chaiSubset);
-
-var Q          	= require('q');
+var Q           = require('q');
+var chai        = require('chai');
+var fetch		= require('node-fetch');
 var expect      = require('chai').expect;
 var should     	= require('chai').should();
 var config     	= require('./config.json');
-var request		= require('request');
+var chaiSubset  = require('chai-subset');
+chai.use(chaiSubset);
 
-var reportId    = null;
+var reportId = null;
 
-describe('reports', function() {
+describe('Reports', function() {
     it('/reporting/reports/add', function(done) {
         this.timeout(5000);
 
@@ -196,15 +195,37 @@ describe('Remove Added Items', function() {
     });
 });
 
+describe('Health Check', function() {
+    it('/', function(done) {
+        this.timeout(5000);
+
+        tools.api.healthcheck()
+        .then((result) => {
+            try {
+                result.should.have.property('uptime');
+                result.should.have.property('memory');
+                result.should.have.property('database');
+                done();
+            } catch(e) {
+                done(e);
+            };
+        }, (err) => {
+            try {
+                done(err);
+            } catch(e) {
+                done(e);
+            };
+        });
+    });
+});
+
 var tools = {
     api: {
         reports: {
             add: () => {
                 var deferred = Q.defer();
                 
-                var url = config.reporting + '/reporting/reports/add';
-
-                tools.post(url, {
+                tools.post('/reporting/reports/add', {
                     'query': {
                         "body":   [],
                         "method": "GET"
@@ -225,9 +246,7 @@ var tools = {
             get: () => {
                 var deferred = Q.defer();
                 
-                var url = config.reporting + '/reporting/reports/get';
-
-                tools.post(url, {
+                tools.post('/reporting/reports/get', {
                     'filter': [
                         'url',
                         'role',
@@ -248,9 +267,7 @@ var tools = {
             list: () => {
                 var deferred = Q.defer();
                 
-                var url = config.reporting + '/reporting/reports/list';
-
-                tools.post(url, {
+                tools.post('/reporting/reports/list', {
                     'filter': [
                         'url',
                         'role',
@@ -270,9 +287,7 @@ var tools = {
             share: () => {
                 var deferred = Q.defer();
                 
-                var url = config.reporting + '/reporting/reports/share';
-
-                tools.post(url, {
+                tools.post('/reporting/reports/share', {
                     'role':     4,
                     'email':    'shared@email.com',
                     'reportId': reportId
@@ -284,9 +299,7 @@ var tools = {
             update: () => {
                 var deferred = Q.defer();
                 
-                var url = config.reporting + '/reporting/reports/update';
-
-                tools.post(url, {
+                tools.post('/reporting/reports/update', {
                     'reportId':    reportId,
                     'description': 'Mocha Test Report Updated'
                 })
@@ -297,9 +310,7 @@ var tools = {
             delete: () => {
                 var deferred = Q.defer();
                 
-                var url = config.reporting + '/reporting/reports/delete';
-
-                tools.post(url, {
+                tools.post('/reporting/reports/delete', {
                     'reportId': reportId
                 })
                 .then(deferred.resolve, deferred.resolve);
@@ -309,9 +320,7 @@ var tools = {
             unsubscribe: () => {
                 var deferred = Q.defer();
                 
-                var url = config.reporting + '/reporting/reports/unsubscribe';
-
-                tools.post(url, {
+                tools.post('/reporting/reports/unsubscribe', {
                     'email':    'shared@email.com',
                     'reportId': reportId
                 })
@@ -322,9 +331,7 @@ var tools = {
             updatesubscriber: () => {
                 var deferred = Q.defer();
                 
-                var url = config.reporting + '/reporting/reports/updatesubscriber';
-
-                tools.post(url, {
+                tools.post('/reporting/reports/updatesubscriber', {
                     'role':     2,
                     'email':    'shared@email.com',
                     'reportId': reportId
@@ -333,43 +340,70 @@ var tools = {
 
                 return deferred.promise;
             }
+        },
+        healthcheck: () => {
+            var deferred = Q.defer();
+            
+            tools.put('/health-check', {})
+            .then(deferred.resolve, deferred.resolve);
+
+            return deferred.promise;
         }
     },
-    post: (url, payload) => {
+    put: async (url, payload) => {
         var deferred = Q.defer();
 
         payload.header = {
-            "email":           config.email, 
-            "appId":    config.appId
+            'email': config.email, 
+            'appId': config.appId
         };
-        payload     = JSON.stringify(payload)
-        var token   = JSON.stringify(config.token);
 
-        request({
-            "headers": {
-                'accept':           '*/*',
+        payload = JSON.stringify(payload);
+
+        const response = await fetch(config.reporting + url, {
+            'headers': {
+                'Accept':           '*/*',
+                'Referer':          '127.0.0.1',
                 'Content-Type':     'application/json; charset=utf-8',
-                'Authorization':    token,
+                'Authorization':    JSON.stringify(config.token),
                 'Content-Length':   payload.length
             },
-            "url":    url,
-            "body":   payload,
-            "method": "POST"
-        }, (error, response, body) => {
-            if (error) {
-                deferred.reject({
-                    "error": error
-                });
-            } else {
-                var result = JSON.parse(response.body);
-                if (typeof(result.errors) == 'undefined') {
-                    deferred.resolve(result);
-                } else {
-                    deferred.reject(result);
-                };
-            };
+            'body':   payload,
+            'method': 'PUT'
         });
+        
+        const result = await response.json();
 
+        deferred.resolve(result);
+        
+        return deferred.promise;
+    },
+    post: async (url, payload) => {
+        var deferred = Q.defer();
+
+        payload.header = {
+            'email': config.email, 
+            'appId': config.appId
+        };
+
+        payload = JSON.stringify(payload);
+
+        const response = await fetch(config.reporting + url, {
+            'headers': {
+                'Accept':           '*/*',
+                'Referer':          '127.0.0.1',
+                'Content-Type':     'application/json; charset=utf-8',
+                'Authorization':    JSON.stringify(config.token),
+                'Content-Length':   payload.length
+            },
+            'body':   payload,
+            'method': 'POST'
+        });
+        
+        const result = await response.json();
+
+        deferred.resolve(result);
+        
         return deferred.promise;
     }
 };
