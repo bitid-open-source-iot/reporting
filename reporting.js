@@ -2,6 +2,7 @@ var Q           = require('q');
 var db          = require('./db/mongo');
 var cors        = require('cors');
 var http        = require('http');
+var auth        = require('./lib/auth');
 var chalk       = require('chalk');
 var express     = require('express');
 var responder   = require('./lib/responder');
