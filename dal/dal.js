@@ -351,14 +351,9 @@ var module = function() {
 			    "_id": 						ObjectId(args.req.body.reportId),
 				"bitid.auth.users.email": 	args.req.body.header.email
 			};
-			var filter = {
-				'_id': 		1,
-				'bitid':	1
-			};
 
 			db.call({
 				'params': 		params,
-				'filter': 		filter,
 				'operation': 	'find',
 				'collection': 	'tblReports'
 			})
