@@ -1,5 +1,6 @@
 var Q       	= require('q');
 var db			= require('../db/mongo');
+const { ErrorResponse } = require('../lib/error-response');
 var ObjectId 	= require('mongodb').ObjectId;
 
 var module = function() {
@@ -347,33 +348,86 @@ var module = function() {
 			var deferred = Q.defer();
 
 			var params = {
-				"bitid.auth.users": {
-			        $elemMatch: {
-			            "role": {
-			                $gte: 4
-			            },
-			            "email": args.req.body.header.email
-			        }
-			    },
-			    "_id": ObjectId(args.req.body.reportId)
+			    "_id": 						ObjectId(args.req.body.reportId),
+				"bitid.auth.users.email": 	args.req.body.header.email
 			};
-			var update = {
-				$set: {
-					"serverDate": new Date()
-				},
-				$pull: {
-					"bitid.auth.users": {
-				        "email": args.req.body.email
-				    }
-				}
+			var filter = {
+				'_id': 				1,
+				'bitid.auth.users':	1
 			};
 
 			db.call({
 				'params': 		params,
-				'update': 		update,
-				'operation': 	'update',
+				'filter': 		filter,
+				'operation': 	'find',
 				'collection': 	'tblReports'
 			})
+			.then(result => {
+				var deferred = Q.defer();
+
+				var role 		= 0;
+				var unsubscribe = true;
+				if (args.req.body.email == args.req.body.header.email) {
+					if (user.role == 5) {
+						role 		= 5;
+						unsubscribe = false;
+					};
+				} else {
+					result[0].bitid.auth.users.map(user => {
+						if (user.email == args.req.body.header.email) {
+							if (user.role < 4) {
+								role 		= user.role;
+								unsubscribe = false;
+							};
+						};
+					});
+				};
+
+				if (unsubscribe) {
+					var params = {
+						"bitid.auth.users": {
+							$elemMatch: {
+								"role": {
+									$gte: 4
+								},
+								"email": args.req.body.header.email
+							}
+						},
+						"_id": ObjectId(args.req.body.reportId)
+					};
+					var update = {
+						$set: {
+							"serverDate": new Date()
+						},
+						$pull: {
+							"bitid.auth.users": {
+								"email": args.req.body.email
+							}
+						}
+					};
+					deferred.resolve({
+						'params': 		params,
+						'update': 		update,
+						'operation': 	'update',
+						'collection': 	'tblReports'
+					});
+				} else {
+					var err 					= new ErrorResponse();
+					err.error.code 				= 401;
+					err.error.errors[0].code 	= 401;
+					if (role == 5) {
+						err.error.errors[0].reason 	= 'You are the owner, you may not unsubscribe yourself!';
+						err.error.errors[0].message	= 'You are the owner, you may not unsubscribe yourself!';
+					} else {
+						err.error.errors[0].reason 	= 'You may not unsubscribe others!';
+						err.error.errors[0].message	= 'You may not unsubscribe others!';
+					};
+					deferred.reject(err);
+				};
+
+				return deferred.promise;
+			}, null)
+			.then(db.call, null)
 			.then(result => {
 				args.result = result;
 				deferred.resolve(args);
