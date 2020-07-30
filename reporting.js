@@ -69,12 +69,7 @@ try {
                             .then(result => {
                                 next(); 
                             }, err => {
-                                var error = {
-                                    "error": err
-                                };
-                                error.error.code             = 401;
-                                error.error.errors[0].code   = 401;
-                                __responder.error(req, res, error);
+                                __responder.error(req, res, err);
                             });
                         } else {
                             next();
