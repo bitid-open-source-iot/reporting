@@ -360,6 +360,8 @@ var module = function() {
 			})
 			.then(result => {
 				var deferred = Q.defer();
+
+				console.log(1)
 				
 				var role 		= 0;
 				var unsubscribe = true;
@@ -379,6 +381,7 @@ var module = function() {
 					});
 				};
 
+				console.log(2)
 				if (unsubscribe) {
 					var params = {
 						"_id": result[0]._id
@@ -393,15 +396,17 @@ var module = function() {
 							}
 						}
 					};
-					console.log(JSON.stringify(params), JSON.stringify(update))
 					deferred.resolve({
 						'params': 		params,
 						'update': 		update,
 						'operation': 	'update',
 						'collection': 	'tblReports'
 					});
+				console.log(3)
+
 				} else {
-					var err 					= new ErrorResponse();
+				console.log(4)
+				var err 					= new ErrorResponse();
 					err.error.code 				= 401;
 					err.error.errors[0].code 	= 401;
 					if (role == 5) {
