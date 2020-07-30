@@ -397,6 +397,7 @@ var module = function() {
 							}
 						}
 					};
+					console.log(JSON.stringify(params), JSON.stringify(update))
 					deferred.resolve({
 						'params': 		params,
 						'update': 		update,
@@ -425,7 +426,7 @@ var module = function() {
 				deferred.resolve(args);
 			}, err => {
 				dalReports.errorResponse.error.errors[0].code   = err.code 			|| dalReports.errorResponse.error.errors[0].code;
-				dalReports.errorResponse.error.errors[0].reason = err.description 	|| 'Unsubscribe User From Jobcard Error';
+				dalReports.errorResponse.error.errors[0].reason = err.description 	|| 'Unsubscribe User From Report Error';
 				dalReports.errorResponse.hiddenErrors.push(err.error);
 				deferred.reject(dalReports.errorResponse);
 			});
