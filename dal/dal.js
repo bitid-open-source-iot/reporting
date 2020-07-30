@@ -385,14 +385,6 @@ var module = function() {
 
 				if (unsubscribe) {
 					var params = {
-						"bitid.auth.users": {
-							$elemMatch: {
-								"role": {
-									$gte: 4
-								},
-								"email": args.req.body.header.email
-							}
-						},
 						"_id": ObjectId(args.req.body.reportId)
 					};
 					var update = {
