@@ -352,9 +352,8 @@ var module = function() {
 				"bitid.auth.users.email": 	args.req.body.header.email
 			};
 
-			console.log(JSON.stringify(params));
-
 			db.call({
+				'filter':		{},
 				'params': 		params,
 				'operation': 	'find',
 				'collection': 	'tblReports'
