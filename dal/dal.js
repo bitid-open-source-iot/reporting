@@ -352,8 +352,8 @@ var module = function() {
 				"bitid.auth.users.email": 	args.req.body.header.email
 			};
 			var filter = {
-				'_id': 				1,
-				'bitid.auth.users':	1
+				'_id': 		1,
+				'bitid':	1
 			};
 
 			db.call({
