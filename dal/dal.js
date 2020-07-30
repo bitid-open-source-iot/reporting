@@ -361,62 +361,60 @@ var module = function() {
 			.then(result => {
 				var deferred = Q.defer();
 
-				console.log(1)
-				
-				var role 		= 0;
-				var unsubscribe = true;
-				if (args.req.body.email == args.req.body.header.email) {
-					if (user.role == 5) {
-						role 		= 5;
-						unsubscribe = false;
-					};
-				} else {
-					result[0].bitid.auth.users.map(user => {
-						if (user.email == args.req.body.header.email) {
-							if (user.role < 4) {
-								role 		= user.role;
-								unsubscribe = false;
-							};
+				try {
+					var role 		= 0;
+					var unsubscribe = true;
+					if (args.req.body.email == args.req.body.header.email) {
+						if (user.role == 5) {
+							role 		= 5;
+							unsubscribe = false;
 						};
-					});
-				};
-
-				console.log(2)
-				if (unsubscribe) {
-					var params = {
-						"_id": result[0]._id
-					};
-					var update = {
-						$set: {
-							"serverDate": new Date()
-						},
-						$pull: {
-							"bitid.auth.users": {
-								"email": args.req.body.email
-							}
-						}
-					};
-					deferred.resolve({
-						'params': 		params,
-						'update': 		update,
-						'operation': 	'update',
-						'collection': 	'tblReports'
-					});
-				console.log(3)
-
-				} else {
-				console.log(4)
-				var err 					= new ErrorResponse();
-					err.error.code 				= 401;
-					err.error.errors[0].code 	= 401;
-					if (role == 5) {
-						err.error.errors[0].reason 	= 'You are the owner, you may not unsubscribe yourself!';
-						err.error.errors[0].message	= 'You are the owner, you may not unsubscribe yourself!';
 					} else {
-						err.error.errors[0].reason 	= 'You may not unsubscribe others!';
-						err.error.errors[0].message	= 'You may not unsubscribe others!';
+						result[0].bitid.auth.users.map(user => {
+							if (user.email == args.req.body.header.email) {
+								if (user.role < 4) {
+									role 		= user.role;
+									unsubscribe = false;
+								};
+							};
+						});
 					};
-					deferred.reject(err);
+
+					if (unsubscribe) {
+						var params = {
+							"_id": result[0]._id
+						};
+						var update = {
+							$set: {
+								"serverDate": new Date()
+							},
+							$pull: {
+								"bitid.auth.users": {
+									"email": args.req.body.email
+								}
+							}
+						};
+						deferred.resolve({
+							'params': 		params,
+							'update': 		update,
+							'operation': 	'update',
+							'collection': 	'tblReports'
+						});
+					} else {
+						var err 					= new ErrorResponse();
+						err.error.code 				= 401;
+						err.error.errors[0].code 	= 401;
+						if (role == 5) {
+							err.error.errors[0].reason 	= 'You are the owner, you may not unsubscribe yourself!';
+							err.error.errors[0].message	= 'You are the owner, you may not unsubscribe yourself!';
+						} else {
+							err.error.errors[0].reason 	= 'You may not unsubscribe others!';
+							err.error.errors[0].message	= 'You may not unsubscribe others!';
+						};
+						deferred.reject(err);
+					};
+				} catch (error) {
+					console.log(error.message)
 				};
 
 				return deferred.promise;
