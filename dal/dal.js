@@ -1,7 +1,7 @@
-var Q       	= require('q');
-var db			= require('../db/mongo');
-const { ErrorResponse } = require('../lib/error-response');
-var ObjectId 	= require('mongodb').ObjectId;
+var Q       		= require('q');
+var db				= require('../db/mongo');
+var ObjectId 		= require('mongodb').ObjectId;
+var ErrorResponse 	= require('../lib/error-response').ErrorResponse;
 
 var module = function() {
 	var dalReports = {
@@ -385,7 +385,7 @@ var module = function() {
 
 				if (unsubscribe) {
 					var params = {
-						"_id": ObjectId(args.req.body.reportId)
+						"_id": result[0]._id
 					};
 					var update = {
 						$set: {
