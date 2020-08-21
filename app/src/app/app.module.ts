@@ -19,6 +19,7 @@ import {
     MatSidenavModule,
     MatBottomSheetModule,
     MatProgressBarModule,
+    MatSnackBarModule,
 } from '@angular/material';
 import {
     FormsModule,
@@ -39,6 +40,7 @@ import { ApiService } from './services/api/api.service';
 import { MenuService } from './services/menu/menu.service';
 import { AuthManager } from './services/auth/auth.manager';
 import { AuthService } from './services/auth/auth.service';
+import { HistoryService } from './services/history/history.service';
 import { ReportsService } from './services/reports/reports.service';
 import { FormErrorService } from './services/form-error/form-error.service';
 import { LocalstorageService } from './services/localstorage/localstorage.service';
@@ -50,6 +52,8 @@ import { RemoveComponent } from './components/remove/remove.component';
 import { SubscribersComponent } from './components/subscribers/subscribers.component';
 import { UnsubscribeComponent } from './components/unsubscribe/unsubscribe.component';
 import { OptionsSheetComponent } from './components/options-sheet/options-sheet.component';
+import { ToastService } from './services/toast/toast.service';
+import { AccountService } from './services/account/account.service';
 
 @NgModule({
     declarations: [
@@ -84,6 +88,7 @@ import { OptionsSheetComponent } from './components/options-sheet/options-sheet.
         MatSidenavModule,
         HttpClientModule,
         FilterPipeModule,
+        MatSnackBarModule,
         ReactiveFormsModule,
         MatBottomSheetModule,
         MatProgressBarModule,
@@ -94,6 +99,9 @@ import { OptionsSheetComponent } from './components/options-sheet/options-sheet.
         MenuService,
         AuthManager,
         AuthService,
+        ToastService,
+        AccountService,
+        HistoryService,
         ReportsService,
         FormErrorService,
         LocalstorageService

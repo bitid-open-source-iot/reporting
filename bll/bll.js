@@ -11,7 +11,7 @@ var module = function() {
 				"errors":[{
 					"reason": 		"General Reports Error",
 					"message": 		"Reports Error",
-					"locaction": 	"bllReports",
+					"location": 	"bllReports",
 					"locationType": "body"
 				}]
 			},
@@ -150,7 +150,7 @@ var module = function() {
 				"errors":[{
 					"reason": 		"General Schedule Error",
 					"message": 		"Schedule Error",
-					"locaction": 	"bllSchedule",
+					"location": 	"bllSchedule",
 					"locationType": "body"
 				}]
 			},

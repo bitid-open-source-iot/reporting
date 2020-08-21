@@ -41,7 +41,11 @@
         </mat-error>
     </mat-form-field>
 
-    <button type="submit" mat-flat-button color="accent" bit-branding bit-background>
+    <button type="submit" mat-flat-button color="primary" bit-branding bit-background>
         {{ 'sign in' | translate : language | async }}
+    </button>
+
+    <button type="button" mat-stroked-button color="primary" bit-branding bit-background routerLink="/signup">
+        {{ 'sign up' | translate : language | async }}
     </button>
 </form>

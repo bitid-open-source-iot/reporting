@@ -23,7 +23,7 @@ try {
                 "errors":[{
                     "reason":       "Reporting Error",
                     "message":      "Invalid Credentials",
-                    "locaction":    "portal",
+                    "location":    "portal",
                     "locationType": "header"
                 }]
             },

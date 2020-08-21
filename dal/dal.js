@@ -12,7 +12,7 @@ var module = function() {
 				"errors": [{
 					"reason": 		"General Reports Error",
 					"message": 		"Invalid Credentials",
-					"locaction": 	"dalReports",
+					"location": 	"dalReports",
 					"locationType": "header"
 				}]
 			},
@@ -499,7 +499,7 @@ var module = function() {
 				"errors": [{
 					"reason": 		"General Schedule Error",
 					"message": 		"Invalid Credentials",
-					"locaction": 	"dalSchedule",
+					"location": 	"dalSchedule",
 					"locationType": "header"
 				}]
 			},

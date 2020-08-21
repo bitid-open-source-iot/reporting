@@ -3,6 +3,7 @@ import { Router } from '@angular/router';
 import { MatSidenav } from '@angular/material';
 import { AuthService } from './services/auth/auth.service';
 import { MenuService } from './services/menu/menu.service';
+import { HistoryService } from './services/history/history.service';
 import { TranslateService } from '@bitid/translate';
 import { OnInit, ViewChild, Component } from '@angular/core';
 
@@ -14,7 +15,7 @@ import { OnInit, ViewChild, Component } from '@angular/core';
 
 export class AppComponent implements OnInit {
 
-	constructor(public menu: MenuService, private auth: AuthService, private title: Title, private router: Router, private translate: TranslateService) {
+	constructor(public menu: MenuService, private auth: AuthService, private history: HistoryService, private title: Title, private router: Router, private translate: TranslateService) {
 		this.translate.directory = './assets/translate/';
 	};
 
@@ -33,6 +34,8 @@ export class AppComponent implements OnInit {
 	};
 
     ngOnInit() {
+		this.history.init();
+		
         this.menu.change.subscribe((mode: string) => {
         	this.mode = mode;
         });
