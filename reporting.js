@@ -1,29 +1,29 @@
-var Q           = require('q');
-var db          = require('./db/mongo');
-var cors        = require('cors');
-var http        = require('http');
-var auth        = require('./lib/auth');
-var chalk       = require('chalk');
-var express     = require('express');
-var responder   = require('./lib/responder');
-var bodyParser  = require('body-parser');
+var Q = require('q');
+var db = require('./db/mongo');
+var cors = require('cors');
+var http = require('http');
+var auth = require('./lib/auth');
+var chalk = require('chalk');
+var express = require('express');
+var responder = require('./lib/responder');
+var bodyParser = require('body-parser');
 var healthcheck = require('@bitid/health-check');
 
-global.__base       = __dirname + '/';
-global.__logger     = require('./lib/logger');
-global.__settings   = require('./config.json');
-global.__responder  = new responder.module();
+global.__base = __dirname + '/';
+global.__logger = require('./lib/logger');
+global.__settings = require('./config.json');
+global.__responder = new responder.module();
 
-try { 
+try {
     var portal = {
         errorResponse: {
             "error": {
-                "code":     401,
-                "message":  "Invalid Credentials",
-                "errors":[{
-                    "reason":       "Reporting Error",
-                    "message":      "Invalid Credentials",
-                    "location":    "portal",
+                "code": 401,
+                "message": "Invalid Credentials",
+                "errors": [{
+                    "reason": "Reporting Error",
+                    "message": "Invalid Credentials",
+                    "location": "portal",
                     "locationType": "header"
                 }]
             },
@@ -34,11 +34,11 @@ try {
             var deferred = Q.defer();
 
             try {
-                var app  = express();
+                var app = express();
                 app.use(cors());
                 app.use(bodyParser.urlencoded({
-                    'limit':          '50mb',
-                    'extended':       true,
+                    'limit': '50mb',
+                    'extended': true,
                     'parameterLimit': 50000
                 }));
                 app.use(bodyParser.json({
@@ -48,9 +48,9 @@ try {
                 if (args.settings.authentication) {
                     app.use((req, res, next) => {
                         /* --- THIS WILL CATER FOR APPS UNTIL WE UPDATE THERE API SERVICES --- */
-                        if (typeof(req.body) != "undefined") {
-                            if (typeof(req.body.header) != "undefined") {
-                                if (typeof(req.body.header.clientIdAuth) != "undefined") {
+                        if (typeof (req.body) != "undefined") {
+                            if (typeof (req.body.header) != "undefined") {
+                                if (typeof (req.body.header.clientIdAuth) != "undefined") {
                                     req.body.header.appId = req.body.header.clientIdAuth;
                                     delete req.body.header.clientIdAuth;
                                 };
@@ -66,11 +66,11 @@ try {
                                 'req': req,
                                 'res': res
                             })
-                            .then(result => {
-                                next(); 
-                            }, err => {
-                                __responder.error(req, res, err);
-                            });
+                                .then(result => {
+                                    next();
+                                }, err => {
+                                    __responder.error(req, res, err);
+                                });
                         } else {
                             next();
                         };
@@ -94,10 +94,10 @@ try {
                 __logger.info('Loaded: ./api/health-check');
 
                 app.use((err, req, res, next) => {
-                    portal.errorResponse.error.code               = 500;
-                    portal.errorResponse.error.message            = 'Something broke';
-                    portal.errorResponse.error.errors[0].code     = 500;
-                    portal.errorResponse.error.errors[0].message  = 'Something broke';
+                    portal.errorResponse.error.code = 500;
+                    portal.errorResponse.error.message = 'Something broke';
+                    portal.errorResponse.error.errors[0].code = 500;
+                    portal.errorResponse.error.errors[0].message = 'Something broke';
                     portal.errorResponse.hiddenErrors.push(err.stack);
                     __responder.error(req, res, portal.errorResponse);
                 });
@@ -106,8 +106,8 @@ try {
                 server.listen(args.settings.localwebserver.port);
 
                 deferred.resolve(args);
-            } catch(e) {
-                __logger.error('initAPI catch error: ' +  e);
+            } catch (e) {
+                __logger.error('initAPI catch error: ' + e);
                 deferred.reject(e)
             };
 
@@ -141,17 +141,17 @@ try {
             };
 
             portal.logger(args)
-            .then(portal.api, null)
-            .then(portal.database, null)
-            .then(args => {
-                console.log('Webserver Running on port: ', args.settings.localwebserver.port);
-            }, err => {
-                console.log('Error Initializing: ', err);
-            });
+                .then(portal.api, null)
+                .then(portal.database, null)
+                .then(args => {
+                    console.log('Webserver Running on port: ', args.settings.localwebserver.port);
+                }, err => {
+                    console.log('Error Initializing: ', err);
+                });
         },
 
         logger: (args) => {
-            var deferred    = Q.defer();
+            var deferred = Q.defer();
 
             __logger.init();
             deferred.resolve(args);
@@ -166,7 +166,7 @@ try {
                 global.__database = database;
                 deferred.resolve(args);
             }, err => {
-                __logger.error('Database Connection Error: ' +  err);
+                __logger.error('Database Connection Error: ' + err);
                 deferred.reject(err);
             });
 
@@ -185,7 +185,7 @@ try {
     portal.init({
         'settings': __settings
     });
-} catch(error) {
+} catch (error) {
     console.log('The following error has occurred: ', error.message);
 };
 

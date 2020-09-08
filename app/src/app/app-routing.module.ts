@@ -1,44 +1,23 @@
-/* --- PAGES --- */
-import { SigninComponent } from './pages/signin/signin.component';
-import { ReportsComponent } from './pages/reports/reports.component';
-import { ReportViewerComponent } from './pages/reports/viewer/viewer.component';
-import { ReportEditorComponent } from './pages/reports/editor/editor.component';
-
 /* --- MODULES --- */
 import { NgModule } from '@angular/core';
 import { Routes, RouterModule } from '@angular/router';
 
 /* --- SERVICES --- */
-import { AuthManager } from './services/auth/auth.manager';
+import { AuthManager } from './services/account/account.manager';
 
 const routes: Routes = [
     {
         'path':         'signin',
-        'component':    SigninComponent
-    },
-    {
-        'path':         'reports',
-        'component':    ReportsComponent,
-        'canActivate':  [AuthManager]
-    },
-    {
-        'path':         'reports/:mode',
-        'component':    ReportEditorComponent,
-        'canActivate':  [AuthManager]
-    },
-    {
-        'path':         'reports/view/:reportId',
-        'component':    ReportViewerComponent,
-        'canActivate':  [AuthManager]
-    },
-    {
-        'path':         'reports/:mode/:reportId',
-        'component':    ReportEditorComponent,
-        'canActivate':  [AuthManager]
+        'loadChildren': () => import('./pages/signin/signin.module').then(m => m.SigninModule)
     },
     {
         'path':         'signup',
         'loadChildren': () => import('./pages/signup/signup.module').then(m => m.SignupModule)
+    },
+    {
+        'path':         'reports',
+        'canActivate':  [AuthManager],
+        'loadChildren': () => import('./pages/reports/reports.module').then(m => m.ReportsModule)
     },
     {
         'path':         'verify-account',
@@ -63,4 +42,4 @@ const routes: Routes = [
     exports: [RouterModule]
 })
 
-export class AppRoutingModule {}
+export class AppRoutingModule { }

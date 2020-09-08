@@ -25,7 +25,9 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
         MatProgressSpinnerModule,
         VerifyAccountRoutingModule
     ],
-    declarations: [VerifyAccountPage]
+    declarations: [
+        VerifyAccountPage
+    ]
 })
 
 export class VerifyAccountModule {}

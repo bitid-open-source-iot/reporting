@@ -1,0 +1,29 @@
+<mat-toolbar color="primary">
+    <img src="./assets/icons/icon-512x512.png" alt="logo" draggable="false">
+
+    <div class="page-label spacer">
+        reports
+    </div>
+
+    <search placeholder="filter reports"></search>
+</mat-toolbar>
+
+<mat-progress-bar mode="indeterminate" color="accent" *ngIf="loading"></mat-progress-bar>
+
+<div class="page-body">
+    <div class="reports">
+        <div class="report" *ngFor="let report of reports | filterBy : 'description' : filter" matRipple (click)="options(report)">
+            <div class="inner">
+                <h1>
+                    {{ report.description }}
+                </h1>
+            </div>
+        </div>
+    </div>
+    
+    <button mat-fab routerLink="editor" [queryParams]="{'mode': 'add'}">
+        <mat-icon>
+            add
+        </mat-icon>
+    </button>
+</div>

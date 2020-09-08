@@ -24,6 +24,10 @@ export class AccountService {
         const response = await this.api.post(environment.auth, '/users/get', {});
 
         if (response.ok) {
+            if (typeof(response.result.profilePic) != "undefined") {
+                response.result.picture = response.result.profilePic;
+               delete response.result.profilePic;
+            };
             this.user.next(response.result);
         };
         
@@ -91,9 +95,9 @@ export class AccountService {
         expiry.setDate(expiry.getDate() + 1000);
         
         const response = await this.api.post(environment.auth, '/auth/allowaccess', {
-            'appId':        environment.appId,
             'expiry':       expiry,
             'scopes':       environment.scopes,
+            'appId':     environment.appId,
             'tokenAddOn':   {},
             'description':  environment.appName
         });
@@ -107,7 +111,7 @@ export class AccountService {
 
     public async verify(params) {
         params.email        = params.email;
-        params.appId        = environment.appId;
+        params.appId     = environment.appId;
         params.description  = environment.appName;
        
         this.localstorage.set('email', params.email);
@@ -126,10 +130,6 @@ export class AccountService {
         this.localstorage.set('email', params.email);
 
         return await this.api.put(environment.auth, '/auth/register', params);
-    };
-
-    public async removeaccount(params) {
-        return await this.api.post(environment.auth, '/users/delete', params);
     };
     
     private async authenticate(params) {
@@ -157,30 +157,23 @@ export class AccountService {
     };
 
     public async changepassword(params) {
-        this.localstorage.set('email', params.email);
-        return await this.api.put(environment.auth, '/auth/changepassword', params);
+        return await this.api.post(environment.auth, '/auth/changepassword', params);
+    };
+
+    public async removeaccount(params) {
+        return await this.api.post(environment.auth, '/users/delete', params);
     };
     
 }
 
 const ACCOUNT = {
-    'name': {
-        'last':     null,
-        'first':    null,
-        'middle':   null
-    },
     'picture':  null,
     'language': null,
-    'username': null
+    'userName': null
 };
 
 export interface Account {
-    'name'?: {
-        'last'?:    string;
-        'first'?:   string;
-        'middle'?:  string;
-    };
     'picture'?:     string;
     'language'?:    string;
-    'username'?:    string;
+    'userName'?:    string;
 }

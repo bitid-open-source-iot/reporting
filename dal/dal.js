@@ -1,55 +1,55 @@
-var Q       		= require('q');
-var db				= require('../db/mongo');
-var ObjectId 		= require('mongodb').ObjectId;
-var ErrorResponse 	= require('../lib/error-response').ErrorResponse;
+var Q = require('q');
+var db = require('../db/mongo');
+var ObjectId = require('mongodb').ObjectId;
+var ErrorResponse = require('../lib/error-response').ErrorResponse;
 
-var module = function() {
+var module = function () {
 	var dalReports = {
 		errorResponse: {
 			"error": {
-				"code": 	401,
-				"message": 	"Invalid Credentials",
+				"code": 401,
+				"message": "Invalid Credentials",
 				"errors": [{
-					"reason": 		"General Reports Error",
-					"message": 		"Invalid Credentials",
-					"location": 	"dalReports",
+					"reason": "General Reports Error",
+					"message": "Invalid Credentials",
+					"location": "dalReports",
 					"locationType": "header"
 				}]
 			},
-			"hiddenErrors":[]
+			"hiddenErrors": []
 		},
 
 		add: (args) => {
 			var deferred = Q.defer();
-			
+
 			var params = {
 				"bitid": {
-	                "auth": {
-	                    "users": 			args.req.body.users,
-	                    "organizationOnly": args.req.body.organizationOnly
-	                }
-	            },
-				"url": 			args.req.body.url,
-				"type": 		args.req.body.type,
-	            "query": 		args.req.body.query,
-				"serverDate": 	new Date(),
-	            "description": 	args.req.body.description
-	        };
+					"auth": {
+						"users": args.req.body.users,
+						"organizationOnly": args.req.body.organizationOnly
+					}
+				},
+				"url": args.req.body.url,
+				"type": args.req.body.type,
+				"query": args.req.body.query,
+				"serverDate": new Date(),
+				"description": args.req.body.description
+			};
 
 			db.call({
-				'params': 		params,
-				'operation': 	'insert',
-				'collection': 	'tblReports'
+				'params': params,
+				'operation': 'insert',
+				'collection': 'tblReports'
 			})
-			.then(result => {
-				args.result = result[0];
-				deferred.resolve(args);
-			}, err => {
-				dalReports.errorResponse.error.errors[0].code 	= err.code 			|| dalReports.errorResponse.error.errors[0].code;
-				dalReports.errorResponse.error.errors[0].reason	= err.description 	|| 'Add Report Error';
-				dalReports.errorResponse.hiddenErrors.push(err.error);
-				deferred.reject(dalReports.errorResponse);
-			});
+				.then(result => {
+					args.result = result[0];
+					deferred.resolve(args);
+				}, err => {
+					dalReports.errorResponse.error.errors[0].code = err.code || dalReports.errorResponse.error.errors[0].code;
+					dalReports.errorResponse.error.errors[0].reason = err.description || 'Add Report Error';
+					dalReports.errorResponse.hiddenErrors.push(err.error);
+					deferred.reject(dalReports.errorResponse);
+				});
 
 			return deferred.promise;
 		},
@@ -58,8 +58,8 @@ var module = function() {
 			var deferred = Q.defer();
 
 			var params = {
-				"_id": 						ObjectId(args.req.body.reportId),
-				"bitid.auth.users.email": 	args.req.body.header.email
+				"_id": ObjectId(args.req.body.reportId),
+				"bitid.auth.users.email": args.req.body.header.email
 			};
 
 			var filter = {};
@@ -79,20 +79,20 @@ var module = function() {
 			};
 
 			db.call({
-				'filter':		filter,
-				'params': 		params,
-				'operation': 	'find',
-				'collection': 	'tblReports'
+				'filter': filter,
+				'params': params,
+				'operation': 'find',
+				'collection': 'tblReports'
 			})
-			.then(result => {
-				args.result = result[0];
-				deferred.resolve(args);
-			}, err => {
-				dalReports.errorResponse.error.errors[0].code 	= err.code 			|| dalReports.errorResponse.error.errors[0].code;
-				dalReports.errorResponse.error.errors[0].reason	= err.description 	|| 'Get Report Error';
-				dalReports.errorResponse.hiddenErrors.push(err.error);
-				deferred.reject(dalReports.errorResponse);
-			});
+				.then(result => {
+					args.result = result[0];
+					deferred.resolve(args);
+				}, err => {
+					dalReports.errorResponse.error.errors[0].code = err.code || dalReports.errorResponse.error.errors[0].code;
+					dalReports.errorResponse.error.errors[0].reason = err.description || 'Get Report Error';
+					dalReports.errorResponse.hiddenErrors.push(err.error);
+					deferred.reject(dalReports.errorResponse);
+				});
 
 			return deferred.promise;
 		},
@@ -104,7 +104,7 @@ var module = function() {
 				"bitid.auth.users.email": args.req.body.header.email
 			};
 
-			if (typeof(args.req.body.reportId) != "undefined") {
+			if (typeof (args.req.body.reportId) != "undefined") {
 				if (Array.isArray(args.req.body.reportId) && args.req.body.reportId.length > 0) {
 					params._id = {
 						$in: args.req.body.reportId.map(id => ObjectId(id))
@@ -114,23 +114,23 @@ var module = function() {
 				};
 			};
 
-			if (typeof(args.req.body.description) != "undefined") {
+			if (typeof (args.req.body.description) != "undefined") {
 				params.description = {
 					$regex: args.req.body.description
 				};
 			};
 
-		 	if (typeof(args.req.body.skip) == "number") {
+			if (typeof (args.req.body.skip) == "number") {
 				var skip = args.req.body.skip;
-		 	};
+			};
 
-		 	if (typeof(args.req.body.sort) == "object") {
+			if (typeof (args.req.body.sort) == "object") {
 				var sort = args.req.body.sort;
-		 	};
+			};
 
-		 	if (typeof(args.req.body.limit) == "number") {
+			if (typeof (args.req.body.limit) == "number") {
 				var limit = args.req.body.limit;
-		 	};
+			};
 
 			var filter = {};
 			if (Array.isArray(args.req.body.filter) && args.req.body.filter.length > 0) {
@@ -149,23 +149,23 @@ var module = function() {
 			};
 
 			db.call({
-				'skip': 		skip,
-				'sort': 		sort,
-				'limit': 		limit,
-				'filter':		filter,
-				'params': 		params,
-				'operation': 	'find',
-				'collection': 	'tblReports'
+				'skip': skip,
+				'sort': sort,
+				'limit': limit,
+				'filter': filter,
+				'params': params,
+				'operation': 'find',
+				'collection': 'tblReports'
 			})
-			.then(result => {
-				args.result = result;
-				deferred.resolve(args);
-			}, err => {
-				dalReports.errorResponse.error.errors[0].code 	= err.code 			|| dalReports.errorResponse.error.errors[0].code;
-				dalReports.errorResponse.error.errors[0].reason	= err.description 	|| 'List Reports Error';
-				dalReports.errorResponse.hiddenErrors.push(err.error);
-				deferred.reject(dalReports.errorResponse);
-			});
+				.then(result => {
+					args.result = result;
+					deferred.resolve(args);
+				}, err => {
+					dalReports.errorResponse.error.errors[0].code = err.code || dalReports.errorResponse.error.errors[0].code;
+					dalReports.errorResponse.error.errors[0].reason = err.description || 'List Reports Error';
+					dalReports.errorResponse.hiddenErrors.push(err.error);
+					deferred.reject(dalReports.errorResponse);
+				});
 
 			return deferred.promise;
 		},
@@ -174,34 +174,34 @@ var module = function() {
 			var deferred = Q.defer();
 
 			db.call({
-				'params': 		args.params,
-				'operation': 	'find',
-				'collection': 	'tblReports'
+				'params': args.params,
+				'operation': 'find',
+				'collection': 'tblReports'
 			})
-			.then(result => {
-				var deferred = Q.defer();
+				.then(result => {
+					var deferred = Q.defer();
 
-				var params 		= result[0];
-				params.reportId 	= params._id.toString();
-				delete params._id;
+					var params = result[0];
+					params.reportId = params._id.toString();
+					delete params._id;
 
-				deferred.resolve({
-					'params': 		params,
-					'operation': 	'insert',
-					'collection': 	'tblAuditReports'
+					deferred.resolve({
+						'params': params,
+						'operation': 'insert',
+						'collection': 'tblAuditReports'
+					});
+
+					return deferred.promise;
+				}, null)
+				.then(db.call, null)
+				.then(result => {
+					deferred.resolve(args);
+				}, err => {
+					dalReports.errorResponse.error.errors[0].code = err.code || dalReports.errorResponse.error.errors[0].code;
+					dalReports.errorResponse.error.errors[0].reason = err.description || 'Audit Report Error';
+					dalReports.errorResponse.hiddenErrors.push(err.error);
+					deferred.reject(dalReports.errorResponse);
 				});
-
-				return deferred.promise;
-			}, null)
-			.then(db.call, null)
-			.then(result => {
-				deferred.resolve(args);
-			}, err => {
-				dalReports.errorResponse.error.errors[0].code 	= err.code 			|| dalReports.errorResponse.error.errors[0].code;
-				dalReports.errorResponse.error.errors[0].reason = err.description 	|| 'Audit Report Error';
-				dalReports.errorResponse.hiddenErrors.push(err.error);
-				deferred.reject(dalReports.errorResponse);
-			});
 
 			return deferred.promise;
 		},
@@ -219,38 +219,38 @@ var module = function() {
 					}
 				},
 				"bitid.auth.users.email": {
-			        $ne: args.req.body.email
-			    },
+					$ne: args.req.body.email
+				},
 				"_id": ObjectId(args.req.body.reportId)
 			};
 
 			var update = {
 				$set: {
-					"serverDate": 	new Date()
+					"serverDate": new Date()
 				},
 				$push: {
 					"bitid.auth.users": {
-				        "role": 	args.req.body.role,
-				        "email": 	args.req.body.email
-				    }
+						"role": args.req.body.role,
+						"email": args.req.body.email
+					}
 				}
 			};
 
 			db.call({
-				'params':		params,
-				'update':		update,
-				'operation': 	'update',
-				'collection': 	'tblReports'
+				'params': params,
+				'update': update,
+				'operation': 'update',
+				'collection': 'tblReports'
 			})
-			.then(result => {
-				args.result = result;
-				deferred.resolve(args);
-			}, err => {
-				dalReports.errorResponse.error.errors[0].code 	= err.code 			|| dalReports.errorResponse.error.errors[0].code;
-				dalReports.errorResponse.error.errors[0].reason = err.description 	|| 'Share Report Error';
-				dalReports.errorResponse.hiddenErrors.push(err.error);
-				deferred.reject(dalReports.errorResponse);
-			});
+				.then(result => {
+					args.result = result;
+					deferred.resolve(args);
+				}, err => {
+					dalReports.errorResponse.error.errors[0].code = err.code || dalReports.errorResponse.error.errors[0].code;
+					dalReports.errorResponse.error.errors[0].reason = err.description || 'Share Report Error';
+					dalReports.errorResponse.hiddenErrors.push(err.error);
+					deferred.reject(dalReports.errorResponse);
+				});
 			return deferred.promise;
 		},
 
@@ -262,50 +262,50 @@ var module = function() {
 					'serverDate': new Date()
 				}
 			};
-			if (typeof(args.req.body.url) != "undefined") {
+			if (typeof (args.req.body.url) != "undefined") {
 				update.$set.url = args.req.body.url;
 			};
-			if (typeof(args.req.body.type) != "undefined") {
+			if (typeof (args.req.body.type) != "undefined") {
 				update.$set.type = args.req.body.type;
 			};
-			if (typeof(args.req.body.query) != "undefined") {
+			if (typeof (args.req.body.query) != "undefined") {
 				update.$set.query = args.req.body.query;
 			};
-			if (typeof(args.req.body.description) != "undefined") {
+			if (typeof (args.req.body.description) != "undefined") {
 				update.$set.description = args.req.body.description;
 			};
-			if (typeof(args.req.body.organizationOnly) != "undefined") {
+			if (typeof (args.req.body.organizationOnly) != "undefined") {
 				update.$set["bitid.auth.organizationOnly"] = args.req.body.organizationOnly;
 			};
 
 			var params = {
 				"bitid.auth.users": {
-			        $elemMatch: {
-			            "role": {
-			                $gte: 2
-			            },
-			            "email": args.req.body.header.email
-			        }
-			    },
+					$elemMatch: {
+						"role": {
+							$gte: 2
+						},
+						"email": args.req.body.header.email
+					}
+				},
 				"_id": ObjectId(args.req.body.reportId)
 			};
 
 			dalReports.audit({
-				'params':		params,
-				'update':		update,
-				'operation': 	'update',
-				'collection': 	'tblReports'
+				'params': params,
+				'update': update,
+				'operation': 'update',
+				'collection': 'tblReports'
 			})
-			.then(db.call, null)
-			.then(result => {
-				args.result = result;
-				deferred.resolve(args);
-			}, err => {
-				dalReports.errorResponse.error.errors[0].code 	= err.code 			|| dalReports.errorResponse.error.errors[0].code;
-				dalReports.errorResponse.error.errors[0].reason = err.description 	|| 'Update Report Error';
-				dalReports.errorResponse.hiddenErrors.push(err.error);
-				deferred.reject(dalReports.errorResponse);
-			});
+				.then(db.call, null)
+				.then(result => {
+					args.result = result;
+					deferred.resolve(args);
+				}, err => {
+					dalReports.errorResponse.error.errors[0].code = err.code || dalReports.errorResponse.error.errors[0].code;
+					dalReports.errorResponse.error.errors[0].reason = err.description || 'Update Report Error';
+					dalReports.errorResponse.hiddenErrors.push(err.error);
+					deferred.reject(dalReports.errorResponse);
+				});
 
 			return deferred.promise;
 		},
@@ -315,31 +315,31 @@ var module = function() {
 
 			var params = {
 				"bitid.auth.users": {
-			        $elemMatch: {
-			            "role": {
-			                $gte: 4
-			            },
-			            "email": args.req.body.header.email
-			        }
-			    },
+					$elemMatch: {
+						"role": {
+							$gte: 4
+						},
+						"email": args.req.body.header.email
+					}
+				},
 				"_id": ObjectId(args.req.body.reportId)
 			};
 
 			dalReports.audit({
-				'params':		params,
-				'operation': 	'remove',
-				'collection': 	'tblReports'
+				'params': params,
+				'operation': 'remove',
+				'collection': 'tblReports'
 			})
-			.then(db.call, null)
-			.then(result => {
-				args.result = result;
-				deferred.resolve(args);
-			}, err => {
-				dalReports.errorResponse.error.errors[0].code 	= err.code 			|| dalReports.errorResponse.error.errors[0].code;
-				dalReports.errorResponse.error.errors[0].reason = err.description 	|| 'Delete Report Error';
-				dalReports.errorResponse.hiddenErrors.push(err.error);
-				deferred.reject(dalReports.errorResponse);
-			});
+				.then(db.call, null)
+				.then(result => {
+					args.result = result;
+					deferred.resolve(args);
+				}, err => {
+					dalReports.errorResponse.error.errors[0].code = err.code || dalReports.errorResponse.error.errors[0].code;
+					dalReports.errorResponse.error.errors[0].reason = err.description || 'Delete Report Error';
+					dalReports.errorResponse.hiddenErrors.push(err.error);
+					deferred.reject(dalReports.errorResponse);
+				});
 
 			return deferred.promise;
 		},
@@ -348,144 +348,144 @@ var module = function() {
 			var deferred = Q.defer();
 
 			var params = {
-			    "_id": 						ObjectId(args.req.body.reportId),
-				"bitid.auth.users.email": 	args.req.body.header.email
+				"_id": ObjectId(args.req.body.reportId),
+				"bitid.auth.users.email": args.req.body.header.email
 			};
 
 			db.call({
-				'filter':		{},
-				'params': 		params,
-				'operation': 	'find',
-				'collection': 	'tblReports'
+				'filter': {},
+				'params': params,
+				'operation': 'find',
+				'collection': 'tblReports'
 			})
-			.then(result => {
-				var deferred = Q.defer();
+				.then(result => {
+					var deferred = Q.defer();
 
-				var role 		= 0;
-				var unsubscribe = true;
-				if (args.req.body.email == args.req.body.header.email) {
-					result[0].bitid.auth.users.map(user => {
-						if (user.email == args.req.body.header.email) {
-							if (user.role == 5) {
-								role 		= 5;
-								unsubscribe = false;
+					var role = 0;
+					var unsubscribe = true;
+					if (args.req.body.email == args.req.body.header.email) {
+						result[0].bitid.auth.users.map(user => {
+							if (user.email == args.req.body.header.email) {
+								if (user.role == 5) {
+									role = 5;
+									unsubscribe = false;
+								};
 							};
-						};
-					});
-				} else {
-					result[0].bitid.auth.users.map(user => {
-						if (user.email == args.req.body.header.email) {
-							if (user.role < 4) {
-								role 		= user.role;
-								unsubscribe = false;
-							};
-						};
-					});
-				};
-
-				if (unsubscribe) {
-					var params = {
-						"_id": result[0]._id
-					};
-					var update = {
-						$set: {
-							"serverDate": new Date()
-						},
-						$pull: {
-							"bitid.auth.users": {
-								"email": args.req.body.email
-							}
-						}
-					};
-					deferred.resolve({
-						'params': 		params,
-						'update': 		update,
-						'operation': 	'update',
-						'collection': 	'tblReports'
-					});
-				} else {
-					var err 					= new ErrorResponse();
-					err.error.code 				= 401;
-					err.error.errors[0].code 	= 401;
-					if (role == 5) {
-						err.error.errors[0].reason 	= 'You are the owner, you may not unsubscribe yourself!';
-						err.error.errors[0].message	= 'You are the owner, you may not unsubscribe yourself!';
+						});
 					} else {
-						err.error.errors[0].reason 	= 'You may not unsubscribe others!';
-						err.error.errors[0].message	= 'You may not unsubscribe others!';
+						result[0].bitid.auth.users.map(user => {
+							if (user.email == args.req.body.header.email) {
+								if (user.role < 4) {
+									role = user.role;
+									unsubscribe = false;
+								};
+							};
+						});
 					};
-					deferred.reject(err);
-				};
 
-				return deferred.promise;
-			}, null)
-			.then(db.call, null)
-			.then(result => {
-				args.result = result;
-				deferred.resolve(args);
-			}, err => {
-				dalReports.errorResponse.error.errors[0].code   = err.code 			|| dalReports.errorResponse.error.errors[0].code;
-				dalReports.errorResponse.error.errors[0].reason = err.description 	|| 'Unsubscribe User From Report Error';
-				dalReports.errorResponse.hiddenErrors.push(err.error);
-				deferred.reject(dalReports.errorResponse);
-			});
+					if (unsubscribe) {
+						var params = {
+							"_id": result[0]._id
+						};
+						var update = {
+							$set: {
+								"serverDate": new Date()
+							},
+							$pull: {
+								"bitid.auth.users": {
+									"email": args.req.body.email
+								}
+							}
+						};
+						deferred.resolve({
+							'params': params,
+							'update': update,
+							'operation': 'update',
+							'collection': 'tblReports'
+						});
+					} else {
+						var err = new ErrorResponse();
+						err.error.code = 401;
+						err.error.errors[0].code = 401;
+						if (role == 5) {
+							err.error.errors[0].reason = 'You are the owner, you may not unsubscribe yourself!';
+							err.error.errors[0].message = 'You are the owner, you may not unsubscribe yourself!';
+						} else {
+							err.error.errors[0].reason = 'You may not unsubscribe others!';
+							err.error.errors[0].message = 'You may not unsubscribe others!';
+						};
+						deferred.reject(err);
+					};
+
+					return deferred.promise;
+				}, null)
+				.then(db.call, null)
+				.then(result => {
+					args.result = result;
+					deferred.resolve(args);
+				}, err => {
+					dalReports.errorResponse.error.errors[0].code = err.code || dalReports.errorResponse.error.errors[0].code;
+					dalReports.errorResponse.error.errors[0].reason = err.description || 'Unsubscribe User From Report Error';
+					dalReports.errorResponse.hiddenErrors.push(err.error);
+					deferred.reject(dalReports.errorResponse);
+				});
 
 			return deferred.promise;
 		},
 
 		updatesubscriber: (args) => {
 			var deferred = Q.defer();
-			
+
 			var params = {
 				"bitid.auth.users": {
-			        $elemMatch: {
-			            "role": {
-			                $gte: 4
-			            },    
-			            "email": args.req.body.header.email
-			        }
-			    },
-				"_id": ObjectId(args.req.body.reportId)	
-			};
-			
-			db.call({
-				'params': 		params,
-				'operation': 	'find',
-				'collection': 	'tblReports'
-			})
-			.then(result => {
-				var deferred = Q.defer();
-
-				var params = {
-					"_id": 						ObjectId(args.req.body.reportId),
-					"bitid.auth.users.email": 	args.req.body.email
-				};
-
-				var update = {
-					$set: {
-			            "bitid.auth.users.$.role": args.req.body.role
+					$elemMatch: {
+						"role": {
+							$gte: 4
+						},
+						"email": args.req.body.header.email
 					}
-				};
+				},
+				"_id": ObjectId(args.req.body.reportId)
+			};
 
-				deferred.resolve({
-					'params': 		params,
-					'update': 		update,
-					'operation': 	'update',
-					'collection': 	'tblReports'
+			db.call({
+				'params': params,
+				'operation': 'find',
+				'collection': 'tblReports'
+			})
+				.then(result => {
+					var deferred = Q.defer();
+
+					var params = {
+						"_id": ObjectId(args.req.body.reportId),
+						"bitid.auth.users.email": args.req.body.email
+					};
+
+					var update = {
+						$set: {
+							"bitid.auth.users.$.role": args.req.body.role
+						}
+					};
+
+					deferred.resolve({
+						'params': params,
+						'update': update,
+						'operation': 'update',
+						'collection': 'tblReports'
+					});
+
+					return deferred.promise;
+				}, null)
+				.then(db.call, null)
+				.then(result => {
+					args.result = result;
+					deferred.resolve(args);
+				}, err => {
+					dalReports.errorResponse.error.errors[0].code = err.code || dalReports.errorResponse.error.errors[0].code;
+					dalReports.errorResponse.error.errors[0].reason = err.description || 'Update Report Subscriber Error';
+					dalReports.errorResponse.hiddenErrors.push(err.error);
+					deferred.reject(dalReports.errorResponse);
 				});
-
-				return deferred.promise;
-			}, null)
-			.then(db.call, null)
-			.then(result => {
-				args.result = result;
-				deferred.resolve(args);
-			}, err => {
-				dalReports.errorResponse.error.errors[0].code 	= err.code 			|| dalReports.errorResponse.error.errors[0].code;
-				dalReports.errorResponse.error.errors[0].reason 	= err.description 	|| 'Update Report Subscriber Error';
-				dalReports.errorResponse.hiddenErrors.push(err.error);
-				deferred.reject(dalReports.errorResponse);
-			});
 
 			return deferred.promise;
 		}
@@ -494,56 +494,56 @@ var module = function() {
 	var dalSchedule = {
 		errorResponse: {
 			"error": {
-				"code": 	401,
-				"message": 	"Invalid Credentials",
+				"code": 401,
+				"message": "Invalid Credentials",
 				"errors": [{
-					"reason": 		"General Schedule Error",
-					"message": 		"Invalid Credentials",
-					"location": 	"dalSchedule",
+					"reason": "General Schedule Error",
+					"message": "Invalid Credentials",
+					"location": "dalSchedule",
 					"locationType": "header"
 				}]
 			},
-			"hiddenErrors":[]
+			"hiddenErrors": []
 		},
 
 		add: (args) => {
 			var deferred = Q.defer();
-			
+
 			var params = {
 				"bitid": {
-	                "auth": {
-	                    "users": 			args.req.body.users,
-	                    "organizationOnly": args.req.body.organizationOnly
-	                }
-	            },
-				"trigger": {
-					"hour":     args.req.body.trigger.hour,
-					"date":     args.req.body.trigger.date,
-					"year":     args.req.body.trigger.year,
-					"month":    args.req.body.trigger.month,
-					"minute":   args.req.body.trigger.minute
+					"auth": {
+						"users": args.req.body.users,
+						"organizationOnly": args.req.body.organizationOnly
+					}
 				},
-				"last":         null,
-				"cycle":        args.req.body.cycle,
-				"offset":       args.req.body.offset,
-				"reportId":     args.req.body.reportId,
-				"recipients": 	args.req.body.recipients || []
-	        };
+				"trigger": {
+					"hour": args.req.body.trigger.hour,
+					"date": args.req.body.trigger.date,
+					"year": args.req.body.trigger.year,
+					"month": args.req.body.trigger.month,
+					"minute": args.req.body.trigger.minute
+				},
+				"last": null,
+				"cycle": args.req.body.cycle,
+				"offset": args.req.body.offset,
+				"reportId": args.req.body.reportId,
+				"recipients": args.req.body.recipients || []
+			};
 
 			db.call({
-				'params': 		params,
-				'operation': 	'insert',
-				'collection': 	'tblSchedule'
+				'params': params,
+				'operation': 'insert',
+				'collection': 'tblSchedule'
 			})
-			.then(result => {
-				args.result = result[0];
-				deferred.resolve(args);
-			}, err => {
-				dalSchedule.errorResponse.error.errors[0].code 		= err.code 			|| dalSchedule.errorResponse.error.errors[0].code;
-				dalSchedule.errorResponse.error.errors[0].reason	= err.description 	|| 'Add Schedule Error';
-				dalSchedule.errorResponse.hiddenErrors.push(err.error);
-				deferred.reject(dalSchedule.errorResponse);
-			});
+				.then(result => {
+					args.result = result[0];
+					deferred.resolve(args);
+				}, err => {
+					dalSchedule.errorResponse.error.errors[0].code = err.code || dalSchedule.errorResponse.error.errors[0].code;
+					dalSchedule.errorResponse.error.errors[0].reason = err.description || 'Add Schedule Error';
+					dalSchedule.errorResponse.hiddenErrors.push(err.error);
+					deferred.reject(dalSchedule.errorResponse);
+				});
 
 			return deferred.promise;
 		},
@@ -552,8 +552,8 @@ var module = function() {
 			var deferred = Q.defer();
 
 			var params = {
-				"_id": 						ObjectId(args.req.body.scheduleId),
-				"bitid.auth.users.email": 	args.req.body.header.email
+				"_id": ObjectId(args.req.body.scheduleId),
+				"bitid.auth.users.email": args.req.body.header.email
 			};
 
 			var filter = {};
@@ -573,20 +573,20 @@ var module = function() {
 			};
 
 			db.call({
-				'filter':		filter,
-				'params': 		params,
-				'operation': 	'find',
-				'collection': 	'tblSchedule'
+				'filter': filter,
+				'params': params,
+				'operation': 'find',
+				'collection': 'tblSchedule'
 			})
-			.then(result => {
-				args.result = result[0];
-				deferred.resolve(args);
-			}, err => {
-				dalSchedule.errorResponse.error.errors[0].code 		= err.code 			|| dalSchedule.errorResponse.error.errors[0].code;
-				dalSchedule.errorResponse.error.errors[0].reason	= err.description 	|| 'Get Schedule Error';
-				dalSchedule.errorResponse.hiddenErrors.push(err.error);
-				deferred.reject(dalSchedule.errorResponse);
-			});
+				.then(result => {
+					args.result = result[0];
+					deferred.resolve(args);
+				}, err => {
+					dalSchedule.errorResponse.error.errors[0].code = err.code || dalSchedule.errorResponse.error.errors[0].code;
+					dalSchedule.errorResponse.error.errors[0].reason = err.description || 'Get Schedule Error';
+					dalSchedule.errorResponse.hiddenErrors.push(err.error);
+					deferred.reject(dalSchedule.errorResponse);
+				});
 
 			return deferred.promise;
 		},
@@ -598,7 +598,7 @@ var module = function() {
 				"bitid.auth.users.email": args.req.body.header.email
 			};
 
-			if (typeof(args.req.body.scheduleId) != "undefined") {
+			if (typeof (args.req.body.scheduleId) != "undefined") {
 				if (Array.isArray(args.req.body.scheduleId) && args.req.body.scheduleId.length > 0) {
 					params._id = {
 						$in: args.req.body.scheduleId.map(id => ObjectId(id))
@@ -608,23 +608,23 @@ var module = function() {
 				};
 			};
 
-			if (typeof(args.req.body.description) != "undefined") {
+			if (typeof (args.req.body.description) != "undefined") {
 				params.description = {
 					$regex: args.req.body.description
 				};
 			};
 
-		 	if (typeof(args.req.body.skip) == "number") {
+			if (typeof (args.req.body.skip) == "number") {
 				var skip = args.req.body.skip;
-		 	};
+			};
 
-		 	if (typeof(args.req.body.sort) == "object") {
+			if (typeof (args.req.body.sort) == "object") {
 				var sort = args.req.body.sort;
-		 	};
+			};
 
-		 	if (typeof(args.req.body.limit) == "number") {
+			if (typeof (args.req.body.limit) == "number") {
 				var limit = args.req.body.limit;
-		 	};
+			};
 
 			var filter = {};
 			if (Array.isArray(args.req.body.filter) && args.req.body.filter.length > 0) {
@@ -643,23 +643,23 @@ var module = function() {
 			};
 
 			db.call({
-				'skip': 		skip,
-				'sort': 		sort,
-				'limit': 		limit,
-				'filter':		filter,
-				'params': 		params,
-				'operation': 	'find',
-				'collection': 	'tblSchedule'
+				'skip': skip,
+				'sort': sort,
+				'limit': limit,
+				'filter': filter,
+				'params': params,
+				'operation': 'find',
+				'collection': 'tblSchedule'
 			})
-			.then(result => {
-				args.result = result;
-				deferred.resolve(args);
-			}, err => {
-				dalSchedule.errorResponse.error.errors[0].code 	= err.code 			|| dalSchedule.errorResponse.error.errors[0].code;
-				dalSchedule.errorResponse.error.errors[0].reason	= err.description 	|| 'List Schedules Error';
-				dalSchedule.errorResponse.hiddenErrors.push(err.error);
-				deferred.reject(dalSchedule.errorResponse);
-			});
+				.then(result => {
+					args.result = result;
+					deferred.resolve(args);
+				}, err => {
+					dalSchedule.errorResponse.error.errors[0].code = err.code || dalSchedule.errorResponse.error.errors[0].code;
+					dalSchedule.errorResponse.error.errors[0].reason = err.description || 'List Schedules Error';
+					dalSchedule.errorResponse.hiddenErrors.push(err.error);
+					deferred.reject(dalSchedule.errorResponse);
+				});
 
 			return deferred.promise;
 		},
@@ -668,34 +668,34 @@ var module = function() {
 			var deferred = Q.defer();
 
 			db.call({
-				'params': 		args.params,
-				'operation': 	'find',
-				'collection': 	'tblSchedule'
+				'params': args.params,
+				'operation': 'find',
+				'collection': 'tblSchedule'
 			})
-			.then(result => {
-				var deferred = Q.defer();
+				.then(result => {
+					var deferred = Q.defer();
 
-				var params 		= result[0];
-				params.scheduleId 	= params._id.toString();
-				delete params._id;
+					var params = result[0];
+					params.scheduleId = params._id.toString();
+					delete params._id;
 
-				deferred.resolve({
-					'params': 		params,
-					'operation': 	'insert',
-					'collection': 	'tblAuditReports'
+					deferred.resolve({
+						'params': params,
+						'operation': 'insert',
+						'collection': 'tblAuditReports'
+					});
+
+					return deferred.promise;
+				}, null)
+				.then(db.call, null)
+				.then(result => {
+					deferred.resolve(args);
+				}, err => {
+					dalSchedule.errorResponse.error.errors[0].code = err.code || dalSchedule.errorResponse.error.errors[0].code;
+					dalSchedule.errorResponse.error.errors[0].reason = err.description || 'Audit Schedule Error';
+					dalSchedule.errorResponse.hiddenErrors.push(err.error);
+					deferred.reject(dalSchedule.errorResponse);
 				});
-
-				return deferred.promise;
-			}, null)
-			.then(db.call, null)
-			.then(result => {
-				deferred.resolve(args);
-			}, err => {
-				dalSchedule.errorResponse.error.errors[0].code 	= err.code 			|| dalSchedule.errorResponse.error.errors[0].code;
-				dalSchedule.errorResponse.error.errors[0].reason = err.description 	|| 'Audit Schedule Error';
-				dalSchedule.errorResponse.hiddenErrors.push(err.error);
-				deferred.reject(dalSchedule.errorResponse);
-			});
 
 			return deferred.promise;
 		},
@@ -713,38 +713,38 @@ var module = function() {
 					}
 				},
 				"bitid.auth.users.email": {
-			        $ne: args.req.body.email
-			    },
+					$ne: args.req.body.email
+				},
 				"_id": ObjectId(args.req.body.scheduleId)
 			};
 
 			var update = {
 				$set: {
-					"serverDate": 	new Date()
+					"serverDate": new Date()
 				},
 				$push: {
 					"bitid.auth.users": {
-				        "role": 	args.req.body.role,
-				        "email": 	args.req.body.email
-				    }
+						"role": args.req.body.role,
+						"email": args.req.body.email
+					}
 				}
 			};
 
 			db.call({
-				'params':		params,
-				'update':		update,
-				'operation': 	'update',
-				'collection': 	'tblSchedule'
+				'params': params,
+				'update': update,
+				'operation': 'update',
+				'collection': 'tblSchedule'
 			})
-			.then(result => {
-				args.result = result;
-				deferred.resolve(args);
-			}, err => {
-				dalSchedule.errorResponse.error.errors[0].code 	= err.code 			|| dalSchedule.errorResponse.error.errors[0].code;
-				dalSchedule.errorResponse.error.errors[0].reason = err.description 	|| 'Share Schedule Error';
-				dalSchedule.errorResponse.hiddenErrors.push(err.error);
-				deferred.reject(dalSchedule.errorResponse);
-			});
+				.then(result => {
+					args.result = result;
+					deferred.resolve(args);
+				}, err => {
+					dalSchedule.errorResponse.error.errors[0].code = err.code || dalSchedule.errorResponse.error.errors[0].code;
+					dalSchedule.errorResponse.error.errors[0].reason = err.description || 'Share Schedule Error';
+					dalSchedule.errorResponse.hiddenErrors.push(err.error);
+					deferred.reject(dalSchedule.errorResponse);
+				});
 			return deferred.promise;
 		},
 
@@ -759,19 +759,19 @@ var module = function() {
 			};
 
 			db.call({
-				'params': 		params,
-				'operation': 	'find',
-				'collection': 	'tblSchedule'
+				'params': params,
+				'operation': 'find',
+				'collection': 'tblSchedule'
 			})
-			.then(result => {
-				args.result = result;
-				deferred.resolve(args);
-			}, err => {
-				dalSchedule.errorResponse.error.errors[0].code   = err.code			|| dalSchedule.errorResponse.error.errors[0].code;
-				dalSchedule.errorResponse.error.errors[0].reason = err.description 	|| 'Unsubscribe User From Schedule Error';
-				dalSchedule.errorResponse.hiddenErrors.push(err.error);
-				deferred.reject(dalSchedule.errorResponse);
-			});
+				.then(result => {
+					args.result = result;
+					deferred.resolve(args);
+				}, err => {
+					dalSchedule.errorResponse.error.errors[0].code = err.code || dalSchedule.errorResponse.error.errors[0].code;
+					dalSchedule.errorResponse.error.errors[0].reason = err.description || 'Unsubscribe User From Schedule Error';
+					dalSchedule.errorResponse.hiddenErrors.push(err.error);
+					deferred.reject(dalSchedule.errorResponse);
+				});
 
 			return deferred.promise;
 		},
@@ -784,50 +784,50 @@ var module = function() {
 					'serverDate': new Date()
 				}
 			};
-			if (typeof(args.req.body.url) != "undefined") {
+			if (typeof (args.req.body.url) != "undefined") {
 				update.$set.url = args.req.body.url;
 			};
-			if (typeof(args.req.body.type) != "undefined") {
+			if (typeof (args.req.body.type) != "undefined") {
 				update.$set.type = args.req.body.type;
 			};
-			if (typeof(args.req.body.query) != "undefined") {
+			if (typeof (args.req.body.query) != "undefined") {
 				update.$set.query = args.req.body.query;
 			};
-			if (typeof(args.req.body.description) != "undefined") {
+			if (typeof (args.req.body.description) != "undefined") {
 				update.$set.description = args.req.body.description;
 			};
-			if (typeof(args.req.body.organizationOnly) != "undefined") {
+			if (typeof (args.req.body.organizationOnly) != "undefined") {
 				update.$set["bitid.auth.organizationOnly"] = args.req.body.organizationOnly;
 			};
 
 			var params = {
 				"bitid.auth.users": {
-			        $elemMatch: {
-			            "role": {
-			                $gte: 2
-			            },
-			            "email": args.req.body.header.email
-			        }
-			    },
+					$elemMatch: {
+						"role": {
+							$gte: 2
+						},
+						"email": args.req.body.header.email
+					}
+				},
 				"_id": ObjectId(args.req.body.scheduleId)
 			};
 
 			dalSchedule.audit({
-				'params':		params,
-				'update':		update,
-				'operation': 	'update',
-				'collection': 	'tblSchedule'
+				'params': params,
+				'update': update,
+				'operation': 'update',
+				'collection': 'tblSchedule'
 			})
-			.then(db.call, null)
-			.then(result => {
-				args.result = result;
-				deferred.resolve(args);
-			}, err => {
-				dalSchedule.errorResponse.error.errors[0].code 	= err.code 			|| dalSchedule.errorResponse.error.errors[0].code;
-				dalSchedule.errorResponse.error.errors[0].reason = err.description 	|| 'Update Schedule Error';
-				dalSchedule.errorResponse.hiddenErrors.push(err.error);
-				deferred.reject(dalSchedule.errorResponse);
-			});
+				.then(db.call, null)
+				.then(result => {
+					args.result = result;
+					deferred.resolve(args);
+				}, err => {
+					dalSchedule.errorResponse.error.errors[0].code = err.code || dalSchedule.errorResponse.error.errors[0].code;
+					dalSchedule.errorResponse.error.errors[0].reason = err.description || 'Update Schedule Error';
+					dalSchedule.errorResponse.hiddenErrors.push(err.error);
+					deferred.reject(dalSchedule.errorResponse);
+				});
 
 			return deferred.promise;
 		},
@@ -837,31 +837,31 @@ var module = function() {
 
 			var params = {
 				"bitid.auth.users": {
-			        $elemMatch: {
-			            "role": {
-			                $gte: 4
-			            },
-			            "email": args.req.body.header.email
-			        }
-			    },
+					$elemMatch: {
+						"role": {
+							$gte: 4
+						},
+						"email": args.req.body.header.email
+					}
+				},
 				"_id": ObjectId(args.req.body.scheduleId)
 			};
 
 			dalSchedule.audit({
-				'params':		params,
-				'operation': 	'remove',
-				'collection': 	'tblSchedule'
+				'params': params,
+				'operation': 'remove',
+				'collection': 'tblSchedule'
 			})
-			.then(db.call, null)
-			.then(result => {
-				args.result = result;
-				deferred.resolve(args);
-			}, err => {
-				dalSchedule.errorResponse.error.errors[0].code 	= err.code 			|| dalSchedule.errorResponse.error.errors[0].code;
-				dalSchedule.errorResponse.error.errors[0].reason = err.description 	|| 'Delete Schedule Error';
-				dalSchedule.errorResponse.hiddenErrors.push(err.error);
-				deferred.reject(dalSchedule.errorResponse);
-			});
+				.then(db.call, null)
+				.then(result => {
+					args.result = result;
+					deferred.resolve(args);
+				}, err => {
+					dalSchedule.errorResponse.error.errors[0].code = err.code || dalSchedule.errorResponse.error.errors[0].code;
+					dalSchedule.errorResponse.error.errors[0].reason = err.description || 'Delete Schedule Error';
+					dalSchedule.errorResponse.hiddenErrors.push(err.error);
+					deferred.reject(dalSchedule.errorResponse);
+				});
 
 			return deferred.promise;
 		},
@@ -871,14 +871,14 @@ var module = function() {
 
 			var params = {
 				"bitid.auth.users": {
-			        $elemMatch: {
-			            "role": {
-			                $gte: 4
-			            },
-			            "email": args.req.body.header.email
-			        }
-			    },
-			    "_id": ObjectId(args.req.body.scheduleId)
+					$elemMatch: {
+						"role": {
+							$gte: 4
+						},
+						"email": args.req.body.header.email
+					}
+				},
+				"_id": ObjectId(args.req.body.scheduleId)
 			};
 			var update = {
 				$set: {
@@ -886,90 +886,90 @@ var module = function() {
 				},
 				$pull: {
 					"bitid.auth.users": {
-				        "email": args.req.body.email
-				    }
+						"email": args.req.body.email
+					}
 				}
 			};
 
 			db.call({
-				'params': 		params,
-				'update': 		update,
-				'operation': 	'update',
-				'collection': 	'tblSchedule'
+				'params': params,
+				'update': update,
+				'operation': 'update',
+				'collection': 'tblSchedule'
 			})
-			.then(result => {
-				args.result = result;
-				deferred.resolve(args);
-			}, err => {
-				dalSchedule.errorResponse.error.errors[0].code   = err.code			|| dalSchedule.errorResponse.error.errors[0].code;
-				dalSchedule.errorResponse.error.errors[0].reason = err.description 	|| 'Unsubscribe User From Schedule Error';
-				dalSchedule.errorResponse.hiddenErrors.push(err.error);
-				deferred.reject(dalSchedule.errorResponse);
-			});
+				.then(result => {
+					args.result = result;
+					deferred.resolve(args);
+				}, err => {
+					dalSchedule.errorResponse.error.errors[0].code = err.code || dalSchedule.errorResponse.error.errors[0].code;
+					dalSchedule.errorResponse.error.errors[0].reason = err.description || 'Unsubscribe User From Schedule Error';
+					dalSchedule.errorResponse.hiddenErrors.push(err.error);
+					deferred.reject(dalSchedule.errorResponse);
+				});
 
 			return deferred.promise;
 		},
 
 		updatesubscriber: (args) => {
 			var deferred = Q.defer();
-			
+
 			var params = {
 				"bitid.auth.users": {
-			        $elemMatch: {
-			            "role": {
-			                $gte: 4
-			            },    
-			            "email": args.req.body.header.email
-			        }
-			    },
-				"_id": ObjectId(args.req.body.scheduleId)	
-			};
-			
-			db.call({
-				'params': 		params,
-				'operation': 	'find',
-				'collection': 	'tblSchedule'
-			})
-			.then(result => {
-				var deferred = Q.defer();
-
-				var params = {
-					"_id": 						ObjectId(args.req.body.scheduleId),
-					"bitid.auth.users.email": 	args.req.body.email
-				};
-
-				var update = {
-					$set: {
-			            "bitid.auth.users.$.role": args.req.body.role
+					$elemMatch: {
+						"role": {
+							$gte: 4
+						},
+						"email": args.req.body.header.email
 					}
-				};
+				},
+				"_id": ObjectId(args.req.body.scheduleId)
+			};
 
-				deferred.resolve({
-					'params': 		params,
-					'update': 		update,
-					'operation': 	'update',
-					'collection': 	'tblSchedule'
+			db.call({
+				'params': params,
+				'operation': 'find',
+				'collection': 'tblSchedule'
+			})
+				.then(result => {
+					var deferred = Q.defer();
+
+					var params = {
+						"_id": ObjectId(args.req.body.scheduleId),
+						"bitid.auth.users.email": args.req.body.email
+					};
+
+					var update = {
+						$set: {
+							"bitid.auth.users.$.role": args.req.body.role
+						}
+					};
+
+					deferred.resolve({
+						'params': params,
+						'update': update,
+						'operation': 'update',
+						'collection': 'tblSchedule'
+					});
+
+					return deferred.promise;
+				}, null)
+				.then(db.call, null)
+				.then(result => {
+					args.result = result;
+					deferred.resolve(args);
+				}, err => {
+					dalSchedule.errorResponse.error.errors[0].code = err.code || dalSchedule.errorResponse.error.errors[0].code;
+					dalSchedule.errorResponse.error.errors[0].reason = err.description || 'Update Schedule Subscriber Error';
+					dalSchedule.errorResponse.hiddenErrors.push(err.error);
+					deferred.reject(dalSchedule.errorResponse);
 				});
-
-				return deferred.promise;
-			}, null)
-			.then(db.call, null)
-			.then(result => {
-				args.result = result;
-				deferred.resolve(args);
-			}, err => {
-				dalSchedule.errorResponse.error.errors[0].code		= err.code 			|| dalSchedule.errorResponse.error.errors[0].code;
-				dalSchedule.errorResponse.error.errors[0].reason 	= err.description 	|| 'Update Schedule Subscriber Error';
-				dalSchedule.errorResponse.hiddenErrors.push(err.error);
-				deferred.reject(dalSchedule.errorResponse);
-			});
 
 			return deferred.promise;
 		}
 	};
 
 	return {
-		'reports': 	dalReports,
+		'reports': dalReports,
 		'schedule': dalSchedule
 	};
 };

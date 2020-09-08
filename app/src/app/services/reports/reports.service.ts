@@ -1,62 +1,92 @@
+import { Report } from 'src/app/interfaces/report';
 import { Injectable } from '@angular/core';
-import { ApiService } from '../api/api.service';
-import { environment } from './../../../environments/environment';
+import { ApiService } from 'src/app/services/api/api.service';
+import { environment } from 'src/environments/environment';
+import { LocalstorageService } from '../localstorage/localstorage.service';
 
 @Injectable({
-	providedIn: 'root'
+    providedIn: 'root'
 })
 
 export class ReportsService {
 
-	constructor(private api: ApiService) {};
+    public data: Report[] = [];
 
-	public async add(params) {
-		return await this.api.post(environment.reporting, '/reporting/reports/add', params);
-	};
+    constructor(private api: ApiService, private localstorage: LocalstorageService) { };
 
-	public async get(params) {
-		return await this.api.post(environment.reporting, '/reporting/reports/get', params);
-	};
+    public async add(params: any) {
+        const response = await this.api.post(environment.reporting, '/reporting/reports/add', params);
 
-	public async list(params) {
-		return  await this.api.post(environment.reporting, '/reporting/reports/list', params);
-	};
+        if (response.ok) {
+            let task: any = params;
+            task.reportId = response.result.reportId;
+            this.data.push(task);
+        };
 
-	public async share(params) {
-		return  await this.api.post(environment.reporting, '/reporting/reports/share', params);
-	};
+        return response;
+    };
 
-	public async update(params) {
-		return  await this.api.post(environment.reporting, '/reporting/reports/update', params);
-	};
+    public async get(params: any) {
+        return await this.api.post(environment.reporting, '/reporting/reports/get', params);
+    };
 
-	public async delete(params) {
-		return  await this.api.post(environment.reporting, '/reporting/reports/delete', params);
-	};
+    public async list(params: any) {
+        return await this.api.post(environment.reporting, '/reporting/reports/list', params);
+    };
 
-	public async unsubscribe(params) {
-		return  await this.api.post(environment.reporting, '/reporting/reports/unsubscribe', params);
-	};
+    public async share(params: any) {
+        return await this.api.post(environment.reporting, '/reporting/reports/share', params);
+    };
 
-	public async updatesubscriber(params) {
-		return  await this.api.post(environment.reporting, '/reporting/reports/updatesubscriber', params);
-	};
-}
+    public async update(params: any) {
+        const response = await this.api.post(environment.reporting, '/reporting/reports/update', params);
 
-export interface Report {
-	'url': 			string;
-	'type': 		string;
-	'users': 		any[];
-	'role'?: 		string;
-	'reportId': 	string;
-	'description': 	string;
-}
+        if (response.ok) {
+            for (let i = 0; i < this.data.length; i++) {
+                if (this.data[i].reportId == params.reportId) {
+                    Object.keys(params).map(key => {
+                        this.data[i][key] = params[key];
+                    });
+                    break;
+                };
+            };
+        };
 
-export const REPORT_DEFAULTS = {
-	'url': 			null,
-	'role': 		null,
-	'type': 		null,
-	'users': 		[],
-	'reportId': 	null,
-	'description': 	null
+        return response;
+    };
+
+    public async delete(params: any) {
+        const response = await this.api.post(environment.reporting, '/reporting/reports/delete', params);
+
+        if (response.ok) {
+            for (let i = 0; i < this.data.length; i++) {
+                if (this.data[i].reportId == params.reportId) {
+                    this.data.splice(i, 1);
+                    break;
+                };
+            };
+        };
+
+        return response;
+    };
+
+    public async unsubscribe(params: any) {
+        const response = await this.api.post(environment.reporting, '/reporting/reports/unsubscribe', params);
+
+        if (response.ok) {
+            for (let i = 0; i < this.data.length; i++) {
+                if (this.data[i].reportId == params.reportId && params.email == this.localstorage.get('email')) {
+                    this.data.splice(i, 1);
+                    break;
+                };
+            };
+        };
+
+        return response;
+    };
+
+    public async updatesubscriber(params: any) {
+        return await this.api.post(environment.reporting, '/reporting/reports/updatesubscriber', params);
+    };
+
 }

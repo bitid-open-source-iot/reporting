@@ -16,18 +16,14 @@ export class SignupPage implements OnInit, OnDestroy {
     constructor(private toast: ToastService, private router: Router, private service: AccountService, private formerror: FormErrorService) {};
 
     public form:            FormGroup   = new FormGroup({
-        'email':        new FormControl('', [Validators.email, Validators.required]),
-        'confirm':      new FormControl('', [Validators.required]),
-        'password':     new FormControl('', [Validators.required]),
-        'name_last':    new FormControl('', [Validators.required]),
-        'name_first':   new FormControl('', [Validators.required])
+        'email':    new FormControl('', [Validators.email, Validators.required]),
+        'confirm':  new FormControl('', [Validators.required]),
+        'password': new FormControl('', [Validators.required])
     });
     public errors:          any         = {
-        'email':        '',
-        'confirm':      '',
-        'password':     '',
-        'name_last':    '',
-        'name_first':   ''
+        'email':    '',
+        'confirm':  '',
+        'password': ''
     };
     public loading:         boolean;
     private subscriptions:  any         = {};
@@ -38,10 +34,6 @@ export class SignupPage implements OnInit, OnDestroy {
         this.form.disable();
 
         const response = await this.service.register({
-            'name': {
-                'last':     this.form.value.name_last,
-                'first':    this.form.value.name_first
-            },
             'email':    this.form.value.email,
             'password': this.form.value.password
         });
@@ -51,10 +43,7 @@ export class SignupPage implements OnInit, OnDestroy {
         this.loading = false;
 
         if (response.ok) {
-            this.router.navigate(['/verify-account'], {
-                'queryParams': {
-                    'email': this.form.value.email
-                },
+            this.router.navigate(['/verify'], {
                 'replaceUrl': true
             });
         } else {

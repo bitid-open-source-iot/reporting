@@ -7,11 +7,11 @@ import { Injectable } from '@angular/core';
 
 export class FormErrorService {
 
-    public validationMessages() {
-        const messages = {
-            email: 'This email address is invalid',
-            required: 'This field is required',
-            not_allowed_characters: (matches: any[]) => {
+    private messages() {
+        return {
+            'email': 'This email address is invalid',
+            'required': 'This field is required',
+            'not_allowed_characters': (matches: any[]) => {
                 let matchedCharacters = matches;
 
                 matchedCharacters = matchedCharacters.reduce((characterString, character, index) => {
@@ -28,32 +28,40 @@ export class FormErrorService {
                 return `These characters are not allowed: ${matchedCharacters}`;
             },
         };
-
-        return messages;
     };
 
-    public validateForm(formToValidate: FormGroup, formErrors: any, checkDirty?: boolean) {
-        const form = formToValidate;
+    private errors(group: FormGroup, errors: any, dirty?: boolean) {
+        const form = group;
 
-        for (const field in formErrors) {
-            if (field) {
-                formErrors[field] = '';
-                const control = form.get(field);
+        Object.keys(errors).map(field => {
+            if (typeof(errors[field]) == "string") {
+                if (field) {
+                    errors[field] = '';
+                    const control = form.get(field);
 
-                const messages = this.validationMessages();
-                if (control && !control.valid) {
-                    if (!checkDirty || (control.dirty || control.touched)) {
-                        for (const key in control.errors) {
-                            if (key && key !== 'not_allowed_characters') {
-                                formErrors[field] = formErrors[field] || messages[key];
-                            } else {
-                                formErrors[field] = formErrors[field] || messages[key](control.errors[key]);
-                            }
-                        }
-                    }
-                }
-            }
-        }
-        return formErrors;
-    }
+                    const messages = this.messages();
+                    if (control && !control.valid) {
+                        if (!dirty || (control.dirty || control.touched)) {
+                            for (const key in control.errors) {
+                                if (key && key !== 'not_allowed_characters') {
+                                    errors[field] = errors[field] || messages[key];
+                                } else {
+                                    errors[field] = errors[field] || messages[key](control.errors[key]);
+                                };
+                            };
+                        };
+                    };
+                };
+            } else if (typeof(errors[field]) == "object") {
+                const inner: any = form.get(field);
+                errors[field] = this.errors(inner, errors[field], dirty);
+            };
+        });
+
+        return errors;
+    };
+
+    public validateForm(formToValidate: FormGroup, errors: any, checkDirty?: boolean) {
+        return this.errors(formToValidate, errors, checkDirty);
+    };
 }

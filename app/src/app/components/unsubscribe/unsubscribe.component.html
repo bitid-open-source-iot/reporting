@@ -1,35 +1,34 @@
-<mat-toolbar>
-    <mat-toolbar-row>
-        <button mat-icon-button (click)="close()" color="accent" bit-branding bit-color>
-            <mat-icon>
-                arrow_back
-            </mat-icon>
-        </button>
-        
-        <div class="page-label" bit-branding bit-color>
-            {{ 'unsubscribe' | translate : language | async }}
-        </div>
-    </mat-toolbar-row>
+<mat-toolbar color="primary">
+    <div class="spacer">
+        unsubscribe
+    </div>
+
+    <button type="button" mat-icon-button (click)="close()">
+        <mat-icon>close</mat-icon>
+    </button>
 </mat-toolbar>
 
-<form [formGroup]="form" (ngSubmit)="form.status == 'VALID' && submit()">
+<form [formGroup]="form" (ngSubmit)="!form.invalid && submit()">
     <mat-form-field appearance="outline">
         <mat-label>
-            {{ ('unsubscribe from' | translate : language | async) + ' ' + title }}
+            Confirm Unsubscribe
         </mat-label>
-
-        <mat-select name="confirm" formControlName="confirm" [placeholder]="('unsubscribe from' | translate : language | async) + ' ' + title" required>
-            <mat-option *ngFor="let option of options" [value]="option.value">
-                {{ option.description | translate : language | async }}
+        
+        <mat-select name="confirm" placeholder="confirm" formControlName="confirm" required>
+            <mat-option [value]="true">
+                Unsubscribe Now
+            </mat-option>
+            <mat-option [value]="false">
+                Don't Unsubscribe
             </mat-option>
         </mat-select>
 
-        <mat-error align="start" *ngIf="errors.confirm" class="form__error">
-            {{ errors.confirm | translate : language | async }}
+        <mat-error *ngIf="errors.confirm">
+            {{ errors.confirm }}
         </mat-error>
     </mat-form-field>
 
-    <button type="submit" mat-raised-button color="warn" [disabled]="!form.value.confirm" bit-branding bit-background>
-        {{ 'submit' | translate : language | async }}
+    <button type="submit" mat-flat-button color="primary" [disabled]="!form.value.confirm">
+        submit
     </button>
 </form>

@@ -1,19 +1,19 @@
+import { Router } from '@angular/router';
 import { ToastService } from 'src/app/services/toast/toast.service';
 import { AccountService } from 'src/app/services/account/account.service';
 import { FormErrorService } from 'src/app/services/form-error/form-error.service';
-import { Router, ActivatedRoute } from '@angular/router';
 import { OnInit, Component, OnDestroy } from '@angular/core';
 import { FormGroup, FormControl, Validators } from '@angular/forms';
 
 @Component({
-    selector:       'app-verify-account',
+    selector:       'app-verify-account-page',
     styleUrls:      ['./verify-account.page.scss'],
     templateUrl:    './verify-account.page.html'
 })
 
 export class VerifyAccountPage implements OnInit, OnDestroy {
 
-    constructor(private route: ActivatedRoute, private toast: ToastService, private router: Router, private service: AccountService, private formerror: FormErrorService) {};
+    constructor(private toast: ToastService, private router: Router, private service: AccountService, private formerror: FormErrorService) {};
 
     public form:            FormGroup   = new FormGroup({
         'code':     new FormControl('', [Validators.required, Validators.min(100000), Validators.max(999999), Validators.minLength(6), Validators.maxLength(6)]),
@@ -53,23 +53,10 @@ export class VerifyAccountPage implements OnInit, OnDestroy {
         this.subscriptions.form = this.form.valueChanges.subscribe(data => {
             this.errors = this.formerror.validateForm(this.form, this.errors, true);
         });
-
-        this.subscriptions.route = this.route.queryParams.subscribe(params => {
-            if (typeof(params.code) != "undefined") {
-                this.form.controls['code'].setValue(params.code);
-            };
-            if (typeof(params.email) != "undefined") {
-                this.form.controls['email'].setValue(params.email);
-            };
-            if (!this.form.invalid) {
-                this.submit();
-            };
-        });
     };
 
     ngOnDestroy(): void {
         this.subscriptions.form.unsubscribe();
-        this.subscriptions.route.unsubscribe();
     };
 
 }

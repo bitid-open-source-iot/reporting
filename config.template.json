@@ -1,27 +1,27 @@
 {
-    "production":       false,
-    "authentication":   false,
+    "production": false,
+    "authentication": false,
     "auth": {
-        "host":     "http://127.0.0.1:9000",
-        "token":    "xxx",
-        "email":    "xxx@xxx.co.za",
-        "appId":    "xxx"
+        "host": "http://127.0.0.1:9000",
+        "token": "xxx",
+        "email": "xxx@xxx.co.za",
+        "appId": "xxx"
     },
     "localwebserver": {
         "port": 2000
     },
     "mongodb": {
-        "url":      "xxx",
+        "url": "xxx",
         "database": "xxx"
     },
     "logger": {
         "appenders": {
             "reporting": {
-                "type":         "file",
-                "backups":      10,
-                "filename":     "./logs/reporting.log",
-                "absolute":     true,
-                "maxLogSize":   102400
+                "type": "file",
+                "backups": 10,
+                "filename": "./logs/reporting.log",
+                "absolute": true,
+                "maxLogSize": 102400
             }
         },
         "categories": {

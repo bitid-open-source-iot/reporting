@@ -8,29 +8,10 @@ img {
 form {
     width:  400px;
     margin: auto;
-    display: flex;
-    flex-direction: column;
     [mat-stroked-button] {
         margin-top: 20px;
     }
-    section {
-        display:        flex;
-        flex-direction: row;
-        mat-form-field:last-child {
-            width:          calc(50% - 5px);
-            margin-left:    5px;
-        }
-        mat-form-field:first-child {
-            width:          calc(50% - 5px);
-            margin-right:   5px;
-        }
-    }
 }
-@media screen and (max-width: 420px) {
-    form {
-        width: calc(100% - 20px);
-    }
-};
 p {
     font-size: 12px;
     margin-top: 15px;
@@ -40,3 +21,8 @@ p {
         color: #2196F3;
     }
 }
+@media screen and (max-width: 420px) {
+    form {
+        width: calc(100% - 20px);
+    }
+};

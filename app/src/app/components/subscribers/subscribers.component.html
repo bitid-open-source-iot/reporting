@@ -1,68 +1,45 @@
-<mat-toolbar>
-    <mat-toolbar-row>
-        <button mat-icon-button (click)="close()" color="accent" bit-branding bit-color>
-            <mat-icon>
-                arrow_back
-            </mat-icon>
-        </button>
-        
-        <div class="page-label" bit-branding bit-color>
-            {{ 'subscribers' | translate : language | async }}
-        </div>
-
-        <div spacer></div>
-
-        <div class="mat-toolbar-search" [class.active]="search">
-            <input type="text" #searchbox [autofocus]="true" [(ngModel)]="filter.email" (ngModelChange)="FilterUsers($event)" [hidden]="!search">
-
-            <button mat-icon-button (click)="ToggleSearch()" bit-branding bit-color>
-                <mat-icon [matTooltip]="'search devices' | translate : language | async">
-                    {{ search ? 'close' : 'search' }}
-                </mat-icon>
-            </button>
-        </div>
-    </mat-toolbar-row>
+<mat-toolbar color="primary">
+    <div class="spacer">
+        subscribers
+    </div>
+    
+    <button type="button" mat-icon-button (click)="close()">
+        <mat-icon>close</mat-icon>
+    </button>
 </mat-toolbar>
 
-<div class="subscribers-container">
-    <mat-table [dataSource]="users">
-        <ng-container matColumnDef="email">
-            <mat-header-cell *matHeaderCellDef>
-                {{ 'email' | translate : language | async }}
-            </mat-header-cell>
+<table mat-table [dataSource]="users">
+    <ng-container matColumnDef="email">
+        <th mat-header-cell *matHeaderCellDef>
+            Email
+        </th>
+        <td mat-cell *matCellDef="let element">
+            {{ element.email }}
+        </td>
+    </ng-container>
 
-            <mat-cell *matCellDef="let element">
-                {{ element.email }}
-            </mat-cell>
-        </ng-container>
+    <ng-container matColumnDef="role">
+        <th mat-header-cell *matHeaderCellDef>
+            Role
+        </th>
+        <td mat-cell *matCellDef="let element">
+            <mat-select [value]="element.role" (selectionChange)="updatesubscriber(element.email, $event)" [disabled]="email == element.email || role < 4 || role <= element.role">
+                <mat-option *ngFor="let role of roles" [value]="role.value" [disabled]="role.value < role || role.value == 5">
+                    {{ role.title }}
+                </mat-option>
+            </mat-select>
+        </td>
+    </ng-container>
 
-        <ng-container matColumnDef="role">
-            <mat-header-cell *matHeaderCellDef>
-                {{ 'role' | translate : language | async }}
-            </mat-header-cell>
+    <ng-container matColumnDef="remove">
+        <th mat-header-cell *matHeaderCellDef></th>
+        <td mat-cell *matCellDef="let element">
+            <button type="button" color="warn" mat-icon-button (click)="unsubscribe(element.email)" [disabled]="email == element.email || role <= element.role || role < 4 || element.role == 5">
+                <mat-icon>remove</mat-icon>
+            </button>
+        </td>
+    </ng-container>
 
-            <mat-cell *matCellDef="let element">
-                <mat-select name="role" [placeholder]="'role' | translate : language | async" [(ngModel)]="element.role" (ngModelChange)="updatesubscriber($event, element.email)" [disabled]="element.role >= role || role < 4" required>
-                    <mat-option *ngFor="let role of roles" [value]="role.value" [disabled]="role.value == 5">
-                        {{ role.description | translate : language | async }}
-                    </mat-option>
-                </mat-select>
-            </mat-cell>
-        </ng-container>
-
-        <ng-container matColumnDef="options">
-            <mat-header-cell *matHeaderCellDef></mat-header-cell>
-
-            <mat-cell *matCellDef="let element">
-                <button mat-icon-button [matTooltip]="'remove' | translate : language | async" matTooltipPosition="left" (click)="remove(element)" color="warn" [disabled]="element.role >= role || role < 4">
-                    <mat-icon aria-label="remove">
-                        remove
-                    </mat-icon>
-                </button>
-            </mat-cell>
-        </ng-container>
-
-        <mat-header-row *matHeaderRowDef="columns; sticky: true;"></mat-header-row>
-        <mat-row *matRowDef="let row; columns: columns;"></mat-row>
-    </mat-table>
-</div>
+    <tr mat-header-row *matHeaderRowDef="columns; sticky: true"></tr>
+    <tr mat-row *matRowDef="let row; columns: columns;"></tr>
+</table>

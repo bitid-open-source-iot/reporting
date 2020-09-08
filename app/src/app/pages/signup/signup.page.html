@@ -1,31 +1,5 @@
 <form [formGroup]="form" (ngSubmit)="!form.invalid && !loading && form.value.password == form.value.confirm && submit()">
-    <img src="./assets/icon-512.png" alt="Auth Icon">
-
-    <section>
-        <mat-form-field appearance="outline">
-            <mat-label text-uppercase>
-                first name
-            </mat-label>
-            
-            <input matInput type="text" name="name_first" placeholder="first name" formControlName="name_first" required>
-    
-            <mat-error *ngIf="errors.name_first">
-                {{ errors.name_first }}
-            </mat-error>
-        </mat-form-field>
-
-        <mat-form-field appearance="outline">
-            <mat-label text-uppercase>
-                last name
-            </mat-label>
-            
-            <input matInput type="text" name="name_last" placeholder="last name" formControlName="name_last" required>
-    
-            <mat-error *ngIf="errors.name_last">
-                {{ errors.name_last }}
-            </mat-error>
-        </mat-form-field>
-    </section>
+    <img src="./assets/icons/icon-512x512.png" alt="Auth Icon">
 
     <mat-form-field appearance="outline">
         <mat-label text-uppercase>
@@ -68,14 +42,18 @@
     <button type="submit" mat-flat-button color="primary">
         {{ loading ? '' : 'sign up' }}
 
-        <mat-progress-spinner mode="indeterminate" diameter="30" *ngIf="loading"></mat-progress-spinner>
+        <mat-progress-spinner class="mat-spinner-negative" mode="indeterminate" diameter="30" *ngIf="loading"></mat-progress-spinner>
     </button>
 
     <p>
         By clicking “SIGN UP”, you agree to our <a routerLink="/terms-and-conditions">Terms & Conditions</a> and  <a routerLink="/privacy-policy">Privacy Policy</a>. We’ll occasionally send you account related emails.
     </p>
 
-    <button type="button" mat-stroked-button color="primary" routerLink="/verify-account">
+    <button type="button" mat-stroked-button color="primary" routerLink="/verfiy">
         verfiy account
+    </button>
+
+    <button type="button" mat-stroked-button color="primary" routerLink="/signin">
+        back to sign in
     </button>
 </form>

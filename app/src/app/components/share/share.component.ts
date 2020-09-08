@@ -1,56 +1,46 @@
 import { environment } from 'src/environments/environment';
+import { MatDialogRef } from '@angular/material/dialog';
 import { FormErrorService } from 'src/app/services/form-error/form-error.service';
-import { TranslateService } from '@bitid/translate';
-import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material';
+import { OnInit, Component, OnDestroy } from '@angular/core';
 import { FormGroup, FormControl, Validators } from '@angular/forms';
-import { Inject, OnInit, Component, OnDestroy } from '@angular/core';
 
 @Component({
-    selector:     'share',
-    styleUrls:    ['./share.component.scss'],
-    templateUrl:  './share.component.html'
+    selector:       'app-share',
+    styleUrls:      ['./share.component.scss'],
+    templateUrl:    './share.component.html'
 })
 
 export class ShareComponent implements OnInit, OnDestroy {
-    
-    constructor(private dialog: MatDialogRef<ShareComponent>, @Inject(MAT_DIALOG_DATA) private data: any, private translate: TranslateService, private formerror: FormErrorService) {}
-    
-    public form:            FormGroup   = new FormGroup({
-        'role':  new FormControl('', [Validators.required]),
-        'email': new FormControl('', [Validators.required, Validators.email]),
+
+    constructor(private dialog: MatDialogRef<ShareComponent>, private formerror: FormErrorService) {};
+
+    public form:    FormGroup   = new FormGroup({
+        'role':     new FormControl(1, [Validators.required]),
+        'email':    new FormControl('', [Validators.required, Validators.email])
     });
-    public roles:           any         = environment.roles;
-    public title:           string      = this.data.description;
-    public errors:          any         = {
+    public roles:   any[]       = environment.roles;
+    public errors:  any         = {
         'role':     '',
         'email':    ''
     };
-    public language:        string      = this.translate.language.value;
-    private subscriptions:  any         = {};
-    
+    private subscriptions: any  = {};
+
     public close() {
         this.dialog.close(false);
     };
 
     public submit() {
-        this.dialog.close({
-            'role':  this.form.value.role,
-            'email': this.form.value.email
-        });
+        this.dialog.close(this.form.value);
     };
 
-    ngOnInit() {
+    ngOnInit(): void {
         this.subscriptions.form = this.form.valueChanges.subscribe(data => {
             this.errors = this.formerror.validateForm(this.form, this.errors, true);
         });
-
-		this.subscriptions.language = this.translate.language.subscribe(language => {
-			this.language = language;
-		});
     };
 
-    ngOnDestroy() {
+    ngOnDestroy(): void {
         this.subscriptions.form.unsubscribe();
-        this.subscriptions.language.unsubscribe();
     };
+
 }

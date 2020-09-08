@@ -1,45 +1,55 @@
-import { Title, } from '@angular/platform-browser';
-import { Router } from '@angular/router';
-import { MatSidenav } from '@angular/material';
-import { AuthService } from './services/auth/auth.service';
-import { MenuService } from './services/menu/menu.service';
+import { DomSanitizer } from '@angular/platform-browser';
+import { SplashScreen } from './splashscreen/splashscreen.component';
+import { AccountService } from './services/account/account.service';
 import { HistoryService } from './services/history/history.service';
-import { TranslateService } from '@bitid/translate';
-import { OnInit, ViewChild, Component } from '@angular/core';
+import { MatIconRegistry } from '@angular/material/icon';
+import { OnInit, Component, ViewChild } from '@angular/core';
 
 @Component({
-	selector: 		'app-root',
-	styleUrls: 		['./app.component.scss'],
-	templateUrl: 	'./app.component.html'
+    selector: 'app-root',
+    styleUrls: ['./app.component.scss'],
+    templateUrl: './app.component.html'
 })
 
 export class AppComponent implements OnInit {
 
-	constructor(public menu: MenuService, private auth: AuthService, private history: HistoryService, private title: Title, private router: Router, private translate: TranslateService) {
-		this.translate.directory = './assets/translate/';
-	};
+    @ViewChild(SplashScreen, { 'static': true }) private splashscreen: SplashScreen;
 
-	public mode: 		string;
-	public brand: 		any 	= {};
-	public loaded: 		boolean = false;
-	public licenced: 	boolean = false;
-	public language: 	string	= this.translate.language.value;
-
-	@ViewChild('sidemenu', {'static': true}) private sidemenu: MatSidenav;
-
-	public logout() {
-    	this.menu.close();
-		this.auth.logout();
-		this.router.navigate(['/signin']);
-	};
-
-    ngOnInit() {
-		this.history.init();
-		
-        this.menu.change.subscribe((mode: string) => {
-        	this.mode = mode;
-        });
-        
-        this.menu.init(this.sidemenu);
+    constructor(private history: HistoryService, private account: AccountService, private registry: MatIconRegistry, private sanitizer: DomSanitizer) {
+        this.registry.addSvgIcon('copy', this.sanitizer.bypassSecurityTrustResourceUrl('./assets/copy.svg'));
+        this.registry.addSvgIcon('data', this.sanitizer.bypassSecurityTrustResourceUrl('./assets/data.svg'));
+        this.registry.addSvgIcon('edit', this.sanitizer.bypassSecurityTrustResourceUrl('./assets/edit.svg'));
+        this.registry.addSvgIcon('view', this.sanitizer.bypassSecurityTrustResourceUrl('./assets/view.svg'));
+        this.registry.addSvgIcon('share', this.sanitizer.bypassSecurityTrustResourceUrl('./assets/share.svg'));
+        this.registry.addSvgIcon('delete', this.sanitizer.bypassSecurityTrustResourceUrl('./assets/delete.svg'));
+        this.registry.addSvgIcon('unsubscribe', this.sanitizer.bypassSecurityTrustResourceUrl('./assets/unsubscribe.svg'));
+        this.registry.addSvgIcon('subscribers', this.sanitizer.bypassSecurityTrustResourceUrl('./assets/subscribers.svg'));
     };
+
+    public authenticated: boolean;
+
+    public async logout() {
+        this.account.logout();
+    };
+
+    private async initialize() {
+        await this.splashscreen.show();
+
+        await this.history.init();
+        await this.account.validate();
+
+        await this.splashscreen.hide();
+    };
+
+    ngOnInit(): void {
+        this.account.authenticated.subscribe(async authenticated => {
+            this.authenticated = authenticated;
+            if (authenticated) {
+                this.account.load();
+            };
+        });
+
+        this.initialize();
+    };
+
 }
