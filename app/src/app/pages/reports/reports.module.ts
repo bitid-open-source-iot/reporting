@@ -1,10 +1,12 @@
 /* --- PAGES --- */
 import { ReportsPage } from './reports.page';
+import { AddRowDialog } from './editor/add-row/add-row.dialog';
 import { ReportViewerPage } from './viewer/viewer.page';
 import { ReportEditorPage } from './editor/editor.page';
 
 /* --- MODULES --- */
 import { NgModule } from '@angular/core';
+import { BloxModule } from 'src/app/lib/blox/blox.module';
 import { ShareModule } from 'src/app/components/share/share.module';
 import { DeleteModule } from 'src/app/components/delete/delete.module';
 import { CommonModule } from '@angular/common';
@@ -29,10 +31,12 @@ import { ReportsRoutingModule } from './reports-routing.module';
 import { MatProgressBarModule } from '@angular/material/progress-bar';
 import { MatBottomSheetModule } from '@angular/material/bottom-sheet';
 import { MatAutocompleteModule } from '@angular/material/autocomplete';
+import { MatButtonToggleModule } from '@angular/material/button-toggle';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 
 @NgModule({
     imports: [
+        BloxModule,
         FormsModule,
         ShareModule,
         CommonModule,
@@ -58,12 +62,14 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
         ReportsRoutingModule,
         MatBottomSheetModule,
         MatProgressBarModule,
-        MatAutocompleteModule
+        MatAutocompleteModule,
+        MatButtonToggleModule
     ],
     declarations: [
         ReportsPage,
+        AddRowDialog,
         ReportViewerPage,
-        ReportEditorPage
+        ReportEditorPage,
     ]
 })
 

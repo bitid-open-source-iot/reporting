@@ -1,1 +1,79 @@
-<p>editor works!</p>
+<mat-toolbar color="primary">
+    <button mat-icon-button class="menu-toggle" (click)="history.back()">
+        <mat-icon>
+            arrow_back
+        </mat-icon>
+    </button>
+
+    <div class="spacer">
+        <input matInput type="text" [(ngModel)]="report.description" required *ngIf="!loading">
+    </div>
+
+    <button mat-icon-button matTooltip="Mobile View" [class.selected]="layout == 'mobile'" (click)="layout = 'mobile'">
+        <mat-icon svgIcon="mobile"></mat-icon>
+    </button>
+
+    <button mat-icon-button matTooltip="Tablet View" [class.selected]="layout == 'tablet'" (click)="layout = 'tablet'">
+        <mat-icon svgIcon="tablet"></mat-icon>
+    </button>
+
+    <button mat-icon-button matTooltip="Desktop View" [class.selected]="layout == 'desktop'" (click)="layout = 'desktop'">
+        <mat-icon svgIcon="desktop"></mat-icon>
+    </button>
+</mat-toolbar>
+
+<mat-progress-bar mode="indeterminate" color="accent" *ngIf="loading"></mat-progress-bar>
+
+<div class="page-body editor">
+    <div class="widgets">
+        <header>
+            widgets
+        </header>
+
+        <div class="widget" *ngFor="let widget of report.widgets">
+            <label [for]="widget.label.value">
+                {{ widget.label.value }}
+            </label>
+        </div>
+
+        <div class="widget" matRipple matTooltip="Add Widget">
+            <mat-icon>
+                add
+            </mat-icon>
+        </div>
+    </div>
+
+    <div class="dashboard">
+        <blox class="bound-rows" [class]="layout" cdkDropList (cdkDropListDropped)="DropRow($event)" (mouseup)="FinishResizing($event)" (mousemove)="DoResizing($event)">
+            <row *ngFor="let row of report.layout[layout].rows" class="bound-columns" [height]="row.style.height" [background]="row.style.background" cdkDragBoundary=".bound-rows"  cdkDragLockAxis="y" cdkDrag cdkDropList (cdkDropListDropped)="DropColumn(row.columns, $event)" [cdkDragDisabled]="resizing">
+                <mat-icon class="drag-handle" svgIcon="drag" cdkDragHandle></mat-icon>
+        
+                <column *ngFor="let column of row.columns; let i = index" [width]="column.style.width" [background]="column.style.background" cdkDragBoundary=".bound-columns"  cdkDragLockAxis="x" cdkDrag [cdkDragDisabled]="resizing">
+                    <div class="options">
+                        <button mat-icon-button matTooltip="Link Widget">
+                            <mat-icon svgIcon="data"></mat-icon>
+                        </button>
+        
+                        <button mat-icon-button color="warn" (click)="remove(row, column.columnId)">
+                            <mat-icon svgIcon="delete"></mat-icon>
+                        </button>
+                    </div>
+                    
+                    <div class="resize right" (mousedown)="StartResizing('x', $event, row, column)" *ngIf="i != row.columns.length - 1"></div>
+                </column>
+        
+                <div class="resize bottom" (mousedown)="StartResizing('y', $event, row, column)"></div>
+
+                <div class="drag-placeholder-row" *cdkDragPlaceholder></div>
+            </row>
+        
+            <row height="100">
+                <column class="add" width="100" background="#FFF" matRipple matTooltip="Add Row" (click)="add()">
+                    <mat-icon>
+                        add
+                    </mat-icon>
+                </column>
+            </row>
+        </blox>
+    </div>
+</div>

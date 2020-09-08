@@ -1,1 +1,25 @@
-<p>viewer works!</p>
+<mat-toolbar color="primary">
+    <button mat-icon-button class="menu-toggle" (click)="history.back()">
+        <mat-icon>
+            arrow_back
+        </mat-icon>
+    </button>
+
+    <div class="page-label spacer">
+        {{ loading ? 'report viewer loading' : report.description }}
+    </div>
+
+    <button mat-icon-button class="menu-toggle" (click)="download()">
+        <mat-icon svgIcon="download"></mat-icon>
+    </button>
+</mat-toolbar>
+
+<mat-progress-bar mode="indeterminate" color="accent" *ngIf="loading"></mat-progress-bar>
+
+<div class="page-body">
+    <blox>
+        <row *ngFor="let row of rows" [height]="row.style.height" [background]="row.style.background">
+            <column *ngFor="let column of row.columns" [width]="column.style.width" [background]="column.style.background"></column>
+        </row>
+    </blox>
+</div>

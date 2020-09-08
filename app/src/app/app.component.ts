@@ -18,10 +18,15 @@ export class AppComponent implements OnInit {
     constructor(private history: HistoryService, private account: AccountService, private registry: MatIconRegistry, private sanitizer: DomSanitizer) {
         this.registry.addSvgIcon('copy', this.sanitizer.bypassSecurityTrustResourceUrl('./assets/copy.svg'));
         this.registry.addSvgIcon('data', this.sanitizer.bypassSecurityTrustResourceUrl('./assets/data.svg'));
+        this.registry.addSvgIcon('drag', this.sanitizer.bypassSecurityTrustResourceUrl('./assets/drag.svg'));
         this.registry.addSvgIcon('edit', this.sanitizer.bypassSecurityTrustResourceUrl('./assets/edit.svg'));
         this.registry.addSvgIcon('view', this.sanitizer.bypassSecurityTrustResourceUrl('./assets/view.svg'));
         this.registry.addSvgIcon('share', this.sanitizer.bypassSecurityTrustResourceUrl('./assets/share.svg'));
+        this.registry.addSvgIcon('mobile', this.sanitizer.bypassSecurityTrustResourceUrl('./assets/mobile.svg'));
+        this.registry.addSvgIcon('tablet', this.sanitizer.bypassSecurityTrustResourceUrl('./assets/tablet.svg'));
+        this.registry.addSvgIcon('desktop', this.sanitizer.bypassSecurityTrustResourceUrl('./assets/desktop.svg'));
         this.registry.addSvgIcon('delete', this.sanitizer.bypassSecurityTrustResourceUrl('./assets/delete.svg'));
+        this.registry.addSvgIcon('download', this.sanitizer.bypassSecurityTrustResourceUrl('./assets/download.svg'));
         this.registry.addSvgIcon('unsubscribe', this.sanitizer.bypassSecurityTrustResourceUrl('./assets/unsubscribe.svg'));
         this.registry.addSvgIcon('subscribers', this.sanitizer.bypassSecurityTrustResourceUrl('./assets/subscribers.svg'));
     };
