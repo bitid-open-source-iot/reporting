@@ -965,9 +965,139 @@ var module = function () {
 		}
 	};
 
+	var dalConnectors = {
+		errorResponse: {
+			'error': {
+				'code': 401,
+				'message': 'Invalid Credentials',
+				'errors': [{
+					'reason': 'General Connectors Error',
+					'message': 'Invalid Credentials',
+					'location': 'dalConnectors',
+					'locationType': 'header'
+				}]
+			},
+			'hiddenErrors': []
+		},
+
+		get: (args) => {
+			var deferred = Q.defer();
+
+			var params = {
+				'_id': ObjectId(args.req.body.connectorId)
+			};
+
+			var filter = {};
+			if (Array.isArray(args.req.body.filter) && args.req.body.filter.length > 0) {
+				filter._id = 0;
+				args.req.body.filter.map(f => {
+					if (f == 'connectorId') {
+						filter['_id'] = 1;
+					} else if (f == 'role' || f == 'users') {
+						filter['bitid.auth.users'] = 1;
+					} else if (f == 'organizationOnly') {
+						filter['bitid.auth.organizationOnly'] = 1;
+					} else {
+						filter[f] = 1;
+					};
+				});
+			};
+
+			db.call({
+				'filter': filter,
+				'params': params,
+				'operation': 'find',
+				'collection': 'tblConnectors'
+			})
+				.then(result => {
+					args.result = result[0];
+					deferred.resolve(args);
+				}, err => {
+					dalSchedule.errorResponse.error.errors[0].code = err.code || dalSchedule.errorResponse.error.errors[0].code;
+					dalSchedule.errorResponse.error.errors[0].reason = err.description || 'Get Schedule Error';
+					dalSchedule.errorResponse.hiddenErrors.push(err.error);
+					deferred.reject(dalSchedule.errorResponse);
+				});
+
+			return deferred.promise;
+		},
+
+		list: (args) => {
+			var deferred = Q.defer();
+
+			var params = {};
+
+			if (typeof (args.req.body.connectorId) != 'undefined') {
+				if (Array.isArray(args.req.body.connectorId) && args.req.body.connectorId.length > 0) {
+					params._id = {
+						$in: args.req.body.connectorId.map(id => ObjectId(id))
+					};
+				} else {
+					params._id = ObjectId(args.req.body.connectorId);
+				};
+			};
+
+			if (typeof (args.req.body.description) != 'undefined') {
+				params.description = {
+					$regex: args.req.body.description
+				};
+			};
+
+			if (typeof (args.req.body.skip) == 'number') {
+				var skip = args.req.body.skip;
+			};
+
+			if (typeof (args.req.body.sort) == 'object') {
+				var sort = args.req.body.sort;
+			};
+
+			if (typeof (args.req.body.limit) == 'number') {
+				var limit = args.req.body.limit;
+			};
+
+			var filter = {};
+			if (Array.isArray(args.req.body.filter) && args.req.body.filter.length > 0) {
+				filter._id = 0;
+				args.req.body.filter.map(f => {
+					if (f == 'scheduleId') {
+						filter['_id'] = 1;
+					} else if (f == 'role' || f == 'users') {
+						filter['bitid.auth.users'] = 1;
+					} else if (f == 'organizationOnly') {
+						filter['bitid.auth.organizationOnly'] = 1;
+					} else {
+						filter[f] = 1;
+					};
+				});
+			};
+
+			db.call({
+				'skip': skip,
+				'sort': sort,
+				'limit': limit,
+				'filter': filter,
+				'params': params,
+				'operation': 'find',
+				'collection': 'tblConnectors'
+			})
+				.then(result => {
+					args.result = result;
+					deferred.resolve(args);
+				}, err => {
+					dalSchedule.errorResponse.error.errors[0].code = err.code || dalSchedule.errorResponse.error.errors[0].code;
+					dalSchedule.errorResponse.error.errors[0].reason = err.description || 'List Schedules Error';
+					dalSchedule.errorResponse.hiddenErrors.push(err.error);
+					deferred.reject(dalSchedule.errorResponse);
+				});
+
+			return deferred.promise;
+		}
+	};
+
 	return {
 		'reports': dalReports,
-		'schedule': dalSchedule
+		'schedule': dalSchedule,
+		'connectors': dalConnectors
 	};
 };
 

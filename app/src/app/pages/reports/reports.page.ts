@@ -34,6 +34,41 @@ export class ReportsPage implements OnInit, OnDestroy {
     public loading: boolean;
     private subscriptions: any = {};
 
+    public async add() {
+        this.loading = true;
+
+        const response = await this.service.add({
+            'layout': {
+                'mobile': {
+                    'rows': []
+                },
+                'tablet': {
+                    'rows': []
+                },
+                'desktop': {
+                    'rows': []
+                }
+            },
+            'type': 'dashboard',
+            'widgets': [],
+            'description': 'Untitled Report'
+        });
+
+        this.loading = false;
+
+        if (response.ok) {
+            this.router.navigate(['/reports', 'editor'], {
+                'queryParams': {
+                    'mode': 'update',
+                    'reportId': response.result.reportId
+                }
+            });
+            this.toast.success('new report created!');
+        } else {
+            this.toast.error(response.error.message);
+        };
+    };
+
     private async list() {
         this.loading = true;
 
@@ -130,12 +165,38 @@ export class ReportsPage implements OnInit, OnDestroy {
                         });
                         break;
                     case (2):
-                        this.router.navigate(['/reports', 'editor'], {
-                            'queryParams': {
-                                'mode': 'copy',
-                                'reportId': report.reportId
-                            }
+                        this.loading = true;
+
+                        const response = await this.service.add({
+                            'layout': report.layout || {
+                                'mobile': {
+                                    'rows': []
+                                },
+                                'tablet': {
+                                    'rows': []
+                                },
+                                'desktop': {
+                                    'rows': []
+                                }
+                            },
+                            'type': 'dashboard',
+                            'widgets': report.widgets || [],
+                            'description': report.description || 'Untitled Report'
                         });
+
+                        this.loading = false;
+
+                        if (response.ok) {
+                            this.router.navigate(['/reports', 'editor'], {
+                                'queryParams': {
+                                    'mode': 'update',
+                                    'reportId': response.result.reportId
+                                }
+                            });
+                            this.toast.success('report created from ' + report.description);
+                        } else {
+                            this.toast.error(response.error.message);
+                        };
                         break;
                     case (3):
                         const share = await this.dialog.open(ShareComponent, {

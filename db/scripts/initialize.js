@@ -5,7 +5,7 @@ if (reports.count() == 0) {
             "auth": {
                 "users": [
                     {
-                        "role":  NumberInt("5"),
+                        "role": NumberInt("5"),
                         "email": "xxx@xxx.co.za"
                     }
                 ],
@@ -13,14 +13,14 @@ if (reports.count() == 0) {
             }
         },
         "query": {
-            "body":   [],
+            "body": [],
             "method": "GET"
         },
-        "_id":         ObjectId("000000000000000000000001"),
-        "url":         "https://...",
-        "type":        "ds",
-        "serverDate":   ISODate(),
-        "description":  "My First Report"
+        "_id": ObjectId("000000000000000000000001"),
+        "url": "https://...",
+        "type": "ds",
+        "serverDate": ISODate(),
+        "description": "My First Report"
     });
 };
 
@@ -31,7 +31,7 @@ if (schedule.count() == 0) {
             "auth": {
                 "users": [
                     {
-                        "role":  NumberInt("5"),
+                        "role": NumberInt("5"),
                         "email": "xxx@xxx.co.za"
                     }
                 ],
@@ -39,23 +39,34 @@ if (schedule.count() == 0) {
             }
         },
         "trigger": {
-            "hour":     0,
-            "date":     0,
-            "year":     0,
-            "month":    0,
-            "minute":   0
+            "hour": 0,
+            "date": 0,
+            "year": 0,
+            "month": 0,
+            "minute": 0
         },
         "recipients": [
             {
                 "email": "xxx@xxx.co.za"
             }
         ],
-        "_id":          ObjectId("000000000000000000000001"),
-        "last":         "2020-01-01T00:00:00.000Z",
-        "cycle":        "daily", // hourly, daily, weekly, monthly, quarterly, bi-annually, annually
-        "offset":       0,
-        "reportId":     "000000000000000000000001",
-        "serverDate":   ISODate(),
-        "description":  "My First Report Schedule"
+        "_id": ObjectId("000000000000000000000001"),
+        "last": "2020-01-01T00:00:00.000Z",
+        "cycle": "daily", // hourly, daily, weekly, monthly, quarterly, bi-annually, annually
+        "offset": 0,
+        "reportId": "000000000000000000000001",
+        "serverDate": ISODate(),
+        "description": "My First Report Schedule"
+    });
+};
+
+var connectors = db.getCollection("tblConnectors");
+if (connectors.count() == 0) {
+    db.tblConnectors.insert({
+        "_id": ObjectId("000000000000000000000001"),
+        "table": "tblHistorical",
+        "database": "telemetry",
+        "serverDate": ISODate(),
+        "description": "Telemetry Historical Data"
     });
 };

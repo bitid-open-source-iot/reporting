@@ -2,6 +2,7 @@
 import { ReportsPage } from './reports.page';
 import { AddRowDialog } from './editor/add-row/add-row.dialog';
 import { WidgetDialog } from './editor/widget/widget.dialog';
+import { LinkWidgetDialog } from './editor/link/link.dialog';
 import { ReportViewerPage } from './viewer/viewer.page';
 import { ReportEditorPage } from './editor/editor.page';
 
@@ -70,8 +71,9 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
         ReportsPage,
         AddRowDialog,
         WidgetDialog,
+        LinkWidgetDialog,
         ReportViewerPage,
-        ReportEditorPage,
+        ReportEditorPage
     ]
 })
 

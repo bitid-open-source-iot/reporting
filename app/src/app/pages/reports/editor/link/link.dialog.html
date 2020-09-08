@@ -1,0 +1,33 @@
+<mat-toolbar color="primary">
+    <div class="spacer">
+        Create Row
+    </div>
+    
+    <button type="button" mat-icon-button (click)="close()">
+        <mat-icon>
+            close
+        </mat-icon>
+    </button>
+</mat-toolbar>
+
+<form [formGroup]="form" (ngSubmit)="!form.invalid && submit()">
+    <mat-form-field appearance="outline">
+        <mat-label>
+            Widget
+        </mat-label>
+        
+        <mat-select name="widgetId" placeholder="Widget" formControlName="widgetId" required>
+            <mat-option *ngFor="let widget of widgets" [value]="widget.widgetId">
+                {{ widget.label.value }}
+            </mat-option>
+        </mat-select>
+
+        <mat-error *ngIf="errors.widgetId">
+            {{ errors.widgetId }}
+        </mat-error>
+    </mat-form-field>
+
+    <button type="submit" mat-flat-button color="primary">
+        submit
+    </button>
+</form>

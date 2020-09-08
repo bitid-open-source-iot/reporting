@@ -21,7 +21,7 @@
         </div>
     </div>
     
-    <button mat-fab routerLink="editor" [queryParams]="{'mode': 'add'}">
+    <button mat-fab (click)="add()">
         <mat-icon>
             add
         </mat-icon>

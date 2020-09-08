@@ -10,6 +10,7 @@ import { HistoryService } from 'src/app/services/history/history.service';
 import { Report, Widget } from 'src/app/interfaces/report';
 import { CdkDragDrop, moveItemInArray } from '@angular/cdk/drag-drop';
 import { OnInit, Component, OnDestroy, ViewChild } from '@angular/core';
+import { LinkWidgetDialog } from './link/link.dialog';
 
 @Component({
     selector: 'app-report-editor-page',
@@ -25,6 +26,7 @@ export class ReportEditorPage implements OnInit, OnDestroy {
 
     public row: any;
     public rows: any[] = [];
+    public mode: string;
     public axis: string;
     public start: any = {
         'x': 0,
@@ -112,6 +114,28 @@ export class ReportEditorPage implements OnInit, OnDestroy {
         };
 
         this.loading = false;
+    };
+
+    public async link(row, column) {
+        const dialog = await this.dialog.open(LinkWidgetDialog, {
+            'data': {
+                'widgets': this.report.widgets,
+                'widgetId': column.widgetId
+            },
+            'panelClass': 'share-dialog',
+            'disableClose': true
+        });
+
+        await dialog.afterClosed().subscribe(async widgetId => {
+            if (widgetId) {
+                for (let i = 0; i < row.columns.length; i++) {
+                    if (row.columns[i].columnId == column.columnId) {
+                        row.columns[i].widgetId = widgetId;
+                        break;
+                    };
+                };
+            };
+        });
     };
 
     public async DoResizing(event) {
@@ -241,8 +265,11 @@ export class ReportEditorPage implements OnInit, OnDestroy {
 
     ngOnInit(): void {
         this.subscriptions.route = this.route.queryParams.subscribe(params => {
+            this.mode = params.mode;
             this.reportId = params.reportId;
-            this.get();
+            if (this.mode != 'add') {
+                this.get();
+            };
         });
     };
 

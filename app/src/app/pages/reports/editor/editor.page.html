@@ -60,7 +60,7 @@
         
                 <column *ngFor="let column of row.columns; let i = index" [width]="column.style.width" [background]="column.style.background" cdkDragBoundary=".bound-columns"  cdkDragLockAxis="x" cdkDrag [cdkDragDisabled]="resizing">
                     <div class="options">
-                        <button mat-icon-button matTooltip="Link Widget">
+                        <button mat-icon-button matTooltip="Link Widget" (click)="link(row, column)">
                             <mat-icon svgIcon="data"></mat-icon>
                         </button>
         

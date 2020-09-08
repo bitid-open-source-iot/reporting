@@ -8,6 +8,59 @@ var chaiSubset = require('chai-subset');
 chai.use(chaiSubset);
 
 var reportId = null;
+var connectorId = null;
+
+describe('Connectors', function () {
+    it('/reporting/connectors/get', function (done) {
+        this.timeout(5000);
+
+        tools.api.connectors.get()
+            .then((result) => {
+                try {
+                    result.should.have.property('table');
+                    result.should.have.property('database');
+                    result.should.have.property('serverDate');
+                    result.should.have.property('connectorId');
+                    result.should.have.property('description');
+                    result.should.have.property('organizationOnly');
+                    done();
+                } catch (e) {
+                    done(e);
+                };
+            }, (err) => {
+                try {
+                    done(err);
+                } catch (e) {
+                    done(e);
+                };
+            });
+    });
+
+    it('/reporting/connectors/list', function (done) {
+        this.timeout(5000);
+
+        tools.api.connectors.list()
+            .then((result) => {
+                try {
+                    result[0].should.have.property('table');
+                    result[0].should.have.property('database');
+                    result[0].should.have.property('serverDate');
+                    result[0].should.have.property('connectorId');
+                    result[0].should.have.property('description');
+                    result[0].should.have.property('organizationOnly');
+                    done();
+                } catch (e) {
+                    done(e);
+                };
+            }, (err) => {
+                try {
+                    done(err);
+                } catch (e) {
+                    done(e);
+                };
+            });
+    });
+});
 
 describe('Reports', function () {
     it('/reporting/reports/add', function (done) {
@@ -333,6 +386,44 @@ var tools = {
                     'role': 2,
                     'email': 'shared@email.com',
                     'reportId': reportId
+                })
+                    .then(deferred.resolve, deferred.resolve);
+
+                return deferred.promise;
+            }
+        },
+        connectors: {
+            get: () => {
+                var deferred = Q.defer();
+
+                tools.post('/reporting/connectors/get', {
+                    'filter': [
+                        'table',
+                        'database',
+                        'serverDate',
+                        'connectorId',
+                        'description',
+                        'organizationOnly'
+                    ],
+                    'connectorId': connectorId
+                })
+                    .then(deferred.resolve, deferred.resolve);
+
+                return deferred.promise;
+            },
+            list: () => {
+                var deferred = Q.defer();
+
+                tools.post('/reporting/connectors/list', {
+                    'filter': [
+                        'table',
+                        'database',
+                        'serverDate',
+                        'connectorId',
+                        'description',
+                        'organizationOnly'
+                    ],
+                    'connectorId': connectorId
                 })
                     .then(deferred.resolve, deferred.resolve);
 

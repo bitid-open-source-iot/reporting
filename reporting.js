@@ -90,6 +90,10 @@ try {
                 app.use('/reporting/schedule', schedule);
                 __logger.info('Loaded: ./api/reporting/schedule');
 
+                var connectors = require('./api/connectors');
+                app.use('/reporting/connectors', connectors);
+                __logger.info('Loaded: ./api/reporting/connectors');
+
                 app.use('/health-check', healthcheck);
                 __logger.info('Loaded: ./api/health-check');
 

@@ -281,9 +281,56 @@ var module = function () {
 		}
 	};
 
+	var bllConnectors = {
+		errorResponse: {
+			"error": {
+				"code": 401,
+				"message": "Connectors Error",
+				"errors": [{
+					"reason": "General Connectors Error",
+					"message": "Connectors Error",
+					"location": "bllConnectors",
+					"locationType": "body"
+				}]
+			},
+			"hiddenErrors": []
+		},
+
+		get: (req, res) => {
+			var args = {
+				'req': req,
+				'res': res
+			};
+
+			var dal = new dalModule.module();
+			dal.connectors.get(args)
+				.then(args => {
+					__responder.success(req, res, args.result);
+				}, err => {
+					__responder.error(req, res, err);
+				});
+		},
+
+		list: (req, res) => {
+			var args = {
+				'req': req,
+				'res': res
+			};
+
+			var dal = new dalModule.module();
+			dal.connectors.list(args)
+				.then(args => {
+					__responder.success(req, res, args.result);
+				}, err => {
+					__responder.error(req, res, err);
+				});
+		}
+	};
+
 	return {
 		'reports': bllReports,
-		'schedule': bllSchedule
+		'schedule': bllSchedule,
+		'connectors': bllConnectors
 	};
 };
 

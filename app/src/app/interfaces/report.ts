@@ -48,4 +48,5 @@ export interface Widget {
         'visable'?: boolean;
     };
     'widgetId'?: string;
+    'connectorId'?: string;
 };
