@@ -34,9 +34,19 @@
             <label [for]="widget.label.value">
                 {{ widget.label.value }}
             </label>
+
+            <div class="options">
+                <button mat-icon-button matTooltip="Edit Widget" (click)="EditWidget('edit', widget)">
+                    <mat-icon svgIcon="edit"></mat-icon>
+                </button>
+
+                <button mat-icon-button matTooltip="Remove Widget" color="warn" (click)="RemoveWidget(widget.widgetId)">
+                    <mat-icon svgIcon="delete"></mat-icon>
+                </button>
+            </div>
         </div>
 
-        <div class="widget" matRipple matTooltip="Add Widget">
+        <div class="widget" matRipple matTooltip="Add Widget" (click)="EditWidget('add')">
             <mat-icon>
                 add
             </mat-icon>
@@ -54,7 +64,7 @@
                             <mat-icon svgIcon="data"></mat-icon>
                         </button>
         
-                        <button mat-icon-button color="warn" (click)="remove(row, column.columnId)">
+                        <button mat-icon-button matTooltip="Remove Column" color="warn" (click)="remove(row, column.columnId)">
                             <mat-icon svgIcon="delete"></mat-icon>
                         </button>
                     </div>

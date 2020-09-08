@@ -1,0 +1,116 @@
+<mat-toolbar color="primary">
+    <div class="spacer">
+        widget editor
+    </div>
+    
+    <button type="button" mat-icon-button (click)="close()">
+        <mat-icon>
+            close
+        </mat-icon>
+    </button>
+</mat-toolbar>
+
+<div class="page-body">
+    <div class="container">
+        <form [formGroup]="form" (ngSubmit)="!form.invalid && submit()">
+            <h2>
+                label
+            </h2>
+
+            <section formGroupName="label">
+                <mat-form-field appearance="outline">
+                    <mat-label text-uppercase>
+                        value
+                    </mat-label>
+                    
+                    <input matInput type="text" name="value" placeholder="value" formControlName="value" required>
+    
+                    <mat-error *ngIf="errors.label.value">
+                        {{ errors.label.value }}
+                    </mat-error>
+                </mat-form-field>
+                
+                <mat-form-field appearance="outline">
+                    <mat-label text-uppercase>
+                        visibility
+                    </mat-label>
+                    
+                    <mat-select name="visable" placeholder="visibility" formControlName="visable" required>
+                        <mat-option [value]="true">
+                            Visable
+                        </mat-option>
+                        <mat-option [value]="false">
+                            Hidden
+                        </mat-option>
+                    </mat-select>
+    
+                    <mat-error *ngIf="errors.label.visable">
+                        {{ errors.label.visable }}
+                    </mat-error>
+                </mat-form-field>
+            </section>
+            
+            <h2>
+                position
+            </h2>
+
+            <section formGroupName="label">
+                <section formGroupName="position">
+                    <mat-form-field appearance="outline">
+                        <mat-label text-uppercase>
+                            vertical
+                        </mat-label>
+                        
+                        <mat-select name="vertical" placeholder="vertical" formControlName="vertical" required>
+                            <mat-option value="top">
+                                top
+                            </mat-option>
+                            <mat-option value="center">
+                                center
+                            </mat-option>
+                            <mat-option value="bottom">
+                                bottom
+                            </mat-option>
+                        </mat-select>
+        
+                        <mat-error *ngIf="errors.label.position.vertical">
+                            {{ errors.label.position.vertical }}
+                        </mat-error>
+                    </mat-form-field>
+
+                    <mat-form-field appearance="outline">
+                        <mat-label text-uppercase>
+                            horizontal
+                        </mat-label>
+                        
+                        <mat-select name="horizontal" placeholder="horizontal" formControlName="horizontal" required>
+                            <mat-option value="left">
+                                left
+                            </mat-option>
+                            <mat-option value="center">
+                                center
+                            </mat-option>
+                            <mat-option value="right">
+                                right
+                            </mat-option>
+                        </mat-select>
+        
+                        <mat-error *ngIf="errors.label.position.horizontal">
+                            {{ errors.label.position.horizontal }}
+                        </mat-error>
+                    </mat-form-field>
+                </section>
+            </section>
+
+            <h2>
+                connector
+            </h2>
+
+            <section formGroupName="connector"></section>
+
+            <button type="submit" mat-flat-button color="primary">
+                submit
+            </button>
+        </form>
+    </div>
+</div>

@@ -1,6 +1,7 @@
 /* --- PAGES --- */
 import { ReportsPage } from './reports.page';
 import { AddRowDialog } from './editor/add-row/add-row.dialog';
+import { WidgetDialog } from './editor/widget/widget.dialog';
 import { ReportViewerPage } from './viewer/viewer.page';
 import { ReportEditorPage } from './editor/editor.page';
 
@@ -68,6 +69,7 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
     declarations: [
         ReportsPage,
         AddRowDialog,
+        WidgetDialog,
         ReportViewerPage,
         ReportEditorPage,
     ]

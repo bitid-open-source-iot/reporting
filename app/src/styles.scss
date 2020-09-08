@@ -92,8 +92,24 @@ h1, h2, h3, h4, h5, p {
 form {
     display:        flex;
     flex-direction: column;
+    h2 {
+        font-size: 14px !important;
+        line-height: 14px !important;
+        margin-bottom: 4px !important;
+        text-transform: uppercase;
+    }
     mat-form-field {
         flex: 1 auto;
+    }
+    section {
+        flex: 1 auto;
+        display: flex;
+        flex-direction: row;
+        justify-content: space-between;
+        mat-form-field {
+            flex: 0 calc(50% - 5px);
+            width: calc(50% - 5px);
+        }
     }
 }
 mat-toolbar {

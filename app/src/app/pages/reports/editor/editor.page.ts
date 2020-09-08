@@ -1,14 +1,15 @@
-import { Report } from 'src/app/interfaces/report';
 import { ObjectId } from 'src/app/id';
 import { MatDialog } from '@angular/material/dialog';
+import { WidgetDialog } from './widget/widget.dialog';
 import { AddRowDialog } from './add-row/add-row.dialog';
 import { ToastService } from 'src/app/services/toast/toast.service';
 import { BloxComponent } from 'src/app/lib/blox/blox.component';
 import { ReportsService } from 'src/app/services/reports/reports.service';
 import { ActivatedRoute } from '@angular/router';
 import { HistoryService } from 'src/app/services/history/history.service';
-import { OnInit, Component, OnDestroy, ViewChild } from '@angular/core';
+import { Report, Widget } from 'src/app/interfaces/report';
 import { CdkDragDrop, moveItemInArray } from '@angular/cdk/drag-drop';
+import { OnInit, Component, OnDestroy, ViewChild } from '@angular/core';
 
 @Component({
     selector: 'app-report-editor-page',
@@ -41,7 +42,8 @@ export class ReportEditorPage implements OnInit, OnDestroy {
             'desktop': {
                 'rows': []
             }
-        }
+        },
+        'widgets': []
     };
     public column: any;
     public loading: boolean;
@@ -98,12 +100,36 @@ export class ReportEditorPage implements OnInit, OnDestroy {
             this.report.role = response.result.role;
             this.report.reportId = response.result.reportId;
             this.report.description = response.result.description;
+            if (Array.isArray(response.result.widgets)) {
+                this.report.widgets = response.result.widgets;
+            };
+            if (typeof(response.result.layout) != 'undefined' && response.result.layout != null && response.result.layout != '') {
+                this.report.layout = response.result.layout;
+            };
         } else {
             this.toast.error(response.error.message);
             this.history.back();
         };
 
         this.loading = false;
+    };
+
+    public async DoResizing(event) {
+        if (this.resizing) {
+            if (this.axis == 'x') {
+                const diff = parseFloat((((event.pageX - this.start.x) / this.blox.element.clientWidth) * 100).toFixed(2));
+                this.column.style.width += diff;
+                this.start.x = event.pageX;
+                this.row.columns.map(col => {
+                    if (col.position - 1 == this.column.position) {
+                        col.style.width -= diff;
+                    };
+                });
+            } else if (this.axis == 'y') {
+                this.row.style.height = this.row.style.height + (event.pageY - this.start.y);
+                this.start.y = event.pageY;
+            };
+        };
     };
 
     public async remove(row, columnId) {
@@ -129,20 +155,11 @@ export class ReportEditorPage implements OnInit, OnDestroy {
         };
     };
 
-    public async DoResizing(event) {
-        if (this.resizing) {
-            if (this.axis == 'x') {
-                const diff = parseFloat((((event.pageX - this.start.x) / this.blox.element.clientWidth) * 100).toFixed(2));
-                this.column.style.width += diff;
-                this.start.x = event.pageX;
-                this.row.columns.map(col => {
-                    if (col.position - 1 == this.column.position) {
-                        col.style.width -= diff;
-                    };
-                });
-            } else if (this.axis == 'y') {
-                this.row.style.height = this.row.style.height + (event.pageY - this.start.y);
-                this.start.y = event.pageY;
+    public async RemoveWidget(widgetId: string) {
+        for (let i = 0; i < this.report.widgets.length; i++) {
+            if (this.report.widgets[i].widgetId == widgetId) {
+                this.report.widgets.splice(i, 1);
+                break;
             };
         };
     };
@@ -164,6 +181,43 @@ export class ReportEditorPage implements OnInit, OnDestroy {
                 this.report.layout[this.layout].rows[a].columns[b].position = b + 1;
             };
         };
+    };
+
+    public async EditWidget(mode: string, widget?: Widget) {
+        if (mode == 'add') {
+            widget = {
+                'label': {
+                    'position': {
+                        'vertical': 'top',
+                        'horizontal': 'left'
+                    },
+                    'value': '',
+                    'visable': true
+                },
+                'widgetId': ObjectId()
+            };
+        };
+        const dialog = await this.dialog.open(WidgetDialog, {
+            'data': widget,
+            'panelClass': 'fullscreen-dialog',
+            'disableClose': true
+        });
+
+        await dialog.afterClosed().subscribe(async result => {
+            if (result) {
+                if (mode == 'add') {
+                    this.report.widgets.push(result);
+                } else if (mode == 'edit') {
+                    this.report.widgets.map(widget => {
+                        if (widget.widgetId == result.widgetId) {
+                            Object.keys(result).map(key => {
+                                widget[key] = result[key];
+                            });
+                        };
+                    });
+                };
+            };
+        });
     };
 
     public async DropColumn(row, event: CdkDragDrop<string[]>) {

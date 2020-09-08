@@ -6,34 +6,34 @@ var ErrorResponse = require('../lib/error-response').ErrorResponse;
 var module = function () {
 	var dalReports = {
 		errorResponse: {
-			"error": {
-				"code": 401,
-				"message": "Invalid Credentials",
-				"errors": [{
-					"reason": "General Reports Error",
-					"message": "Invalid Credentials",
-					"location": "dalReports",
-					"locationType": "header"
+			'error': {
+				'code': 401,
+				'message': 'Invalid Credentials',
+				'errors': [{
+					'reason': 'General Reports Error',
+					'message': 'Invalid Credentials',
+					'location': 'dalReports',
+					'locationType': 'header'
 				}]
 			},
-			"hiddenErrors": []
+			'hiddenErrors': []
 		},
 
 		add: (args) => {
 			var deferred = Q.defer();
 
 			var params = {
-				"bitid": {
-					"auth": {
-						"users": args.req.body.users,
-						"organizationOnly": args.req.body.organizationOnly
+				'bitid': {
+					'auth': {
+						'users': args.req.body.users,
+						'organizationOnly': args.req.body.organizationOnly
 					}
 				},
-				"url": args.req.body.url,
-				"type": args.req.body.type,
-				"query": args.req.body.query,
-				"serverDate": new Date(),
-				"description": args.req.body.description
+				'type': args.req.body.type,
+				'layout': args.req.body.layout,
+				'widgets': args.req.body.widgets || [],
+				'serverDate': new Date(),
+				'description': args.req.body.description
 			};
 
 			db.call({
@@ -58,8 +58,8 @@ var module = function () {
 			var deferred = Q.defer();
 
 			var params = {
-				"_id": ObjectId(args.req.body.reportId),
-				"bitid.auth.users.email": args.req.body.header.email
+				'_id': ObjectId(args.req.body.reportId),
+				'bitid.auth.users.email': args.req.body.header.email
 			};
 
 			var filter = {};
@@ -101,10 +101,10 @@ var module = function () {
 			var deferred = Q.defer();
 
 			var params = {
-				"bitid.auth.users.email": args.req.body.header.email
+				'bitid.auth.users.email': args.req.body.header.email
 			};
 
-			if (typeof (args.req.body.reportId) != "undefined") {
+			if (typeof (args.req.body.reportId) != 'undefined') {
 				if (Array.isArray(args.req.body.reportId) && args.req.body.reportId.length > 0) {
 					params._id = {
 						$in: args.req.body.reportId.map(id => ObjectId(id))
@@ -114,21 +114,21 @@ var module = function () {
 				};
 			};
 
-			if (typeof (args.req.body.description) != "undefined") {
+			if (typeof (args.req.body.description) != 'undefined') {
 				params.description = {
 					$regex: args.req.body.description
 				};
 			};
 
-			if (typeof (args.req.body.skip) == "number") {
+			if (typeof (args.req.body.skip) == 'number') {
 				var skip = args.req.body.skip;
 			};
 
-			if (typeof (args.req.body.sort) == "object") {
+			if (typeof (args.req.body.sort) == 'object') {
 				var sort = args.req.body.sort;
 			};
 
-			if (typeof (args.req.body.limit) == "number") {
+			if (typeof (args.req.body.limit) == 'number') {
 				var limit = args.req.body.limit;
 			};
 
@@ -210,28 +210,28 @@ var module = function () {
 			var deferred = Q.defer();
 
 			var params = {
-				"bitid.auth.users": {
+				'bitid.auth.users': {
 					$elemMatch: {
-						"role": {
+						'role': {
 							$gte: 4
 						},
-						"email": args.req.body.header.email
+						'email': args.req.body.header.email
 					}
 				},
-				"bitid.auth.users.email": {
+				'bitid.auth.users.email': {
 					$ne: args.req.body.email
 				},
-				"_id": ObjectId(args.req.body.reportId)
+				'_id': ObjectId(args.req.body.reportId)
 			};
 
 			var update = {
 				$set: {
-					"serverDate": new Date()
+					'serverDate': new Date()
 				},
 				$push: {
-					"bitid.auth.users": {
-						"role": args.req.body.role,
-						"email": args.req.body.email
+					'bitid.auth.users': {
+						'role': args.req.body.role,
+						'email': args.req.body.email
 					}
 				}
 			};
@@ -262,32 +262,29 @@ var module = function () {
 					'serverDate': new Date()
 				}
 			};
-			if (typeof (args.req.body.url) != "undefined") {
-				update.$set.url = args.req.body.url;
+			if (typeof (args.req.body.layout) != 'undefined' && args.req.body.layout != null && args.req.body.layout != '') {
+				update.$set.layout = args.req.body.layout;
 			};
-			if (typeof (args.req.body.type) != "undefined") {
-				update.$set.type = args.req.body.type;
+			if (typeof (args.req.body.widgets) != 'undefined' && args.req.body.widgets != null && args.req.body.widgets != '') {
+				update.$set.widgets = args.req.body.widgets;
 			};
-			if (typeof (args.req.body.query) != "undefined") {
-				update.$set.query = args.req.body.query;
-			};
-			if (typeof (args.req.body.description) != "undefined") {
+			if (typeof (args.req.body.description) != 'undefined') {
 				update.$set.description = args.req.body.description;
 			};
-			if (typeof (args.req.body.organizationOnly) != "undefined") {
-				update.$set["bitid.auth.organizationOnly"] = args.req.body.organizationOnly;
+			if (typeof (args.req.body.organizationOnly) != 'undefined') {
+				update.$set['bitid.auth.organizationOnly'] = args.req.body.organizationOnly;
 			};
 
 			var params = {
-				"bitid.auth.users": {
+				'bitid.auth.users': {
 					$elemMatch: {
-						"role": {
+						'role': {
 							$gte: 2
 						},
-						"email": args.req.body.header.email
+						'email': args.req.body.header.email
 					}
 				},
-				"_id": ObjectId(args.req.body.reportId)
+				'_id': ObjectId(args.req.body.reportId)
 			};
 
 			dalReports.audit({
@@ -314,15 +311,15 @@ var module = function () {
 			var deferred = Q.defer();
 
 			var params = {
-				"bitid.auth.users": {
+				'bitid.auth.users': {
 					$elemMatch: {
-						"role": {
+						'role': {
 							$gte: 4
 						},
-						"email": args.req.body.header.email
+						'email': args.req.body.header.email
 					}
 				},
-				"_id": ObjectId(args.req.body.reportId)
+				'_id': ObjectId(args.req.body.reportId)
 			};
 
 			dalReports.audit({
@@ -348,8 +345,8 @@ var module = function () {
 			var deferred = Q.defer();
 
 			var params = {
-				"_id": ObjectId(args.req.body.reportId),
-				"bitid.auth.users.email": args.req.body.header.email
+				'_id': ObjectId(args.req.body.reportId),
+				'bitid.auth.users.email': args.req.body.header.email
 			};
 
 			db.call({
@@ -385,15 +382,15 @@ var module = function () {
 
 					if (unsubscribe) {
 						var params = {
-							"_id": result[0]._id
+							'_id': result[0]._id
 						};
 						var update = {
 							$set: {
-								"serverDate": new Date()
+								'serverDate': new Date()
 							},
 							$pull: {
-								"bitid.auth.users": {
-									"email": args.req.body.email
+								'bitid.auth.users': {
+									'email': args.req.body.email
 								}
 							}
 						};
@@ -437,15 +434,15 @@ var module = function () {
 			var deferred = Q.defer();
 
 			var params = {
-				"bitid.auth.users": {
+				'bitid.auth.users': {
 					$elemMatch: {
-						"role": {
+						'role': {
 							$gte: 4
 						},
-						"email": args.req.body.header.email
+						'email': args.req.body.header.email
 					}
 				},
-				"_id": ObjectId(args.req.body.reportId)
+				'_id': ObjectId(args.req.body.reportId)
 			};
 
 			db.call({
@@ -457,13 +454,13 @@ var module = function () {
 					var deferred = Q.defer();
 
 					var params = {
-						"_id": ObjectId(args.req.body.reportId),
-						"bitid.auth.users.email": args.req.body.email
+						'_id': ObjectId(args.req.body.reportId),
+						'bitid.auth.users.email': args.req.body.email
 					};
 
 					var update = {
 						$set: {
-							"bitid.auth.users.$.role": args.req.body.role
+							'bitid.auth.users.$.role': args.req.body.role
 						}
 					};
 
@@ -493,41 +490,41 @@ var module = function () {
 
 	var dalSchedule = {
 		errorResponse: {
-			"error": {
-				"code": 401,
-				"message": "Invalid Credentials",
-				"errors": [{
-					"reason": "General Schedule Error",
-					"message": "Invalid Credentials",
-					"location": "dalSchedule",
-					"locationType": "header"
+			'error': {
+				'code': 401,
+				'message': 'Invalid Credentials',
+				'errors': [{
+					'reason': 'General Schedule Error',
+					'message': 'Invalid Credentials',
+					'location': 'dalSchedule',
+					'locationType': 'header'
 				}]
 			},
-			"hiddenErrors": []
+			'hiddenErrors': []
 		},
 
 		add: (args) => {
 			var deferred = Q.defer();
 
 			var params = {
-				"bitid": {
-					"auth": {
-						"users": args.req.body.users,
-						"organizationOnly": args.req.body.organizationOnly
+				'bitid': {
+					'auth': {
+						'users': args.req.body.users,
+						'organizationOnly': args.req.body.organizationOnly
 					}
 				},
-				"trigger": {
-					"hour": args.req.body.trigger.hour,
-					"date": args.req.body.trigger.date,
-					"year": args.req.body.trigger.year,
-					"month": args.req.body.trigger.month,
-					"minute": args.req.body.trigger.minute
+				'trigger': {
+					'hour': args.req.body.trigger.hour,
+					'date': args.req.body.trigger.date,
+					'year': args.req.body.trigger.year,
+					'month': args.req.body.trigger.month,
+					'minute': args.req.body.trigger.minute
 				},
-				"last": null,
-				"cycle": args.req.body.cycle,
-				"offset": args.req.body.offset,
-				"reportId": args.req.body.reportId,
-				"recipients": args.req.body.recipients || []
+				'last': null,
+				'cycle': args.req.body.cycle,
+				'offset': args.req.body.offset,
+				'reportId': args.req.body.reportId,
+				'recipients': args.req.body.recipients || []
 			};
 
 			db.call({
@@ -552,8 +549,8 @@ var module = function () {
 			var deferred = Q.defer();
 
 			var params = {
-				"_id": ObjectId(args.req.body.scheduleId),
-				"bitid.auth.users.email": args.req.body.header.email
+				'_id': ObjectId(args.req.body.scheduleId),
+				'bitid.auth.users.email': args.req.body.header.email
 			};
 
 			var filter = {};
@@ -595,10 +592,10 @@ var module = function () {
 			var deferred = Q.defer();
 
 			var params = {
-				"bitid.auth.users.email": args.req.body.header.email
+				'bitid.auth.users.email': args.req.body.header.email
 			};
 
-			if (typeof (args.req.body.scheduleId) != "undefined") {
+			if (typeof (args.req.body.scheduleId) != 'undefined') {
 				if (Array.isArray(args.req.body.scheduleId) && args.req.body.scheduleId.length > 0) {
 					params._id = {
 						$in: args.req.body.scheduleId.map(id => ObjectId(id))
@@ -608,21 +605,21 @@ var module = function () {
 				};
 			};
 
-			if (typeof (args.req.body.description) != "undefined") {
+			if (typeof (args.req.body.description) != 'undefined') {
 				params.description = {
 					$regex: args.req.body.description
 				};
 			};
 
-			if (typeof (args.req.body.skip) == "number") {
+			if (typeof (args.req.body.skip) == 'number') {
 				var skip = args.req.body.skip;
 			};
 
-			if (typeof (args.req.body.sort) == "object") {
+			if (typeof (args.req.body.sort) == 'object') {
 				var sort = args.req.body.sort;
 			};
 
-			if (typeof (args.req.body.limit) == "number") {
+			if (typeof (args.req.body.limit) == 'number') {
 				var limit = args.req.body.limit;
 			};
 
@@ -704,28 +701,28 @@ var module = function () {
 			var deferred = Q.defer();
 
 			var params = {
-				"bitid.auth.users": {
+				'bitid.auth.users': {
 					$elemMatch: {
-						"role": {
+						'role': {
 							$gte: 4
 						},
-						"email": args.req.body.header.email
+						'email': args.req.body.header.email
 					}
 				},
-				"bitid.auth.users.email": {
+				'bitid.auth.users.email': {
 					$ne: args.req.body.email
 				},
-				"_id": ObjectId(args.req.body.scheduleId)
+				'_id': ObjectId(args.req.body.scheduleId)
 			};
 
 			var update = {
 				$set: {
-					"serverDate": new Date()
+					'serverDate': new Date()
 				},
 				$push: {
-					"bitid.auth.users": {
-						"role": args.req.body.role,
-						"email": args.req.body.email
+					'bitid.auth.users': {
+						'role': args.req.body.role,
+						'email': args.req.body.email
 					}
 				}
 			};
@@ -752,7 +749,7 @@ var module = function () {
 			var deferred = Q.defer();
 
 			var params = {
-				"next": {
+				'next': {
 					$gte: new Date(),
 					$lte: new Date() + 60000
 				}
@@ -784,32 +781,32 @@ var module = function () {
 					'serverDate': new Date()
 				}
 			};
-			if (typeof (args.req.body.url) != "undefined") {
+			if (typeof (args.req.body.url) != 'undefined') {
 				update.$set.url = args.req.body.url;
 			};
-			if (typeof (args.req.body.type) != "undefined") {
+			if (typeof (args.req.body.type) != 'undefined') {
 				update.$set.type = args.req.body.type;
 			};
-			if (typeof (args.req.body.query) != "undefined") {
+			if (typeof (args.req.body.query) != 'undefined') {
 				update.$set.query = args.req.body.query;
 			};
-			if (typeof (args.req.body.description) != "undefined") {
+			if (typeof (args.req.body.description) != 'undefined') {
 				update.$set.description = args.req.body.description;
 			};
-			if (typeof (args.req.body.organizationOnly) != "undefined") {
-				update.$set["bitid.auth.organizationOnly"] = args.req.body.organizationOnly;
+			if (typeof (args.req.body.organizationOnly) != 'undefined') {
+				update.$set['bitid.auth.organizationOnly'] = args.req.body.organizationOnly;
 			};
 
 			var params = {
-				"bitid.auth.users": {
+				'bitid.auth.users': {
 					$elemMatch: {
-						"role": {
+						'role': {
 							$gte: 2
 						},
-						"email": args.req.body.header.email
+						'email': args.req.body.header.email
 					}
 				},
-				"_id": ObjectId(args.req.body.scheduleId)
+				'_id': ObjectId(args.req.body.scheduleId)
 			};
 
 			dalSchedule.audit({
@@ -836,15 +833,15 @@ var module = function () {
 			var deferred = Q.defer();
 
 			var params = {
-				"bitid.auth.users": {
+				'bitid.auth.users': {
 					$elemMatch: {
-						"role": {
+						'role': {
 							$gte: 4
 						},
-						"email": args.req.body.header.email
+						'email': args.req.body.header.email
 					}
 				},
-				"_id": ObjectId(args.req.body.scheduleId)
+				'_id': ObjectId(args.req.body.scheduleId)
 			};
 
 			dalSchedule.audit({
@@ -870,23 +867,23 @@ var module = function () {
 			var deferred = Q.defer();
 
 			var params = {
-				"bitid.auth.users": {
+				'bitid.auth.users': {
 					$elemMatch: {
-						"role": {
+						'role': {
 							$gte: 4
 						},
-						"email": args.req.body.header.email
+						'email': args.req.body.header.email
 					}
 				},
-				"_id": ObjectId(args.req.body.scheduleId)
+				'_id': ObjectId(args.req.body.scheduleId)
 			};
 			var update = {
 				$set: {
-					"serverDate": new Date()
+					'serverDate': new Date()
 				},
 				$pull: {
-					"bitid.auth.users": {
-						"email": args.req.body.email
+					'bitid.auth.users': {
+						'email': args.req.body.email
 					}
 				}
 			};
@@ -914,15 +911,15 @@ var module = function () {
 			var deferred = Q.defer();
 
 			var params = {
-				"bitid.auth.users": {
+				'bitid.auth.users': {
 					$elemMatch: {
-						"role": {
+						'role': {
 							$gte: 4
 						},
-						"email": args.req.body.header.email
+						'email': args.req.body.header.email
 					}
 				},
-				"_id": ObjectId(args.req.body.scheduleId)
+				'_id': ObjectId(args.req.body.scheduleId)
 			};
 
 			db.call({
@@ -934,13 +931,13 @@ var module = function () {
 					var deferred = Q.defer();
 
 					var params = {
-						"_id": ObjectId(args.req.body.scheduleId),
-						"bitid.auth.users.email": args.req.body.email
+						'_id': ObjectId(args.req.body.scheduleId),
+						'bitid.auth.users.email': args.req.body.email
 					};
 
 					var update = {
 						$set: {
-							"bitid.auth.users.$.role": args.req.body.role
+							'bitid.auth.users.$.role': args.req.body.role
 						}
 					};
 
