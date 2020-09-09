@@ -197,14 +197,44 @@ export class ReportEditorPage implements OnInit, OnDestroy {
         this.save('layout', this.report.layout);
     };
 
+    public GetWidgetLabel(widgetId: string) {
+        for (let i = 0; i < this.report.widgets.length; i++) {
+            if (this.report.widgets[i].widgetId == widgetId) {
+                return this.report.widgets[i].label.value;
+            };
+        };
+    };
+
     public async RemoveWidget(widgetId: string) {
         for (let i = 0; i < this.report.widgets.length; i++) {
             if (this.report.widgets[i].widgetId == widgetId) {
                 this.report.widgets.splice(i, 1);
-                this.save('layout', this.report.layout);
+                this.save('widgets', this.report.widgets);
                 break;
             };
         };
+        for (let a = 0; a < this.report.layout.mobile.rows.length; a++) {
+            for (let b = 0; b < this.report.layout.mobile.rows[a].columns.length; b++) {
+                if (this.report.layout.mobile.rows[a].columns[b].widgetId == widgetId) {
+                    this.report.layout.mobile.rows[a].columns[b].widgetId = null;
+                };
+            };
+        };
+        for (let a = 0; a < this.report.layout.tablet.rows.length; a++) {
+            for (let b = 0; b < this.report.layout.tablet.rows[a].columns.length; b++) {
+                if (this.report.layout.tablet.rows[a].columns[b].widgetId == widgetId) {
+                    this.report.layout.tablet.rows[a].columns[b].widgetId = null;
+                };
+            };
+        };
+        for (let a = 0; a < this.report.layout.desktop.rows.length; a++) {
+            for (let b = 0; b < this.report.layout.desktop.rows[a].columns.length; b++) {
+                if (this.report.layout.desktop.rows[a].columns[b].widgetId == widgetId) {
+                    this.report.layout.desktop.rows[a].columns[b].widgetId = null;
+                };
+            };
+        };
+        this.save('layout', this.report.layout);
     };
 
     public async FinishResizing(event: MouseEvent) {

@@ -58,7 +58,15 @@
             <row *ngFor="let row of report.layout[layout].rows" class="bound-columns" [height]="row.style.height" [background]="row.style.background" cdkDragBoundary=".bound-rows"  cdkDragLockAxis="y" cdkDrag cdkDropList (cdkDropListDropped)="DropColumn(row.columns, $event)" [cdkDragDisabled]="resizing">
                 <mat-icon class="drag-handle" svgIcon="drag" cdkDragHandle></mat-icon>
         
-                <column *ngFor="let column of row.columns; let i = index" [width]="column.style.width" [background]="column.style.background" cdkDragBoundary=".bound-columns"  cdkDragLockAxis="x" cdkDrag [cdkDragDisabled]="resizing">
+                <column *ngFor="let column of row.columns; let i = index" [width]="column.style.width" [style.color]="column.style.color" [background]="column.style.background" cdkDragBoundary=".bound-columns"  cdkDragLockAxis="x" cdkDrag [cdkDragDisabled]="resizing">
+                    <column-label *ngIf="column.widgetId">
+                        {{ GetWidgetLabel(column.widgetId) }}
+                    </column-label>
+    
+                    <column-content>
+                        {{ column.widgetId ? 'data will show here' : '' }}
+                    </column-content>
+                    
                     <div class="options">
                         <button mat-icon-button matTooltip="Link Widget" (click)="link(row, column)">
                             <mat-icon svgIcon="data"></mat-icon>

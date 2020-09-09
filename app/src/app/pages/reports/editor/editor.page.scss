@@ -82,6 +82,7 @@ column .options {
     right: 0px;
     bottom: 0px;
     display: flex;
+    z-index: 1000;
     opacity: 0;
     position: absolute;
     transition: all 0.5s ease-in-out;

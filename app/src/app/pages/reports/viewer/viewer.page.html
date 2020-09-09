@@ -20,13 +20,15 @@
     <blox>
         <row *ngFor="let row of report.layout[layout].rows" [height]="row.style.height" [background]="row.style.background">
             <column *ngFor="let column of row.columns" [width]="column.style.width" [style.color]="column.style.color" [background]="column.style.background">
-                <h3 class="label" *ngIf="column.widget" [class.hidden]="!column.widget.label.visable">
+                <column-label *ngIf="column.widget" [class.hidden]="!column.widget.label.visable">
                     {{ column.widget.label.value }}
-                </h3>
+                </column-label>
 
-                <h1 class="value" *ngIf="column.widget && column.widget.type == 'value'">
-                    100%
-                </h1>
+                <column-content>
+                    <h1 class="value" *ngIf="column.widget && column.widget.type == 'value'">
+                        100%
+                    </h1>
+                </column-content>
             </column>
         </row>
     </blox>
