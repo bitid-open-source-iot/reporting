@@ -11,18 +11,19 @@ var reportId = null;
 var connectorId = null;
 
 describe('Connectors', function () {
-    it('/reporting/connectors/get', function (done) {
+    it('/reporting/connectors/list', function (done) {
         this.timeout(5000);
 
-        tools.api.connectors.get()
+        tools.api.connectors.list()
             .then((result) => {
                 try {
-                    result.should.have.property('table');
-                    result.should.have.property('database');
-                    result.should.have.property('serverDate');
-                    result.should.have.property('connectorId');
-                    result.should.have.property('description');
-                    result.should.have.property('organizationOnly');
+                    connectorId = result[0].connectorId;
+                    result[0].should.have.property('table');
+                    result[0].should.have.property('fields');
+                    result[0].should.have.property('database');
+                    result[0].should.have.property('serverDate');
+                    result[0].should.have.property('connectorId');
+                    result[0].should.have.property('description');
                     done();
                 } catch (e) {
                     done(e);
@@ -36,18 +37,18 @@ describe('Connectors', function () {
             });
     });
 
-    it('/reporting/connectors/list', function (done) {
+    it('/reporting/connectors/get', function (done) {
         this.timeout(5000);
 
-        tools.api.connectors.list()
+        tools.api.connectors.get()
             .then((result) => {
                 try {
-                    result[0].should.have.property('table');
-                    result[0].should.have.property('database');
-                    result[0].should.have.property('serverDate');
-                    result[0].should.have.property('connectorId');
-                    result[0].should.have.property('description');
-                    result[0].should.have.property('organizationOnly');
+                    result.should.have.property('table');
+                    result.should.have.property('fields');
+                    result.should.have.property('database');
+                    result.should.have.property('serverDate');
+                    result.should.have.property('connectorId');
+                    result.should.have.property('description');
                     done();
                 } catch (e) {
                     done(e);
@@ -399,11 +400,11 @@ var tools = {
                 tools.post('/reporting/connectors/get', {
                     'filter': [
                         'table',
+                        'fields',
                         'database',
                         'serverDate',
                         'connectorId',
-                        'description',
-                        'organizationOnly'
+                        'description'
                     ],
                     'connectorId': connectorId
                 })
@@ -417,13 +418,12 @@ var tools = {
                 tools.post('/reporting/connectors/list', {
                     'filter': [
                         'table',
+                        'fields',
                         'database',
                         'serverDate',
                         'connectorId',
-                        'description',
-                        'organizationOnly'
-                    ],
-                    'connectorId': connectorId
+                        'description'
+                    ]
                 })
                     .then(deferred.resolve, deferred.resolve);
 

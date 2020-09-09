@@ -33,6 +33,7 @@ export interface Column {
         'width'?: number;
         'background'?: string;
     };
+    'widget'?: Widget;
     'widgetId'?: string;
     'columnId'?: string;
     'position'?: number;
@@ -40,13 +41,15 @@ export interface Column {
 
 export interface Widget {
     'label'?: {
-        'position'?: {
-            'vertical'?: string;
-            'horizontal'?: string;
-        };
         'value'?: string;
         'visable'?: boolean;
     };
+    'chart'?: {
+        'type'?: string;
+        'query'?: any;
+    };
+    'status'?: {};
+    'type'?: string;
     'widgetId'?: string;
     'connectorId'?: string;
 };

@@ -1,4 +1,4 @@
-import { Input, Output, Component, Renderer2, OnChanges, ElementRef, EventEmitter } from '@angular/core';
+import { Input, Component, Renderer2, OnChanges, ElementRef } from '@angular/core';
 
 @Component({
     selector: 'row',
@@ -12,8 +12,6 @@ export class BloxRowComponent implements OnChanges {
     @Input('height') public height: number = 0;
     @Input('background') public background: string;
 
-    @Output('changes') private changes: EventEmitter<any> = new EventEmitter<any>();
-    
     constructor(private element: ElementRef, private renderer: Renderer2) {
         this.renderer.setStyle(this.element.nativeElement, 'height', this.height + 'px');
         this.renderer.setStyle(this.element.nativeElement, 'background', this.background);

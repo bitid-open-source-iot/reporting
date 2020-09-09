@@ -4,7 +4,10 @@ var mongo = require('mongodb').MongoClient;
 exports.call = (args) => {
 	var deferred = Q.defer();
 
-	var db = __database;
+	var db = __databases['reporting'];
+	if (typeof(args.database) != 'undefined' && args.database != null && args.database != '') {
+		db = __databases[args.database];
+	};
 	var collection = db.collection(args.collection);
 
 	switch (args.operation) {
@@ -193,12 +196,12 @@ exports.call = (args) => {
 	return deferred.promise;
 };
 
-exports.connect = () => {
+exports.connect = (database) => {
 	var deferred = Q.defer();
 
 	mongo.connect(__settings.mongodb.url, {
-		"poolSize": 500,
-		"useUnifiedTopology": true
+		'poolSize': 500,
+		'useUnifiedTopology': true
 	}, (error, connection) => {
 		if (error) {
 			deferred.reject({
@@ -206,8 +209,7 @@ exports.connect = () => {
 				'description': 'Error Connecting To Database'
 			});
 		} else {
-			var database = connection.db(__settings.mongodb.database);
-			deferred.resolve(database);
+			deferred.resolve(connection.db(database));
 		};
 	});
 

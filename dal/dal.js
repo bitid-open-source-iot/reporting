@@ -170,6 +170,28 @@ var module = function () {
 			return deferred.promise;
 		},
 
+		data: (args) => {
+			var deferred = Q.defer();
+
+			db.call({
+				'params': args.params,
+				'database': args.connector.database,
+				'operation': 'aggregate',
+				'collection': args.connector.table
+			})
+				.then(result => {
+					args.result = JSON.parse(JSON.stringify(result));
+					deferred.resolve(args);
+				}, err => {
+					dalReports.errorResponse.error.errors[0].code = err.code || dalReports.errorResponse.error.errors[0].code;
+					dalReports.errorResponse.error.errors[0].reason = err.description || 'List Reports Error';
+					dalReports.errorResponse.hiddenErrors.push(err.error);
+					deferred.reject(dalReports.errorResponse);
+				});
+
+			return deferred.promise;
+		},
+
 		audit: (args) => {
 			var deferred = Q.defer();
 
@@ -993,10 +1015,6 @@ var module = function () {
 				args.req.body.filter.map(f => {
 					if (f == 'connectorId') {
 						filter['_id'] = 1;
-					} else if (f == 'role' || f == 'users') {
-						filter['bitid.auth.users'] = 1;
-					} else if (f == 'organizationOnly') {
-						filter['bitid.auth.organizationOnly'] = 1;
 					} else {
 						filter[f] = 1;
 					};
@@ -1043,28 +1061,12 @@ var module = function () {
 				};
 			};
 
-			if (typeof (args.req.body.skip) == 'number') {
-				var skip = args.req.body.skip;
-			};
-
-			if (typeof (args.req.body.sort) == 'object') {
-				var sort = args.req.body.sort;
-			};
-
-			if (typeof (args.req.body.limit) == 'number') {
-				var limit = args.req.body.limit;
-			};
-
 			var filter = {};
 			if (Array.isArray(args.req.body.filter) && args.req.body.filter.length > 0) {
 				filter._id = 0;
 				args.req.body.filter.map(f => {
-					if (f == 'scheduleId') {
+					if (f == 'connectorId') {
 						filter['_id'] = 1;
-					} else if (f == 'role' || f == 'users') {
-						filter['bitid.auth.users'] = 1;
-					} else if (f == 'organizationOnly') {
-						filter['bitid.auth.organizationOnly'] = 1;
 					} else {
 						filter[f] = 1;
 					};
@@ -1072,9 +1074,6 @@ var module = function () {
 			};
 
 			db.call({
-				'skip': skip,
-				'sort': sort,
-				'limit': limit,
 				'filter': filter,
 				'params': params,
 				'operation': 'find',
@@ -1088,6 +1087,70 @@ var module = function () {
 					dalSchedule.errorResponse.error.errors[0].reason = err.description || 'List Schedules Error';
 					dalSchedule.errorResponse.hiddenErrors.push(err.error);
 					deferred.reject(dalSchedule.errorResponse);
+				});
+
+			return deferred.promise;
+		},
+
+		load: (args) => {
+			var deferred = Q.defer();
+
+			var params = {
+				'_id': ObjectId(args.req.body.connectorId)
+			};
+
+			db.call({
+				'params': params,
+				'operation': 'find',
+				'collection': 'tblConnectors'
+			})
+				.then(result => {
+					args.connector = JSON.parse(JSON.stringify(result[0]));
+					deferred.resolve(args);
+				}, err => {
+					dalReports.errorResponse.error.errors[0].code = err.code || dalReports.errorResponse.error.errors[0].code;
+					dalReports.errorResponse.error.errors[0].reason = err.description || 'List Reports Error';
+					dalReports.errorResponse.hiddenErrors.push(err.error);
+					deferred.reject(dalReports.errorResponse);
+				});
+
+			return deferred.promise;
+		},
+
+		authenticate: (args) => {
+			var deferred = Q.defer();
+
+			var params = {
+				'bitid.auth.users.email': args.req.body.header.email
+			};
+
+			var field = args.connector.authenticate.field;
+
+			if (typeof(args.req.body[field]) != 'undefined' && args.req.body[field] != null && args.req.body[field] != '') {
+				if (Array.isArray(args.req.body[field]) && args.req.body[field].length > 0) {
+					params._id = {
+						$in: args.req.body[field].map(id => ObjectId(id))
+					};
+				} else if (typeof(args.req.body[field]) == 'string' && args.req.body[field].length == 24) {
+					params._id = ObjectId(args.req.body[field]);
+				};
+			};
+
+			db.call({
+				'params': params,
+				'database': args.connector.database,
+				'operation': 'find',
+				'collection': args.connector.authenticate.table
+			})
+				.then(result => {
+					args.req.body[field] = JSON.parse(JSON.stringify(result)).map(o => o._id);
+					deferred.resolve(args);
+				}, error => {
+					var err = new ErrorResponse();
+					err.error.errors[0].code = 503;
+					err.error.errors[0].reason = error.description;
+					err.error.errors[0].message = 'Authentication table rejected query!';
+					deferred.reject(err);
 				});
 
 			return deferred.promise;

@@ -1,5 +1,6 @@
 import { Widget } from 'src/app/interfaces/report';
 import { FormErrorService } from 'src/app/services/form-error/form-error.service';
+import { ConnectorsService } from 'src/app/services/connectors/connectors.service';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { FormGroup, FormControl, Validators } from '@angular/forms';
 import { OnInit, Inject, Component, OnDestroy } from '@angular/core';
@@ -12,33 +13,46 @@ import { OnInit, Inject, Component, OnDestroy } from '@angular/core';
 
 export class WidgetDialog implements OnInit, OnDestroy {
 
-    constructor(private dialog: MatDialogRef<WidgetDialog>, @Inject(MAT_DIALOG_DATA) private widget: Widget, private formerror: FormErrorService) { };
+    constructor(private dialog: MatDialogRef<WidgetDialog>, @Inject(MAT_DIALOG_DATA) private widget: Widget, public connectors: ConnectorsService, private formerror: FormErrorService) { };
 
     public form: FormGroup = new FormGroup({
         'label': new FormGroup({
-            'position': new FormGroup({
-                'vertical': new FormControl(this.widget.label.position.vertical, [Validators.required]),
-                'horizontal': new FormControl(this.widget.label.position.horizontal, [Validators.required])
-            }),
             'value': new FormControl(this.widget.label.value, [Validators.required]),
             'visable': new FormControl(this.widget.label.visable, [Validators.required])
         }),
-        'connector': new FormGroup({}),
-        'widgetId': new FormControl(this.widget.widgetId, [Validators.required])
+        'type': new FormControl(this.widget.type, [Validators.required]),
+        'widgetId': new FormControl(this.widget.widgetId, [Validators.required]),
+        'connectorId': new FormControl(this.widget.connectorId, [Validators.required])
     });
     public errors: any = {
         'label': {
-            'position': {
-                'vertical': '',
-                'horizontal': ''
-            },
             'value': '',
             'visable': ''
         },
-        'connector': {},
-        'widgetId': ''
+        'type': '',
+        'widgetId': '',
+        'connectorId': ''
     };
+    public loading: boolean;
     private subscriptions: any = {};
+
+    public async load() {
+        this.loading = true;
+
+        this.form.disable();
+
+        const response = await this.connectors.list({});
+
+        if (response.ok) {
+            this.connectors.data = response.result;
+        } else {
+            this.connectors.data = [];
+        };
+
+        this.form.enable();
+
+        this.loading = false;
+    };
 
     public close() {
         this.dialog.close(false);
@@ -49,6 +63,8 @@ export class WidgetDialog implements OnInit, OnDestroy {
     };
 
     ngOnInit(): void {
+        this.load();
+
         this.subscriptions.form = this.form.valueChanges.subscribe(data => {
             this.errors = this.formerror.validateForm(this.form, this.errors, true);
         });

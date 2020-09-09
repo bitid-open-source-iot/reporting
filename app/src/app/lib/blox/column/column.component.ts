@@ -1,4 +1,4 @@
-import { Input, Output, Component, Renderer2, OnChanges, ElementRef, EventEmitter } from '@angular/core';
+import { Input, Component, Renderer2, OnChanges, ElementRef } from '@angular/core';
 
 @Component({
     selector: 'column',
@@ -11,8 +11,6 @@ export class BloxColumnComponent implements OnChanges {
     @Input('width') public width: number = 0;
     @Input('background') public background: string;
 
-    @Output('changes') private changes: EventEmitter<any> = new EventEmitter<any>();
-    
     constructor(private element: ElementRef, private renderer: Renderer2) {
         this.renderer.setStyle(this.element.nativeElement, 'background', this.background);
         this.renderer.setStyle(this.element.nativeElement, 'flex', '0 calc(' + this.width + '% - 10px)');

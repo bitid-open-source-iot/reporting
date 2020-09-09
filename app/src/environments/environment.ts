@@ -19,6 +19,8 @@ export const environment = {
 
         { "url": "/drive/files/upload", "role": 4 },
 
+        { "url": "/telemetry/devices/list", "role": 4 },
+        
         { "url": "/reporting/reports/add", "role": 4 },
         { "url": "/reporting/reports/get", "role": 4 },
         { "url": "/reporting/reports/list", "role": 4 },

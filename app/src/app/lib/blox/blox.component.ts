@@ -9,12 +9,10 @@ import { Output, Component, ElementRef, EventEmitter, ViewEncapsulation } from '
 
 export class BloxComponent {
     
-    @Output('changes') private changes: EventEmitter<any> = new EventEmitter<any>();
-
     public element: HTMLElement;
 
-    constructor(private _element: ElementRef) {
-        this.element = _element.nativeElement;
+    constructor(el: ElementRef) {
+        this.element = el.nativeElement;
     };
-    
+
 }

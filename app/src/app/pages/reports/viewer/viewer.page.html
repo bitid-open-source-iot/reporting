@@ -16,10 +16,18 @@
 
 <mat-progress-bar mode="indeterminate" color="accent" *ngIf="loading"></mat-progress-bar>
 
-<div class="page-body">
+<div id="dashboard" class="page-body" *ngIf="layout && report && !loading">
     <blox>
-        <row *ngFor="let row of rows" [height]="row.style.height" [background]="row.style.background">
-            <column *ngFor="let column of row.columns" [width]="column.style.width" [background]="column.style.background"></column>
+        <row *ngFor="let row of report.layout[layout].rows" [height]="row.style.height" [background]="row.style.background">
+            <column *ngFor="let column of row.columns" [width]="column.style.width" [style.color]="column.style.color" [background]="column.style.background">
+                <h3 class="label" *ngIf="column.widget" [class.hidden]="!column.widget.label.visable">
+                    {{ column.widget.label.value }}
+                </h3>
+
+                <h1 class="value" *ngIf="column.widget && column.widget.type == 'value'">
+                    100%
+                </h1>
+            </column>
         </row>
     </blox>
 </div>

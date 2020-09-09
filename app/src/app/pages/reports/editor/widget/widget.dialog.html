@@ -10,6 +10,8 @@
     </button>
 </mat-toolbar>
 
+<mat-progress-bar mode="indeterminate" color="accent" *ngIf="loading"></mat-progress-bar>
+
 <div class="page-body">
     <div class="container">
         <form [formGroup]="form" (ngSubmit)="!form.invalid && submit()">
@@ -49,62 +51,50 @@
                     </mat-error>
                 </mat-form-field>
             </section>
-            
-            <h2>
-                position
-            </h2>
-
-            <section formGroupName="label">
-                <section formGroupName="position">
-                    <mat-form-field appearance="outline">
-                        <mat-label text-uppercase>
-                            vertical
-                        </mat-label>
-                        
-                        <mat-select name="vertical" placeholder="vertical" formControlName="vertical" required>
-                            <mat-option value="top">
-                                top
-                            </mat-option>
-                            <mat-option value="center">
-                                center
-                            </mat-option>
-                            <mat-option value="bottom">
-                                bottom
-                            </mat-option>
-                        </mat-select>
-        
-                        <mat-error *ngIf="errors.label.position.vertical">
-                            {{ errors.label.position.vertical }}
-                        </mat-error>
-                    </mat-form-field>
-
-                    <mat-form-field appearance="outline">
-                        <mat-label text-uppercase>
-                            horizontal
-                        </mat-label>
-                        
-                        <mat-select name="horizontal" placeholder="horizontal" formControlName="horizontal" required>
-                            <mat-option value="left">
-                                left
-                            </mat-option>
-                            <mat-option value="center">
-                                center
-                            </mat-option>
-                            <mat-option value="right">
-                                right
-                            </mat-option>
-                        </mat-select>
-        
-                        <mat-error *ngIf="errors.label.position.horizontal">
-                            {{ errors.label.position.horizontal }}
-                        </mat-error>
-                    </mat-form-field>
-                </section>
-            </section>
 
             <h2>
                 connector
             </h2>
+
+            <section>
+                <mat-form-field appearance="outline">
+                    <mat-label text-uppercase>
+                        data connector
+                    </mat-label>
+                    
+                    <mat-select name="connectorId" placeholder="data connector" formControlName="connectorId" required>
+                        <mat-option *ngFor="let connector of connectors.data" [value]="connector.connectorId">
+                            {{ connector.description }}
+                        </mat-option>
+                    </mat-select>
+    
+                    <mat-error *ngIf="errors.connectorId">
+                        {{ errors.connectorId }}
+                    </mat-error>
+                </mat-form-field>
+
+                <mat-form-field appearance="outline">
+                    <mat-label text-uppercase>
+                        display type
+                    </mat-label>
+                    
+                    <mat-select name="type" placeholder="display type" formControlName="type" required>
+                        <mat-option value="map">
+                            Map
+                        </mat-option>
+                        <mat-option value="chart">
+                            Chart
+                        </mat-option>
+                        <mat-option value="value">
+                            Value
+                        </mat-option>
+                    </mat-select>
+    
+                    <mat-error *ngIf="errors.type">
+                        {{ errors.type }}
+                    </mat-error>
+                </mat-form-field>
+            </section>
 
             <section formGroupName="connector"></section>
 

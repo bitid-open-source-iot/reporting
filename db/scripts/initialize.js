@@ -63,6 +63,37 @@ if (schedule.count() == 0) {
 var connectors = db.getCollection("tblConnectors");
 if (connectors.count() == 0) {
     db.tblConnectors.insert({
+        "fields": [
+            {
+                "key": "deviceDate",
+                "type": "date",
+                "description": "Device Date"
+            },
+            {
+                "key": "serverDate",
+                "type": "date",
+                "description": "Server Date"
+            },
+            {
+                "key": "location.latitude",
+                "type": "number",
+                "description": "Latitude"
+            },
+            {
+                "key": "location.longitude",
+                "type": "number",
+                "description": "Longitude"
+            }
+        ],
+        "adjust": [
+            {
+                $unwind: "$inputs"
+            }
+        ],
+        "authenticate": {
+            "table": "tblDevices",
+            "field": "deviceId"
+        },
         "_id": ObjectId("000000000000000000000001"),
         "table": "tblHistorical",
         "database": "telemetry",

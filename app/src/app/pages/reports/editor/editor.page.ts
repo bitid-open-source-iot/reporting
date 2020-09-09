@@ -8,9 +8,9 @@ import { ReportsService } from 'src/app/services/reports/reports.service';
 import { ActivatedRoute } from '@angular/router';
 import { HistoryService } from 'src/app/services/history/history.service';
 import { Report, Widget } from 'src/app/interfaces/report';
+import { LinkWidgetDialog } from './link/link.dialog';
 import { CdkDragDrop, moveItemInArray } from '@angular/cdk/drag-drop';
 import { OnInit, Component, OnDestroy, ViewChild } from '@angular/core';
-import { LinkWidgetDialog } from './link/link.dialog';
 
 @Component({
     selector: 'app-report-editor-page',
@@ -82,6 +82,7 @@ export class ReportEditorPage implements OnInit, OnDestroy {
                 };
 
                 this.report.layout[this.layout].rows.push(row);
+                this.save('layout', this.report.layout);
             };
         });
     };
@@ -92,6 +93,8 @@ export class ReportEditorPage implements OnInit, OnDestroy {
         const response = await this.service.get({
             'filter': [
                 'role',
+                'layout',
+                'widgets',
                 'reporId',
                 'description'
             ],
@@ -116,6 +119,19 @@ export class ReportEditorPage implements OnInit, OnDestroy {
         this.loading = false;
     };
 
+    public async save(key, value) {
+        let params: any = {
+            'reportId': this.reportId
+        };
+        params[key] = value;
+
+        const response = await this.service.update(params);
+
+        if (!response.ok) {
+            this.toast.error(response.error.message);
+        };
+    };
+
     public async link(row, column) {
         const dialog = await this.dialog.open(LinkWidgetDialog, {
             'data': {
@@ -131,6 +147,7 @@ export class ReportEditorPage implements OnInit, OnDestroy {
                 for (let i = 0; i < row.columns.length; i++) {
                     if (row.columns[i].columnId == column.columnId) {
                         row.columns[i].widgetId = widgetId;
+                        this.save('layout', this.report.layout);
                         break;
                     };
                 };
@@ -177,18 +194,23 @@ export class ReportEditorPage implements OnInit, OnDestroy {
                 };
             };
         };
+        this.save('layout', this.report.layout);
     };
 
     public async RemoveWidget(widgetId: string) {
         for (let i = 0; i < this.report.widgets.length; i++) {
             if (this.report.widgets[i].widgetId == widgetId) {
                 this.report.widgets.splice(i, 1);
+                this.save('layout', this.report.layout);
                 break;
             };
         };
     };
 
     public async FinishResizing(event: MouseEvent) {
+        if (typeof(this.row) != 'undefined' && this.row != null || typeof(this.column) != 'undefined' && this.column != null) {
+            this.save('layout', this.report.layout);
+        };
         this.row = null;
         this.axis = null;
         this.column = null;
@@ -205,16 +227,13 @@ export class ReportEditorPage implements OnInit, OnDestroy {
                 this.report.layout[this.layout].rows[a].columns[b].position = b + 1;
             };
         };
+        this.save('layout', this.report.layout);
     };
 
     public async EditWidget(mode: string, widget?: Widget) {
         if (mode == 'add') {
             widget = {
                 'label': {
-                    'position': {
-                        'vertical': 'top',
-                        'horizontal': 'left'
-                    },
                     'value': '',
                     'visable': true
                 },
@@ -240,6 +259,7 @@ export class ReportEditorPage implements OnInit, OnDestroy {
                         };
                     });
                 };
+                this.save('widgets', this.report.widgets);
             };
         });
     };
@@ -252,6 +272,7 @@ export class ReportEditorPage implements OnInit, OnDestroy {
                 this.report.layout[this.layout].rows[a].columns[b].position = b + 1;
             };
         };
+        this.save('layout', this.report.layout);
     };
 
     public async StartResizing(axis, event: MouseEvent, row, column) {

@@ -13,6 +13,7 @@ global.__base = __dirname + '/';
 global.__logger = require('./lib/logger');
 global.__settings = require('./config.json');
 global.__responder = new responder.module();
+global.__databases = {};
 
 try {
     var portal = {
@@ -166,13 +167,18 @@ try {
         database: (args) => {
             var deferred = Q.defer();
 
-            db.connect().then(database => {
-                global.__database = database;
+            try {
+                Object.keys(__settings.databases).map(database => {
+                    db.connect(database).then(connection => {
+                        __databases[database] = connection;
+                    }, err => {
+                        __logger.error('Database Connection Error: ' + err);
+                    });
+                });    
                 deferred.resolve(args);
-            }, err => {
-                __logger.error('Database Connection Error: ' + err);
-                deferred.reject(err);
-            });
+            } catch (error) {
+                deferred.reject(error);
+            };
 
             return deferred.promise;
         },

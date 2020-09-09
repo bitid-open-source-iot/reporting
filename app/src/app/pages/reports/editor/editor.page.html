@@ -6,7 +6,7 @@
     </button>
 
     <div class="spacer">
-        <input matInput type="text" [(ngModel)]="report.description" required *ngIf="!loading">
+        <input matInput type="text" [(ngModel)]="report.description" (blur)="save('description', report.description)" required *ngIf="!loading">
     </div>
 
     <button mat-icon-button matTooltip="Mobile View" [class.selected]="layout == 'mobile'" (click)="layout = 'mobile'">
