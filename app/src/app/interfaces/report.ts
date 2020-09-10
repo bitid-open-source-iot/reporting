@@ -44,12 +44,21 @@ export interface Widget {
         'value'?: string;
         'visable'?: boolean;
     };
+    'query'?: {
+        'range'?: string;
+        'inputId'?: string;
+        'deviceId'?: string;
+    };
     'chart'?: {
         'type'?: string;
         'query'?: any;
     };
+    'value'?: {
+        'expression'?: string;
+    };
     'status'?: {};
     'type'?: string;
+    'data'?: any;
     'widgetId'?: string;
     'connectorId'?: string;
 };

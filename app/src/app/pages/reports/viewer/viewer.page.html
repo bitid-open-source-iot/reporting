@@ -24,9 +24,9 @@
                     {{ column.widget.label.value }}
                 </column-label>
 
-                <column-content>
+                <column-content *ngIf="column.widget">
                     <h1 class="value" *ngIf="column.widget && column.widget.type == 'value'">
-                        100%
+                        {{ column.widget.data }}
                     </h1>
                 </column-content>
             </column>

@@ -195,35 +195,37 @@ var module = function () {
 		audit: (args) => {
 			var deferred = Q.defer();
 
-			db.call({
-				'params': args.params,
-				'operation': 'find',
-				'collection': 'tblReports'
-			})
-				.then(result => {
-					var deferred = Q.defer();
+			// db.call({
+			// 	'params': args.params,
+			// 	'database': 'reporting',
+			// 	'operation': 'find',
+			// 	'collection': 'tblReports'
+			// })
+			// 	.then(result => {
+			// 		var deferred = Q.defer();
 
-					var params = result[0];
-					params.reportId = params._id.toString();
-					delete params._id;
+			// 		var params = result[0];
+			// 		params.reportId = params._id.toString();
+			// 		delete params._id;
 
-					deferred.resolve({
-						'params': params,
-						'operation': 'insert',
-						'collection': 'tblAuditReports'
-					});
+			// 		deferred.resolve({
+			// 			'params': params,
+			// 			'database': 'reporting',
+			// 			'operation': 'insert',
+			// 			'collection': 'tblAuditReports'
+			// 		});
 
-					return deferred.promise;
-				}, null)
-				.then(db.call, null)
-				.then(result => {
+			// 		return deferred.promise;
+			// 	}, null)
+			// 	.then(db.call, null)
+			// 	.then(result => {
 					deferred.resolve(args);
-				}, err => {
-					dalReports.errorResponse.error.errors[0].code = err.code || dalReports.errorResponse.error.errors[0].code;
-					dalReports.errorResponse.error.errors[0].reason = err.description || 'Audit Report Error';
-					dalReports.errorResponse.hiddenErrors.push(err.error);
-					deferred.reject(dalReports.errorResponse);
-				});
+				// }, err => {
+				// 	dalReports.errorResponse.error.errors[0].code = err.code || dalReports.errorResponse.error.errors[0].code;
+				// 	dalReports.errorResponse.error.errors[0].reason = err.description || 'Audit Report Error';
+				// 	dalReports.errorResponse.hiddenErrors.push(err.error);
+				// 	deferred.reject(dalReports.errorResponse);
+				// });
 
 			return deferred.promise;
 		},

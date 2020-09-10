@@ -53,6 +53,83 @@
             </section>
 
             <h2>
+                filter
+            </h2>
+
+            <section formGroupName="query">
+                <mat-form-field appearance="outline">
+                    <mat-label text-uppercase>
+                        device
+                    </mat-label>
+                    
+                    <mat-select name="deviceId" placeholder="device" formControlName="deviceId" required>
+                        <mat-option *ngFor="let device of devices.data | orderBy : 'description'" [value]="device.deviceId">
+                            {{ device.description }}
+                        </mat-option>
+                    </mat-select>
+    
+                    <mat-error *ngIf="errors.query.deviceId">
+                        {{ errors.query.deviceId }}
+                    </mat-error>
+                </mat-form-field>
+
+                <mat-form-field appearance="outline">
+                    <mat-label text-uppercase>
+                        input
+                    </mat-label>
+                    
+                    <mat-select name="inputs.inputId" placeholder="input" formControlName="inputs.inputId" required>
+                        <mat-option *ngFor="let input of inputs | orderBy : 'description'" [value]="input.inputId">
+                            {{ input.description }}
+                        </mat-option>
+                    </mat-select>
+    
+                    <mat-error *ngIf="errors.query['inputs.inputId']">
+                        {{ errors.query['inputs.inputId'] }}
+                    </mat-error>
+                </mat-form-field>
+            </section>
+
+            <section formGroupName="query">
+                <mat-form-field appearance="outline">
+                    <mat-label text-uppercase>
+                        date range
+                    </mat-label>
+                    
+                    <mat-select name="range" placeholder="date range" formControlName="range" required>
+                        <mat-option value="current-day">
+                            Current Day
+                        </mat-option>
+                        <mat-option value="previous-day">
+                            Previous Day
+                        </mat-option>
+                        <mat-option value="current-week" disabled>
+                            Current Week
+                        </mat-option>
+                        <mat-option value="previous-week" disabled>
+                            Previous Week
+                        </mat-option>
+                        <mat-option value="current-month">
+                            Current Month
+                        </mat-option>
+                        <mat-option value="previous-month">
+                            Previous Month
+                        </mat-option>
+                        <mat-option value="current-year" disabled>
+                            Current Year
+                        </mat-option>
+                        <mat-option value="previous-year" disabled>
+                            Previous Year
+                        </mat-option>
+                    </mat-select>
+    
+                    <mat-error *ngIf="errors.query.range">
+                        {{ errors.query.range }}
+                    </mat-error>
+                </mat-form-field>
+            </section>
+
+            <h2>
                 connector
             </h2>
 
@@ -79,8 +156,11 @@
                     </mat-label>
                     
                     <mat-select name="type" placeholder="display type" formControlName="type" required>
-                        <mat-option value="map">
+                        <mat-option value="map" disabled>
                             Map
+                        </mat-option>
+                        <mat-option value="table" disabled>
+                            Table
                         </mat-option>
                         <mat-option value="chart">
                             Chart
@@ -92,6 +172,62 @@
     
                     <mat-error *ngIf="errors.type">
                         {{ errors.type }}
+                    </mat-error>
+                </mat-form-field>
+            </section>
+
+            <h2 *ngIf="form.value.type == 'chart'">
+                chart settings
+            </h2>
+
+            <section formGroupName="chart" *ngIf="form.value.type == 'chart'">
+                <mat-form-field appearance="outline">
+                    <mat-label text-uppercase>
+                        type
+                    </mat-label>
+                    
+                    <mat-select name="type" placeholder="type" formControlName="type" [required]="form.value.type == 'chart'">
+                        <mat-option value="bar">
+                            Bar
+                        </mat-option>
+                        <mat-option value="area">
+                            Area
+                        </mat-option>
+                        <mat-option value="line">
+                            Line
+                        </mat-option>
+                    </mat-select>
+    
+                    <mat-error *ngIf="errors.chart.type">
+                        {{ errors.chart.type }}
+                    </mat-error>
+                </mat-form-field>
+            </section>
+
+            <h2 *ngIf="form.value.type == 'value'">
+                value settings
+            </h2>
+
+            <section formGroupName="value" *ngIf="form.value.type == 'value'">
+                <mat-form-field appearance="outline">
+                    <mat-label text-uppercase>
+                        expression
+                    </mat-label>
+                    
+                    <mat-select name="expression" placeholder="expression" formControlName="expression" [required]="form.value.type == 'value'">
+                        <mat-option value="last-value">
+                            Last Value
+                        </mat-option>
+                        <mat-option value="first-value">
+                            First Value
+                        </mat-option>
+                        <mat-option value="predicted-value">
+                            Predicted Value
+                        </mat-option>
+                    </mat-select>
+    
+                    <mat-error *ngIf="errors.value.expression">
+                        {{ errors.value.expression }}
                     </mat-error>
                 </mat-form-field>
             </section>

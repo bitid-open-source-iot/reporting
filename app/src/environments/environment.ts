@@ -5,6 +5,7 @@ export const environment = {
     "appName": "Reporting",
     "reporting": "http://127.0.0.1:2000",
     // "reporting": "https://reporting.bitid.co.za",
+    "telemetry": "https://telemetry.bitid.co.za",
     "production": false,
     "roles": [
         { "value": 1, "title": "Read Only" },
@@ -23,6 +24,7 @@ export const environment = {
         
         { "url": "/reporting/reports/add", "role": 4 },
         { "url": "/reporting/reports/get", "role": 4 },
+        { "url": "/reporting/reports/data", "role": 4 },
         { "url": "/reporting/reports/list", "role": 4 },
         { "url": "/reporting/reports/share", "role": 4 },
         { "url": "/reporting/reports/update", "role": 4 },

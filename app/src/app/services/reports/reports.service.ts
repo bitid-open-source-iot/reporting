@@ -34,6 +34,10 @@ export class ReportsService {
         return await this.api.post(environment.reporting, '/reporting/reports/list', params);
     };
 
+    public async load(params: any) {
+        return await this.api.post(environment.reporting, '/reporting/reports/data', params);
+    };
+
     public async share(params: any) {
         return await this.api.post(environment.reporting, '/reporting/reports/share', params);
     };

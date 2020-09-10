@@ -72,16 +72,30 @@ export class ReportViewerPage implements OnInit, OnDestroy {
                     });
                 });
             });
+            this.load();
         } else {
             this.toast.error(response.error.message);
             this.history.back();
+            this.loading = false;
         };
+    };
+
+    private async load() {
+        this.loading = true;
+
+        await this.report.widgets.reduce(async (promise, widget, index) => {
+            const response = await this.service.load(widget);
+            if (response.ok) {
+                widget.data = response.result;
+            };
+        }, Promise.resolve());
 
         this.loading = false;
     };
 
     public async download() {
-        canvas(document.getElementById('dashboard')).then(canvas => {
+        const element = document.getElementById('dashboard');
+        canvas(element).then(canvas => {
             const pdf = new jspdf();
             const image = canvas.toDataURL("image/jpeg");
             pdf.addImage(image, 'JPEG', 0, 0);

@@ -4,6 +4,7 @@ export const environment = {
     "appId": "000000000000000000000002",
     "appName": "Reporting",
     "reporting": "https://reporting.bitid.co.za",
+    "telemetry": "https://telemetry.bitid.co.za",
     "production": true,
     "roles": [
         { "value": 1, "title": "Read Only" },
@@ -18,8 +19,11 @@ export const environment = {
 
         { "url": "/drive/files/upload", "role": 4 },
 
+        { "url": "/telemetry/devices/list", "role": 4 },
+        
         { "url": "/reporting/reports/add", "role": 4 },
         { "url": "/reporting/reports/get", "role": 4 },
+        { "url": "/reporting/reports/data", "role": 4 },
         { "url": "/reporting/reports/list", "role": 4 },
         { "url": "/reporting/reports/share", "role": 4 },
         { "url": "/reporting/reports/update", "role": 4 },

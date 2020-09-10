@@ -267,6 +267,9 @@ export class ReportEditorPage implements OnInit, OnDestroy {
                     'value': '',
                     'visable': true
                 },
+                'chart': {},
+                'value': {},
+                'query': {},
                 'widgetId': ObjectId()
             };
         };
