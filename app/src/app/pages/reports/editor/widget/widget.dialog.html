@@ -78,14 +78,14 @@
                         input
                     </mat-label>
                     
-                    <mat-select name="inputs.inputId" placeholder="input" formControlName="inputs.inputId" required>
+                    <mat-select name="inputId" placeholder="input" formControlName="inputId" required>
                         <mat-option *ngFor="let input of inputs | orderBy : 'description'" [value]="input.inputId">
                             {{ input.description }}
                         </mat-option>
                     </mat-select>
     
-                    <mat-error *ngIf="errors.query['inputs.inputId']">
-                        {{ errors.query['inputs.inputId'] }}
+                    <mat-error *ngIf="errors.query.inputId">
+                        {{ errors.query.inputId }}
                     </mat-error>
                 </mat-form-field>
             </section>
@@ -187,7 +187,7 @@
                     </mat-label>
                     
                     <mat-select name="type" placeholder="type" formControlName="type" [required]="form.value.type == 'chart'">
-                        <mat-option value="bar">
+                        <mat-option value="bar" disabled>
                             Bar
                         </mat-option>
                         <mat-option value="area">

@@ -29,6 +29,7 @@ var module = function () {
 						'organizationOnly': args.req.body.organizationOnly
 					}
 				},
+				'url': args.req.body.url,
 				'type': args.req.body.type,
 				'layout': args.req.body.layout,
 				'widgets': args.req.body.widgets || [],
@@ -285,6 +286,12 @@ var module = function () {
 				$set: {
 					'serverDate': new Date()
 				}
+			};
+			if (typeof (args.req.body.url) != 'undefined') {
+				update.$set.url = args.req.body.url;
+			};
+			if (typeof (args.req.body.type) != 'undefined') {
+				update.$set.type = args.req.body.type;
 			};
 			if (typeof (args.req.body.layout) != 'undefined' && args.req.body.layout != null && args.req.body.layout != '') {
 				update.$set.layout = args.req.body.layout;

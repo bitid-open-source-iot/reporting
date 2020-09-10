@@ -23,8 +23,8 @@ export class WidgetDialog implements OnInit, OnDestroy {
         }),
         'query': new FormGroup({
             'range': new FormControl(this.widget.query.range, [Validators.required]),
-            'deviceId': new FormControl(this.widget.query.deviceId, [Validators.required]),
-            'inputs.inputId': new FormControl(this.widget.query['inputs.inputId'], [Validators.required]),
+            'inputId': new FormControl(this.widget.query['inputId'], [Validators.required]),
+            'deviceId': new FormControl(this.widget.query.deviceId, [Validators.required])
         }),
         'chart': new FormGroup({
             'type': new FormControl(this.widget.chart.type)
@@ -43,8 +43,8 @@ export class WidgetDialog implements OnInit, OnDestroy {
         },
         'query': {
             'range': '',
-            'deviceId': '',
-            'inputs.inputId': ''
+            'inputId': '',
+            'deviceId': ''
         },
         'chart': {
             'type': ''

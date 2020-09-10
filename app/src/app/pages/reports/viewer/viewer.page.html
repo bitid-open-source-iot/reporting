@@ -29,6 +29,8 @@
                         {{ column.widget.data }}
                     </h1>
                 </column-content>
+                    
+                <chart *ngIf="column.widget && column.widget.type == 'chart'" [type]="column.widget.chart.type" [data]="column.widget.data" [label]="column.widget.label.value"></chart>
             </column>
         </row>
     </blox>
