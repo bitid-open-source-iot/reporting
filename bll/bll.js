@@ -140,6 +140,17 @@ var module = function () {
 							case ('map'):
 								break;
 							case ('chart'):
+								if (args.req.body.query.counter) {
+									var step = args.result[0].value;
+									args.result = args.result.map(row => {
+										var tmp =  {
+											'date': row.date,
+											'value': row.value - step
+										};
+										step = row.value;
+										return tmp;
+									});
+								};
 								break;
 							case ('table'):
 								break;
@@ -147,7 +158,7 @@ var module = function () {
 								switch (args.req.body.value.expression) {
 									case ('last-value'):
 									case ('first-value'):
-										args.result = args.result[0].value;
+										args.result = parseFloat(args.result[0].value.toFixed(2));
 										break;
 									case ('predicted-value'):
 										args.result = args.result.map(o => o.value);
@@ -173,13 +184,19 @@ var module = function () {
 												break;
 										};
 										if (args.req.body.query.counter) {
-											var total = args.result.reduce((a, b) => a + b);
+											var step = args.result[0];
+											var total = args.result.map(value => {
+												var tmp = value - step;
+												step = value;
+												return tmp;
+											}).reduce((a, b) => a + b);
 											var average = total / args.result.length;
 											args.result = average * max;
+											args.result = parseFloat(average * max.toFixed(2));
 										} else {
 											var total = args.result.reduce((a, b) => a + b);
 											var average = total / args.result.length;
-											args.result = average;
+											args.result = parseFloat(average.toFixed(2));
 										};
 										break;
 								};

@@ -37,7 +37,7 @@ export class ChartComponent implements OnChanges, AfterViewInit {
     };
 
     ngAfterViewInit(): void {
-        const values = this.data.map(o => o.value);
+        const values = this.data.map(o => parseFloat(o.value.toFixed(2)));
         const labels = this.data.map(o => new Date(o.date));
 
         const element: HTMLCanvasElement = this.canvas.nativeElement;
@@ -45,20 +45,56 @@ export class ChartComponent implements OnChanges, AfterViewInit {
         element.width = this.el.nativeElement.offsetWidth;
         element.height = this.el.nativeElement.offsetHeight;
 
+        let data: any;
+        switch(this.type) {
+            case('bar'):
+                data = {
+                    'labels': labels,
+                    'datasets': [
+                        {
+                            'fill': false,
+                            'data': values,
+                            'label': this.label,
+                            'borderColor': values.map(o => this.rgba(this.color, 1)),
+                            'borderWidth': 1,
+                            'backgroundColor': this.rgba(this.color, 0.5)
+                        }
+                    ]
+                }
+                break;
+            case('line'):
+                data = {
+                    'labels': labels,
+                    'datasets': [
+                        {
+                            'data': values,
+                            'label': this.label,
+                            'borderColor': this.rgba(this.color, 1),
+                            'borderWidth': 2,
+                            'backgroundColor': 'transparent'
+                        }
+                    ]
+                };
+                break;
+            case('area'):
+                data = {
+                    'labels': labels,
+                    'datasets': [
+                        {
+                            'data': values,
+                            'label': this.label,
+                            'borderColor': this.rgba(this.color, 1),
+                            'borderWidth': 2,
+                            'backgroundColor': this.rgba(this.color, 0.5)
+                        }
+                    ]
+                };
+                break;
+        };
+
         this.chart = new Chart(element.getContext('2d'), {
-            'type': this.type,
-            'data': {
-                'labels': labels,
-                'datasets': [
-                    {
-                        'data': values,
-                        'label': this.label,
-                        'borderColor': this.rgba(this.color, 1),
-                        'borderWidth': 2,
-                        'backgroundColor': this.type == 'area' ? this.rgba(this.color, 0.5) : 'transparent'
-                    }
-                ]
-            },
+            'type': this.type == 'area' ? 'line' : this.type,
+            'data': data,
             'options': {
                 'legend': {
                     'display': false
@@ -79,7 +115,14 @@ export class ChartComponent implements OnChanges, AfterViewInit {
                                 'unit': 'day',
                             }
                         }
-                    ]
+                    ],
+                    'yAxes': [
+                        {
+                            'ticks': {
+                                'beginAtZero': true
+                            }
+                        }
+                    ],
                 },
                 'tooltips': {
                     'enabled': true
