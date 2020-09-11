@@ -23,6 +23,7 @@ export class WidgetDialog implements OnInit, OnDestroy {
         }),
         'query': new FormGroup({
             'range': new FormControl(this.widget.query.range, [Validators.required]),
+            'counter': new FormControl(this.widget.query.counter, [Validators.required]),
             'inputId': new FormControl(this.widget.query['inputId'], [Validators.required]),
             'deviceId': new FormControl(this.widget.query.deviceId, [Validators.required])
         }),
@@ -43,6 +44,7 @@ export class WidgetDialog implements OnInit, OnDestroy {
         },
         'query': {
             'range': '',
+            'counter': '',
             'inputId': '',
             'deviceId': ''
         },

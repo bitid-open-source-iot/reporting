@@ -1,10 +1,8 @@
 var Q = require('q');
-var dates = require('../lib/dates');
 var tools = require('../lib/tools');
-var ObjectId = require('mongodb').ObjectId;
 var telemetry = require('../lib/telemetry');
 var dalModule = require('../dal/dal');
-const { ErrorResponse } = require('../lib/error-response');
+var ErrorResponse = require('../lib/error-response').ErrorResponse;
 
 var module = function () {
 	var bllReports = {
@@ -87,26 +85,26 @@ var module = function () {
 						err.error.errors[0].code = 503;
 						err.error.errors[0].reason = "Display type not found!";
 						err.error.errors[0].message = "Display type not found!";
-						switch(args.req.body.type) {
-							case('map'):
+						switch (args.req.body.type) {
+							case ('map'):
 								break;
-							case('chart'):
+							case ('chart'):
 								args.params = telemetry.historical.inputs.data(args.req.body.query);
 								deferred.resolve(args);
 								break;
-							case('table'):
+							case ('table'):
 								break;
-							case('value'):
-								switch(args.req.body.value.expression) {
-									case('last-value'):
+							case ('value'):
+								switch (args.req.body.value.expression) {
+									case ('last-value'):
 										args.params = telemetry.historical.inputs.value.last(args.req.body.query);
 										deferred.resolve(args);
 										break;
-									case('first-value'):
+									case ('first-value'):
 										args.params = telemetry.historical.inputs.value.first(args.req.body.query);
 										deferred.resolve(args);
 										break;
-									case('predicted-value'):
+									case ('predicted-value'):
 										args.params = telemetry.historical.inputs.value.predict(args.req.body.query);
 										deferred.resolve(args);
 										break;
@@ -138,50 +136,56 @@ var module = function () {
 					var deferred = Q.defer();
 
 					try {
-						switch(args.req.body.type) {
-							case('map'):
+						switch (args.req.body.type) {
+							case ('map'):
 								break;
-							case('chart'):
+							case ('chart'):
 								break;
-							case('table'):
+							case ('table'):
 								break;
-							case('value'):
-								switch(args.req.body.value.expression) {
-									case('last-value'):
-									case('first-value'):
+							case ('value'):
+								switch (args.req.body.value.expression) {
+									case ('last-value'):
+									case ('first-value'):
 										args.result = args.result[0].value;
 										break;
-									case('predicted-value'):
+									case ('predicted-value'):
 										args.result = args.result.map(o => o.value);
 										var max = 0;
-										switch(args.req.body.query.range) {
-											case('current-day'):
-											case('previous-day'):
+										switch (args.req.body.query.range) {
+											case ('current-day'):
+											case ('previous-day'):
 												max = 24;
 												break;
-											case('current-week'):
-											case('previous-week'):
+											case ('current-week'):
+											case ('previous-week'):
 												max = 7;
 												break;
-											case('current-month'):
+											case ('current-month'):
 												max = new Date(new Date().getFullYear(), new Date().getMonth(), 0).getDate();
 												break;
-											case('previous-month'):
+											case ('previous-month'):
 												max = new Date(new Date().getFullYear(), new Date().getMonth() - 1, 0).getDate();
 												break;
-											case('current-year'):
-											case('previous-year'):
+											case ('current-year'):
+											case ('previous-year'):
 												max = 12;
 												break;
 										};
-										var total = args.result.reduce((a, b) => a + b);
-										var average = total / args.result.length;
-										args.result = average * max;
+										if (args.req.body.query.counter) {
+											var total = args.result.reduce((a, b) => a + b);
+											var average = total / args.result.length;
+											args.result = average * max;
+										} else {
+											var total = args.result.reduce((a, b) => a + b);
+											var average = total / args.result.length;
+											args.result = average;
+										};
 										break;
 								};
 								break;
 						};
-						
+
 						deferred.resolve(args);
 					} catch (error) {
 						var err = new ErrorResponse();

@@ -46,6 +46,7 @@ export interface Widget {
     };
     'query'?: {
         'range'?: string;
+        'counter'?: string;
         'inputId'?: string;
         'deviceId'?: string;
     };

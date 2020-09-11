@@ -127,6 +127,25 @@
                         {{ errors.query.range }}
                     </mat-error>
                 </mat-form-field>
+
+                <mat-form-field appearance="outline">
+                    <mat-label text-uppercase>
+                        counter
+                    </mat-label>
+                    
+                    <mat-select name="counter" placeholder="counter" formControlName="counter" required>
+                        <mat-option [value]="true">
+                            Is Counter
+                        </mat-option>
+                        <mat-option [value]="false">
+                            Not Counter
+                        </mat-option>
+                    </mat-select>
+    
+                    <mat-error *ngIf="errors.query.counter">
+                        {{ errors.query.counter }}
+                    </mat-error>
+                </mat-form-field>
             </section>
 
             <h2>
