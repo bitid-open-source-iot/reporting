@@ -20,7 +20,7 @@ export const environment = {
         { "url": "/drive/files/upload", "role": 4 },
 
         { "url": "/telemetry/devices/list", "role": 4 },
-        
+
         { "url": "/reporting/reports/add", "role": 4 },
         { "url": "/reporting/reports/get", "role": 4 },
         { "url": "/reporting/reports/data", "role": 4 },
@@ -29,6 +29,9 @@ export const environment = {
         { "url": "/reporting/reports/update", "role": 4 },
         { "url": "/reporting/reports/delete", "role": 4 },
         { "url": "/reporting/reports/unsubscribe", "role": 4 },
-        { "url": "/reporting/reports/updatesubscriber", "role": 4 }
+        { "url": "/reporting/reports/updatesubscriber", "role": 4 },
+
+        { "url": "/reporting/connectors/get", "role": 4 },
+        { "url": "/reporting/connectors/list", "role": 4 },
     ]
 };

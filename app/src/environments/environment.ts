@@ -4,7 +4,6 @@ export const environment = {
     "appId": "000000000000000000000002",
     "appName": "Reporting",
     "reporting": "http://127.0.0.1:2000",
-    // "reporting": "https://reporting.bitid.co.za",
     "telemetry": "https://telemetry.bitid.co.za",
     "production": false,
     "roles": [
@@ -30,6 +29,9 @@ export const environment = {
         { "url": "/reporting/reports/update", "role": 4 },
         { "url": "/reporting/reports/delete", "role": 4 },
         { "url": "/reporting/reports/unsubscribe", "role": 4 },
-        { "url": "/reporting/reports/updatesubscriber", "role": 4 }
+        { "url": "/reporting/reports/updatesubscriber", "role": 4 },
+
+        { "url": "/reporting/connectors/get", "role": 4 },
+        { "url": "/reporting/connectors/list", "role": 4 },
     ]
 };
