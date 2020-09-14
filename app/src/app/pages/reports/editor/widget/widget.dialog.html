@@ -221,6 +221,18 @@
                         {{ errors.chart.type }}
                     </mat-error>
                 </mat-form-field>
+
+                <mat-form-field appearance="outline">
+                    <mat-label text-uppercase>
+                        color
+                    </mat-label>
+                    
+                    <input matInput type="color" name="color" placeholder="color" formControlName="color" [required]="form.value.type == 'chart'">
+    
+                    <mat-error *ngIf="errors.chart.color">
+                        {{ errors.chart.color }}
+                    </mat-error>
+                </mat-form-field>
             </section>
 
             <h2 *ngIf="form.value.type == 'value'">
@@ -247,6 +259,18 @@
     
                     <mat-error *ngIf="errors.value.expression">
                         {{ errors.value.expression }}
+                    </mat-error>
+                </mat-form-field>
+
+                <mat-form-field appearance="outline">
+                    <mat-label text-uppercase>
+                        color
+                    </mat-label>
+                    
+                    <input matInput type="color" name="color" placeholder="color" formControlName="color" [required]="form.value.type == 'value'">
+    
+                    <mat-error *ngIf="errors.value.color">
+                        {{ errors.value.color }}
                     </mat-error>
                 </mat-form-field>
             </section>

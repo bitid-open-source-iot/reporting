@@ -1,5 +1,6 @@
 /* --- PAGES --- */
 import { ReportsPage } from './reports.page';
+import { ThemeDialog } from './editor/theme/theme.dialog';
 import { AddRowDialog } from './editor/add-row/add-row.dialog';
 import { WidgetDialog } from './editor/widget/widget.dialog';
 import { LinkWidgetDialog } from './editor/link/link.dialog';
@@ -70,6 +71,7 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
         MatButtonToggleModule
     ],
     declarations: [
+        ThemeDialog,
         ReportsPage,
         AddRowDialog,
         WidgetDialog,

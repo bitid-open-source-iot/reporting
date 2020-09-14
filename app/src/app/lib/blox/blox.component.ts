@@ -1,4 +1,4 @@
-import { Output, Component, ElementRef, EventEmitter, ViewEncapsulation } from '@angular/core';
+import { Input, Component, Renderer2, ElementRef, ViewEncapsulation } from '@angular/core';
 
 @Component({
     selector: 'blox',
@@ -11,7 +11,10 @@ export class BloxComponent {
     
     public element: HTMLElement;
 
-    constructor(el: ElementRef) {
+    @Input('background') public background: string;
+
+    constructor(private el: ElementRef, private renderer: Renderer2) {
+        this.renderer.setStyle(this.el.nativeElement, 'background', this.background);
         this.element = el.nativeElement;
     };
 

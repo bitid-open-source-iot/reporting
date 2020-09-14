@@ -34,6 +34,7 @@ export class ReportViewerPage implements OnInit, OnDestroy {
         const response = await this.service.get({
             'filter': [
                 'role',
+                'theme',
                 'layout',
                 'widgets',
                 'reporId',

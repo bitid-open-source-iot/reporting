@@ -1,5 +1,7 @@
+import { Theme } from 'src/app/interfaces/theme';
 import { ObjectId } from 'src/app/id';
 import { MatDialog } from '@angular/material/dialog';
+import { ThemeDialog } from './theme/theme.dialog';
 import { WidgetDialog } from './widget/widget.dialog';
 import { AddRowDialog } from './add-row/add-row.dialog';
 import { ToastService } from 'src/app/services/toast/toast.service';
@@ -34,6 +36,7 @@ export class ReportEditorPage implements OnInit, OnDestroy {
     };
     public layout: string = 'desktop';
     public report: Report = {
+        'theme': {},
         'layout': {
             'mobile': {
                 'rows': []
@@ -93,6 +96,7 @@ export class ReportEditorPage implements OnInit, OnDestroy {
         const response = await this.service.get({
             'filter': [
                 'role',
+                'theme',
                 'layout',
                 'widgets',
                 'reporId',
@@ -103,6 +107,7 @@ export class ReportEditorPage implements OnInit, OnDestroy {
 
         if (response.ok) {
             this.report.role = response.result.role;
+            this.report.theme = response.result.theme;
             this.report.reportId = response.result.reportId;
             this.report.description = response.result.description;
             if (Array.isArray(response.result.widgets)) {
@@ -117,6 +122,37 @@ export class ReportEditorPage implements OnInit, OnDestroy {
         };
 
         this.loading = false;
+    };
+
+    public async EditTheme() {
+        const dialog = await this.dialog.open(ThemeDialog, {
+            'data': this.report.theme,
+            'panelClass': 'fullscreen-dialog',
+            'disableClose': true
+        });
+
+        await dialog.afterClosed().subscribe(async (result: Theme) => {
+            if (result) {
+                this.report.theme = result;
+                this.report.layout.mobile.rows.map(row => {
+                    row.columns.map(column => {
+                        column.style.background = this.report.theme.column;
+                    });
+                });
+                this.report.layout.tablet.rows.map(row => {
+                    row.columns.map(column => {
+                        column.style.background = this.report.theme.column;
+                    });
+                });
+                this.report.layout.desktop.rows.map(row => {
+                    row.columns.map(column => {
+                        column.style.background = this.report.theme.column;
+                    });
+                });
+                this.save('theme', this.report.theme);
+                this.save('layout', this.report.layout);
+            };
+        });
     };
 
     public async save(key, value) {

@@ -24,7 +24,7 @@
 
 <mat-progress-bar mode="indeterminate" color="accent" *ngIf="loading"></mat-progress-bar>
 
-<div class="page-body editor">
+<div class="page-body editor" [style.background]="report.theme.board">
     <div class="widgets">
         <header>
             widgets
@@ -54,9 +54,17 @@
     </div>
 
     <div class="dashboard">
-        <blox class="bound-rows" [class]="layout" cdkDropList (cdkDropListDropped)="DropRow($event)" (mouseup)="FinishResizing($event)" (mousemove)="DoResizing($event)">
+        <mat-toolbar>
+            <div class="spacer"></div>
+
+            <button mat-icon-button matTooltip="Board Theme" (click)="EditTheme()">
+                <mat-icon svgIcon="theme"></mat-icon>
+            </button>
+        </mat-toolbar>
+
+        <blox class="bound-rows" [class]="layout" cdkDropList (cdkDropListDropped)="DropRow($event)" (mouseup)="FinishResizing($event)" (mousemove)="DoResizing($event)" [background]="report.theme.board">
             <row *ngFor="let row of report.layout[layout].rows" class="bound-columns" [height]="row.style.height" [background]="row.style.background" cdkDragBoundary=".bound-rows"  cdkDragLockAxis="y" cdkDrag cdkDropList (cdkDropListDropped)="DropColumn(row.columns, $event)" [cdkDragDisabled]="resizing">
-                <mat-icon class="drag-handle" svgIcon="drag" cdkDragHandle></mat-icon>
+                <mat-icon class="drag-handle" svgIcon="drag" [style.color]="report.theme.color" cdkDragHandle></mat-icon>
         
                 <column *ngFor="let column of row.columns; let i = index" [width]="column.style.width" [style.color]="column.style.color" [background]="column.style.background" cdkDragBoundary=".bound-columns"  cdkDragLockAxis="x" cdkDrag [cdkDragDisabled]="resizing">
                     <column-label *ngIf="column.widgetId">
@@ -69,7 +77,7 @@
                     
                     <div class="options">
                         <button mat-icon-button matTooltip="Link Widget" (click)="link(row, column)">
-                            <mat-icon svgIcon="data"></mat-icon>
+                            <mat-icon [style.color]="report.theme.color" svgIcon="data"></mat-icon>
                         </button>
         
                         <button mat-icon-button matTooltip="Remove Column" color="warn" (click)="remove(row, column.columnId)">
@@ -86,8 +94,8 @@
             </row>
         
             <row height="100">
-                <column class="add" width="100" background="#FFF" matRipple matTooltip="Add Row" (click)="add()">
-                    <mat-icon>
+                <column class="add" width="100" [style.background]="report.theme.column" matRipple matTooltip="Add Row" (click)="add()">
+                    <mat-icon [style.color]="report.theme.color">
                         add
                     </mat-icon>
                 </column>

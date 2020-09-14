@@ -28,9 +28,11 @@ export class WidgetDialog implements OnInit, OnDestroy {
             'deviceId': new FormControl(this.widget.query.deviceId, [Validators.required])
         }),
         'chart': new FormGroup({
-            'type': new FormControl(this.widget.chart.type)
+            'type': new FormControl(this.widget.chart.type),
+            'color': new FormControl(this.widget.chart.color)
         }),
         'value': new FormGroup({
+            'color': new FormControl(this.widget.chart.color),
             'expression': new FormControl(this.widget.value.expression)
         }),
         'type': new FormControl(this.widget.type, [Validators.required]),
@@ -49,9 +51,11 @@ export class WidgetDialog implements OnInit, OnDestroy {
             'deviceId': ''
         },
         'chart': {
-            'type': ''
+            'type': '',
+            'color': ''
         },
         'value': {
+            'color': '',
             'expression': ''
         },
         'type': '',
@@ -115,10 +119,14 @@ export class WidgetDialog implements OnInit, OnDestroy {
             case('chart'):
                 chart.controls['type'].setValidators([Validators.required]);
                 chart.controls['type'].updateValueAndValidity();
+                chart.controls['color'].setValidators([Validators.required]);
+                chart.controls['color'].updateValueAndValidity();
                 break;
             case('table'):
                 break;
             case('value'):
+                value.controls['color'].setValidators([Validators.required]);
+                value.controls['color'].updateValueAndValidity();
                 value.controls['expression'].setValidators([Validators.required]);
                 value.controls['expression'].updateValueAndValidity();
                 break;

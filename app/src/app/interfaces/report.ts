@@ -1,4 +1,5 @@
 import { User } from './user';
+import { Theme } from './theme';
 
 export interface Report {
     'layout'?: {
@@ -14,8 +15,9 @@ export interface Report {
     };
     'role'?: number;
     'users'?: User[];
+    'theme'?: Theme;
     'widgets'?: Widget[];
-    'reportId'?: number;
+    'reportId'?: string;
     'description'?: string;
 }
 
@@ -52,7 +54,7 @@ export interface Widget {
     };
     'chart'?: {
         'type'?: string;
-        'query'?: any;
+        'color'?: string;
     };
     'value'?: {
         'expression'?: string;

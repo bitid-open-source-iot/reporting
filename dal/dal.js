@@ -31,6 +31,7 @@ var module = function () {
 				},
 				'url': args.req.body.url,
 				'type': args.req.body.type,
+				'theme': args.req.body.theme || {},
 				'layout': args.req.body.layout,
 				'widgets': args.req.body.widgets || [],
 				'serverDate': new Date(),
@@ -302,6 +303,9 @@ var module = function () {
 			};
 			if (typeof (args.req.body.type) != 'undefined') {
 				update.$set.type = args.req.body.type;
+			};
+			if (typeof (args.req.body.theme) != 'undefined' && args.req.body.theme != null && args.req.body.theme != '') {
+				update.$set.theme = args.req.body.theme;
 			};
 			if (typeof (args.req.body.layout) != 'undefined' && args.req.body.layout != null && args.req.body.layout != '') {
 				update.$set.layout = args.req.body.layout;

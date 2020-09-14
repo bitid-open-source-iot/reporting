@@ -49,6 +49,12 @@ export class ReportsPage implements OnInit, OnDestroy {
                     'rows': []
                 }
             },
+            'theme': {
+                'name': 'dark',
+                'color': 'rgba(255, 255, 255, 1)',
+                'board': 'rgba(0, 0, 0, 1)',
+                'column': 'rgba(255, 255, 255, 1)'
+            },
             'type': 'dashboard',
             'widgets': [],
             'description': 'Untitled Report'

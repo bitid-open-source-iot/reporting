@@ -1,4 +1,5 @@
 import { Chart } from 'chart.js';
+import * as moment from 'moment';
 import { Input, Component, OnChanges, ViewChild, ElementRef, AfterViewInit } from '@angular/core';
 
 @Component({
@@ -38,7 +39,8 @@ export class ChartComponent implements OnChanges, AfterViewInit {
 
     ngAfterViewInit(): void {
         const values = this.data.map(o => parseFloat(o.value.toFixed(2)));
-        const labels = this.data.map(o => new Date(o.date));
+        const labels = this.data.map(o => moment(o.date).format('YYYY/MM/DD HH:mm'));
+        // const labels = this.data.map(o => new Date(o.date));
 
         const element: HTMLCanvasElement = this.canvas.nativeElement;
 
@@ -110,10 +112,7 @@ export class ChartComponent implements OnChanges, AfterViewInit {
                 'scales': {
                     'xAxes': [
                         {
-                            'type': 'time',
-                            'time': {
-                                'unit': 'day',
-                            }
+                            'display': false,
                         }
                     ],
                     'yAxes': [
@@ -122,7 +121,7 @@ export class ChartComponent implements OnChanges, AfterViewInit {
                                 'beginAtZero': true
                             }
                         }
-                    ],
+                    ]
                 },
                 'tooltips': {
                     'enabled': true

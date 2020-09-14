@@ -16,7 +16,7 @@
 
 <mat-progress-bar mode="indeterminate" color="accent" *ngIf="loading"></mat-progress-bar>
 
-<div id="dashboard" class="page-body" *ngIf="layout && report && !loading">
+<div id="dashboard" class="page-body" *ngIf="layout && report && !loading" [style.color]="report.theme.color" [style.background]="report.theme.board">
     <blox>
         <row *ngFor="let row of report.layout[layout].rows" [height]="row.style.height" [background]="row.style.background">
             <column *ngFor="let column of row.columns" [width]="column.style.width" [style.color]="column.style.color" [background]="column.style.background">
@@ -25,12 +25,12 @@
                 </column-label>
 
                 <column-content *ngIf="column.widget">
-                    <h1 class="value" *ngIf="column.widget && column.widget.type == 'value'">
+                    <h1 class="value" *ngIf="column.widget && column.widget.type == 'value'" [style.color]="column.widget.value.color">
                         {{ column.widget.data }}
                     </h1>
                 </column-content>
                     
-                <chart *ngIf="column.widget && column.widget.type == 'chart'" [type]="column.widget.chart.type" [data]="column.widget.data" [label]="column.widget.label.value"></chart>
+                <chart *ngIf="column.widget && column.widget.type == 'chart'" [type]="column.widget.chart.type" [data]="column.widget.data" [color]="column.widget.chart.color" [label]="column.widget.label.value"></chart>
             </column>
         </row>
     </blox>
