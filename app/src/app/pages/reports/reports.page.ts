@@ -80,7 +80,8 @@ export class ReportsPage implements OnInit, OnDestroy {
                 'role',
                 'reportId',
                 'description'
-            ]
+            ],
+            'type': 'dashboard'
         });
 
         this.loading = false;

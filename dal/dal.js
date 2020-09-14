@@ -110,8 +110,18 @@ var module = function () {
 					params._id = {
 						$in: args.req.body.reportId.map(id => ObjectId(id))
 					};
-				} else {
+				} else if (typeof (args.req.body.reportId) == 'string' && args.req.body.reportId.length == 24) {
 					params._id = ObjectId(args.req.body.reportId);
+				};
+			};
+
+			if (typeof (args.req.body.type) != 'undefined') {
+				if (Array.isArray(args.req.body.type) && args.req.body.type.length > 0) {
+					params.type = {
+						$in: args.req.body.type
+					};
+				} else if (typeof (args.req.body.type) == 'string') {
+					params.type = args.req.body.type;
 				};
 			};
 
