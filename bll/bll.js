@@ -142,12 +142,13 @@ var module = function () {
 							case ('chart'):
 								if (args.req.body.query.counter) {
 									var result = [];
-									args.result.sort((a, b) => {
-										const value = b.value - a.value
-										b.value = value;
-										result.push(b);
-										return 0;
-									});
+									for (let i = 0; i < args.result.length; i++) {
+										if (i + 1 < args.result.length) {
+											var value = args.result[i + 1].value = args.result[i].value;
+											args.result[i + 1].value = value;
+											result.push(args.result[i]);
+										};
+									};
 									args.result = result;
 								};
 								break;
