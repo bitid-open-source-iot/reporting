@@ -141,13 +141,13 @@ var module = function () {
 								break;
 							case ('chart'):
 								if (args.req.body.query.counter) {
-									var step = args.result[0].value;
-									args.result = args.result.map(row => {
-										delete row._id;
-										row.value =  row.value - step
-										step = row.value;
-										return row;
+									var result = [];
+									args.result.sort((a, b) => {
+										b.value = b.value - a.value
+										result.push(b);
+										return 0;
 									});
+									args.result = result;
 								};
 								break;
 							case ('table'):
