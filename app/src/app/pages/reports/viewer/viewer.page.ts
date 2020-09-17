@@ -119,6 +119,16 @@ export class ReportViewerPage implements OnInit, OnDestroy {
             'to': new Date(),
             'from': new Date()
         };
+        date.to.setHours(23);
+        date.to.setMinutes(59);
+        date.to.setSeconds(59);
+        date.to.setMilliseconds(999);
+
+        date.from.setHours(0);
+        date.from.setMinutes(0);
+        date.from.setSeconds(0);
+        date.from.setMilliseconds(0);
+
         const range = [this.period.tense, this.period.frame].join('-');
         switch (range) {
             case('current-day'):
