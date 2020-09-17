@@ -90,7 +90,6 @@ var module = function () {
 								break;
 							case ('chart'):
 								args.params = telemetry.historical.inputs.data(args.req.body.query);
-								console.log("QUERY: ", JSON.stringify(args.params));
 								deferred.resolve(args);
 								break;
 							case ('table'):
@@ -144,8 +143,9 @@ var module = function () {
 								if (args.req.body.query.counter) {
 									var result = [];
 									args.result.sort((a, b) => {
-										b.value = b.value - a.value
-										result.push(b);
+										const value = b.value - a.value
+										a.value = value;
+										result.push(a);
 										return 0;
 									});
 									args.result = result;
