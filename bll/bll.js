@@ -144,8 +144,8 @@ var module = function () {
 									var result = [];
 									args.result.sort((a, b) => {
 										const value = b.value - a.value
-										a.value = value;
-										result.push(a);
+										b.value = value;
+										result.push(b);
 										return 0;
 									});
 									args.result = result;
