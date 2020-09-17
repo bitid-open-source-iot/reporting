@@ -324,3 +324,27 @@ mat-list {
         margin: 0px 5px;
     }
 }
+.dashboard-select {
+    color: #FFF !important;
+    margin: 2.5px;
+    border: 2px solid #FFF !important;
+    padding: 0px 10px;
+    max-width: 300px;
+    font-size: 12px;
+    font-weight: 500;
+    border-radius: 4px;
+    text-transform: uppercase !important;
+    background-color: #000 !important;
+    .mat-select-value {
+        color: #FFF !important;
+        align-items: center;
+        justify-content: center;
+    }
+    .mat-select-trigger {
+        height: 40px !important;
+        line-height: 40px !important;
+    }
+    .mat-select-arrow {
+        color: #FFF !important;
+    }
+}

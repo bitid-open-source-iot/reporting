@@ -1,3 +1,10 @@
+.filter {
+    padding: 2.5px;
+    display: flex;
+    align-items: center;
+    flex-direction: row;
+    justify-content: center;
+}
 iframe {
     width: 1000px;
     border: 0;

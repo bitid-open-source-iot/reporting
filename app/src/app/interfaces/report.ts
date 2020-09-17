@@ -49,6 +49,10 @@ export interface Widget {
         'visable'?: boolean;
     };
     'query'?: {
+        'date'?: {
+            'to'?: Date;
+            'from'?: Date;
+        };
         'range'?: string;
         'counter'?: string;
         'inputId'?: string;

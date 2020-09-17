@@ -12,8 +12,10 @@ export class ChartComponent implements OnChanges, AfterViewInit {
 
     @Input('data') private data: any[] = [];
     @Input('type') private type: string = 'bar';
+    @Input('units') private units: string = '';
     @Input('label') private label: string = '';
-    @Input('color') private color: string = '#2196F3';
+    @Input('color') private color: string = '#000000';
+    @Input('background') private background: string = '#2196F3';
     @ViewChild('canvas', { 'static': true }) private canvas: ElementRef;
 
     constructor(private el: ElementRef) { };
@@ -57,9 +59,9 @@ export class ChartComponent implements OnChanges, AfterViewInit {
                             'fill': false,
                             'data': values,
                             'label': this.label,
-                            'borderColor': values.map(o => this.rgba(this.color, 1)),
+                            'borderColor': values.map(o => this.rgba(this.background, 1)),
                             'borderWidth': 1,
-                            'backgroundColor': this.rgba(this.color, 0.5)
+                            'backgroundColor': this.rgba(this.background, 0.5)
                         }
                     ]
                 }
@@ -71,7 +73,7 @@ export class ChartComponent implements OnChanges, AfterViewInit {
                         {
                             'data': values,
                             'label': this.label,
-                            'borderColor': this.rgba(this.color, 1),
+                            'borderColor': this.rgba(this.background, 1),
                             'borderWidth': 2,
                             'backgroundColor': 'transparent'
                         }
@@ -85,9 +87,9 @@ export class ChartComponent implements OnChanges, AfterViewInit {
                         {
                             'data': values,
                             'label': this.label,
-                            'borderColor': this.rgba(this.color, 1),
+                            'borderColor': this.rgba(this.background, 1),
                             'borderWidth': 2,
-                            'backgroundColor': this.rgba(this.color, 0.5)
+                            'backgroundColor': this.rgba(this.background, 0.5)
                         }
                     ]
                 };
@@ -113,18 +115,23 @@ export class ChartComponent implements OnChanges, AfterViewInit {
                     'xAxes': [
                         {
                             'display': false,
+                            'fontColor': this.color
                         }
                     ],
                     'yAxes': [
                         {
                             'ticks': {
-                                'beginAtZero': true
+                                'beginAtZero': true,
+                                'fontColor': this.color
                             }
                         }
                     ]
                 },
                 'tooltips': {
-                    'enabled': true
+                    'enabled': true,
+                    'callbacks': {
+                        label: (item) => ([this.label, ': ', item.value, ' ', this.units].join(''))
+                    }
                 }
             }
         });

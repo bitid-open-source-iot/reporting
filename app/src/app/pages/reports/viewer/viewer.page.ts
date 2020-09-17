@@ -24,6 +24,10 @@ export class ReportViewerPage implements OnInit, OnDestroy {
         this.SetLayout();
     };
 
+    public period: any = {
+        'tense': 'current',
+        'frame': 'month'
+    };
     public layout: string;
     public report: Report = {
         'theme': {
@@ -108,10 +112,57 @@ export class ReportViewerPage implements OnInit, OnDestroy {
         };
     };
 
-    private async load() {
+    public async load() {
         this.loading = true;
 
+        const date = {
+            'to': new Date(),
+            'from': new Date()
+        };
+        const range = [this.period.tense, this.period.frame].join('-');
+        switch (range) {
+            case('current-day'):
+                break;
+            case('previous-day'):
+                date.to.setDate(date.to.getDate() - 1);
+                date.from.setDate(date.from.getDate() - 1);
+                break;
+            case('current-week'):
+                date.to.setDate(date.to.getDate() - date.to.getDay() + 7);
+                date.from.setDate(date.from.getDate() - date.from.getDay() + 1);
+                break;
+            case('previous-week'):
+                date.to.setDate(date.to.getDate() - date.to.getDay());
+                date.from.setDate(date.from.getDate() - date.from.getDay() - 6);
+                break;
+            case('current-month'):
+                date.to.setDate(new Date(date.to.getFullYear(), date.to.getMonth() + 1, 0).getDate());
+                date.from.setDate(1);
+                break;
+            case('previous-month'):
+                date.to.setMonth(date.to.getMonth() - 1);
+                date.from.setMonth(date.from.getMonth() - 1);
+                date.to.setDate(new Date(date.to.getFullYear(), date.to.getMonth() + 1, 0).getDate());
+                date.from.setDate(1);
+                break;
+            case('current-year'):
+                date.to.setMonth(11);
+                date.from.setMonth(0);
+                date.to.setDate(new Date(date.to.getFullYear(), date.to.getMonth() + 1, 0).getDate());
+                date.from.setDate(1);
+                break;
+            case('previous-year'):
+                date.to.setFullYear(date.to.getFullYear() - 1);
+                date.from.setFullYear(date.from.getFullYear() - 1);
+                date.to.setMonth(11);
+                date.from.setMonth(0);
+                date.to.setDate(new Date(date.to.getFullYear(), date.to.getMonth() + 1, 0).getDate());
+                date.from.setDate(1);
+                break;
+        };
+
         await this.report.widgets.reduce(async (promise, widget, index) => {
+            widget.query.date = date
             const response = await this.service.load(widget);
             if (response.ok) {
                 widget.data = response.result;

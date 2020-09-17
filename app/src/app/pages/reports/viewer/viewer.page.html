@@ -21,6 +21,32 @@
 </div>
 
 <div id="dashboard" class="page-body" *ngIf="layout && report && !loading && report.type == 'dashboard'" [style.color]="report.theme.color" [style.background]="report.theme.board">
+    <div class="filter" [style.color]="report.theme.color" [style.background]="report.theme.column">
+        <mat-select class="dashboard-select" [(ngModel)]="period.tense" (ngModelChange)="load()">
+            <mat-option value="current">
+                CURRENT
+            </mat-option>
+            <mat-option value="previous">
+                PREVIOUS
+            </mat-option>
+        </mat-select>
+
+        <mat-select class="dashboard-select" [(ngModel)]="period.frame" (ngModelChange)="load()">
+            <mat-option value="day">
+                DAY
+            </mat-option>
+            <mat-option value="week">
+                WEEK
+            </mat-option>
+            <mat-option value="month">
+                MONTH
+            </mat-option>
+            <mat-option value="year">
+                YEAR
+            </mat-option>
+        </mat-select>
+    </div>
+
     <blox>
         <row *ngFor="let row of report.layout[layout].rows" [height]="row.style.height" [background]="row.style.background">
             <column *ngFor="let column of row.columns" [width]="column.style.width" [style.color]="column.style.color" [background]="column.style.background">
@@ -34,7 +60,7 @@
                     </h1>
                 </column-content>
                     
-                <chart *ngIf="column.widget && column.widget.type == 'chart'" [type]="column.widget.chart.type" [data]="column.widget.data" [color]="column.widget.chart.color" [label]="column.widget.label.value"></chart>
+                <chart *ngIf="column.widget && column.widget.type == 'chart'" [type]="column.widget.chart.type" [data]="column.widget.data" units="kl" [color]="column.style.color" [background]="column.widget.chart.color" [label]="column.widget.label.value"></chart>
             </column>
         </row>
     </blox>
