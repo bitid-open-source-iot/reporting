@@ -1,13 +1,13 @@
 iframe {
-    width:      1000px;
-    border:     0;
-    height:     calc(100% - 56px);
-    margin:     auto;
-    display:    block;
+    width: 1000px;
+    border: 0;
+    height: 100%;
+    margin: auto;
+    display: block;
 }
 @media screen and (max-width: 1000px) {
     iframe {
-        width:  100%;
+        width: 100%;
     }
 }
 mat-toolbar img {
