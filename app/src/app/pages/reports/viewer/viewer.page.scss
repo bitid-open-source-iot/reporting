@@ -1,3 +1,15 @@
+iframe {
+    width:      1000px;
+    border:     0;
+    height:     calc(100% - 56px);
+    margin:     auto;
+    display:    block;
+}
+@media screen and (max-width: 1000px) {
+    iframe {
+        width:  100%;
+    }
+}
 mat-toolbar img {
     width: 45px;
     height: 45px;

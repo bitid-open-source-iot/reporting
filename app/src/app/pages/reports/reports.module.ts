@@ -17,6 +17,7 @@ import { CommonModule } from '@angular/common';
 import { SearchModule } from 'src/app/components/search/search.module';
 import { MatListModule } from '@angular/material/list';
 import { MatIconModule } from '@angular/material/icon';
+import { MatMenuModule } from '@angular/material/menu';
 import { MatInputModule } from '@angular/material/input';
 import { DragDropModule } from '@angular/cdk/drag-drop';
 import { MatSelectModule } from '@angular/material/select';
@@ -48,6 +49,7 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
         DeleteModule,
         SearchModule,
         MatIconModule,
+        MatMenuModule,
         MatListModule,
         DragDropModule,
         MatInputModule,

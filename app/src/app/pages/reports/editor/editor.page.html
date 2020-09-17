@@ -5,38 +5,80 @@
         </mat-icon>
     </button>
 
-    <div class="spacer">
+    <div class="page-label spacer" *ngIf="report.type == 'ds'">
+        data studio editor
+    </div>
+
+    <div class="spacer" *ngIf="report.type == 'dashboard'">
         <input matInput type="text" [(ngModel)]="report.description" (blur)="save('description', report.description)" required *ngIf="!loading">
     </div>
 
-    <button mat-icon-button matTooltip="Mobile View" [class.selected]="layout == 'mobile'" (click)="layout = 'mobile'">
+    <button mat-icon-button matTooltip="Mobile View" [class.selected]="layout == 'mobile'" (click)="layout = 'mobile'" *ngIf="report.type == 'dashboard'">
         <mat-icon svgIcon="mobile"></mat-icon>
     </button>
 
-    <button mat-icon-button matTooltip="Tablet View" [class.selected]="layout == 'tablet'" (click)="layout = 'tablet'">
+    <button mat-icon-button matTooltip="Tablet View" [class.selected]="layout == 'tablet'" (click)="layout = 'tablet'" *ngIf="report.type == 'dashboard'">
         <mat-icon svgIcon="tablet"></mat-icon>
     </button>
 
-    <button mat-icon-button matTooltip="Desktop View" [class.selected]="layout == 'desktop'" (click)="layout = 'desktop'">
+    <button mat-icon-button matTooltip="Desktop View" [class.selected]="layout == 'desktop'" (click)="layout = 'desktop'" *ngIf="report.type == 'dashboard'">
         <mat-icon svgIcon="desktop"></mat-icon>
+    </button>
+
+    <div class="dot" *ngIf="report.type == 'dashboard'"></div>
+
+    <button mat-icon-button matTooltip="Board Theme" (click)="EditTheme()" *ngIf="report.type == 'dashboard'">
+        <mat-icon svgIcon="theme"></mat-icon>
     </button>
 </mat-toolbar>
 
 <mat-progress-bar mode="indeterminate" color="accent" *ngIf="loading"></mat-progress-bar>
 
-<div class="page-body editor" [style.background]="report.theme.board">
-    <div class="widgets">
-        <header>
+<div class="page-body" *ngIf="report.type == 'ds'">
+    <form [formGroup]="form" (ngSubmit)="!form.invalid && !loading && update()">
+        <mat-form-field appearance="outline">
+            <mat-label text-uppercase>
+                data studio url
+            </mat-label>
+            
+            <input matInput type="url" name="url" placeholder="data studio url" formControlName="url" required>
+    
+            <mat-error *ngIf="errors.url">
+                {{ errors.url }}
+            </mat-error>
+        </mat-form-field>
+    
+        <mat-form-field appearance="outline">
+            <mat-label text-uppercase>
+                description
+            </mat-label>
+            
+            <input matInput type="text" name="description" placeholder="description" formControlName="description" required>
+    
+            <mat-error *ngIf="errors.description">
+                {{ errors.description }}
+            </mat-error>
+        </mat-form-field>
+    
+        <button type="submit" mat-flat-button color="primary">
+            submit
+        </button>
+    </form>
+</div>
+
+<div class="page-body editor" [style.background]="report.theme.board" *ngIf="report.type == 'dashboard'">
+    <div class="widgets" [style.background]="report.theme.column">
+        <header [style.color]="report.theme.color">
             widgets
         </header>
 
-        <div class="widget" *ngFor="let widget of report.widgets">
-            <label [for]="widget.label.value">
+        <div class="widget" *ngFor="let widget of report.widgets" [style.background]="report.theme.board">
+            <label [for]="widget.label.value" [style.color]="report.theme.color">
                 {{ widget.label.value }}
             </label>
 
             <div class="options">
-                <button mat-icon-button matTooltip="Edit Widget" (click)="EditWidget('edit', widget)">
+                <button mat-icon-button matTooltip="Edit Widget" (click)="EditWidget('edit', widget)" [style.color]="report.theme.color">
                     <mat-icon svgIcon="edit"></mat-icon>
                 </button>
 
@@ -46,27 +88,19 @@
             </div>
         </div>
 
-        <div class="widget" matRipple matTooltip="Add Widget" (click)="EditWidget('add')">
-            <mat-icon>
+        <div class="widget" matRipple matTooltip="Add Widget" (click)="EditWidget('add')" [style.background]="report.theme.board">
+            <mat-icon [style.color]="report.theme.color">
                 add
             </mat-icon>
         </div>
     </div>
 
     <div class="dashboard">
-        <mat-toolbar>
-            <div class="spacer"></div>
-
-            <button mat-icon-button matTooltip="Board Theme" (click)="EditTheme()">
-                <mat-icon svgIcon="theme"></mat-icon>
-            </button>
-        </mat-toolbar>
-
         <blox class="bound-rows" [class]="layout" cdkDropList (cdkDropListDropped)="DropRow($event)" (mouseup)="FinishResizing($event)" (mousemove)="DoResizing($event)" [background]="report.theme.board">
-            <row *ngFor="let row of report.layout[layout].rows" class="bound-columns" [height]="row.style.height" [background]="row.style.background" cdkDragBoundary=".bound-rows"  cdkDragLockAxis="y" cdkDrag cdkDropList (cdkDropListDropped)="DropColumn(row.columns, $event)" [cdkDragDisabled]="resizing">
+            <row *ngFor="let row of report.layout[layout].rows | orderBy : 'position'" class="bound-columns" [height]="row.style.height" [background]="row.style.background" cdkDragBoundary=".bound-rows"  cdkDragLockAxis="y" cdkDrag cdkDropList  [cdkDragDisabled]="resizing">
                 <mat-icon class="drag-handle" svgIcon="drag" [style.color]="report.theme.color" cdkDragHandle></mat-icon>
         
-                <column *ngFor="let column of row.columns; let i = index" [width]="column.style.width" [style.color]="column.style.color" [background]="column.style.background" cdkDragBoundary=".bound-columns"  cdkDragLockAxis="x" cdkDrag [cdkDragDisabled]="resizing">
+                <column *ngFor="let column of row.columns | orderBy : 'position'; let i = index" [width]="column.style.width" [style.color]="column.style.color" [background]="column.style.background">
                     <column-label *ngIf="column.widgetId">
                         {{ GetWidgetLabel(column.widgetId) }}
                     </column-label>

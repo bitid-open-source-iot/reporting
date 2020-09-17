@@ -6,7 +6,7 @@ import { ToastService } from 'src/app/services/toast/toast.service';
 import { ReportsService } from 'src/app/services/reports/reports.service';
 import { ActivatedRoute } from '@angular/router';
 import { HistoryService } from 'src/app/services/history/history.service';
-import { OnInit, Component, OnDestroy, HostListener } from '@angular/core';
+import { OnInit, Component, OnDestroy, ViewChild, ElementRef, HostListener } from '@angular/core';
 
 @Component({
     selector: 'app-report-viewer-page',
@@ -16,6 +16,8 @@ import { OnInit, Component, OnDestroy, HostListener } from '@angular/core';
 
 export class ReportViewerPage implements OnInit, OnDestroy {
 
+    @ViewChild('frame', {'static': true}) private frame: ElementRef;
+
     constructor(private route: ActivatedRoute, private toast: ToastService, public history: HistoryService, private service: ReportsService) { };
 
     @HostListener('window:resize', ['$event']) function() {
@@ -23,7 +25,26 @@ export class ReportViewerPage implements OnInit, OnDestroy {
     };
 
     public layout: string;
-    public report: Report;
+    public report: Report = {
+        'theme': {
+            'name': 'dark',
+            'color': 'rgba(255, 255, 255, 1)',
+            'board': 'rgba(0, 0, 0, 1)',
+            'column': 'rgba(255, 255, 255, 0.25)'
+        },
+        'layout': {
+            'mobile': {
+                'rows': []
+            },
+            'tablet': {
+                'rows': []
+            },
+            'desktop': {
+                'rows': []
+            }
+        },
+        'widgets': []
+    };
     public loading: boolean;
     public reportId: string;
     private subscriptions: any = {};
@@ -33,6 +54,8 @@ export class ReportViewerPage implements OnInit, OnDestroy {
 
         const response = await this.service.get({
             'filter': [
+                'url',
+                'type',
                 'role',
                 'theme',
                 'layout',
@@ -45,6 +68,10 @@ export class ReportViewerPage implements OnInit, OnDestroy {
 
         if (response.ok) {
             this.report = response.result;
+
+            if (this.report.type == 'ds') {
+                this.frame.nativeElement.src = this.report.url;
+            };
 
             this.report.layout.mobile.rows.map(row => {
                 row.columns.map(column => {

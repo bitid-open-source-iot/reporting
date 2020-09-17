@@ -9,14 +9,18 @@
         {{ loading ? 'report viewer loading' : report.description }}
     </div>
 
-    <button mat-icon-button class="menu-toggle" (click)="download()">
+    <button mat-icon-button class="menu-toggle" (click)="download()" disabled *ngIf="report && report.type == 'dashboard'">
         <mat-icon svgIcon="download"></mat-icon>
     </button>
 </mat-toolbar>
 
 <mat-progress-bar mode="indeterminate" color="accent" *ngIf="loading"></mat-progress-bar>
 
-<div id="dashboard" class="page-body" *ngIf="layout && report && !loading" [style.color]="report.theme.color" [style.background]="report.theme.board">
+<div class="page-body">
+    <iframe #frame src="" frameborder="0" allowfullscreen [hidden]="!report && loading && report.type == 'dashboard'"></iframe>
+</div>
+
+<div id="dashboard" class="page-body" *ngIf="layout && report && !loading && report.type == 'dashboard'" [style.color]="report.theme.color" [style.background]="report.theme.board">
     <blox>
         <row *ngFor="let row of report.layout[layout].rows" [height]="row.style.height" [background]="row.style.background">
             <column *ngFor="let column of row.columns" [width]="column.style.width" [style.color]="column.style.color" [background]="column.style.background">

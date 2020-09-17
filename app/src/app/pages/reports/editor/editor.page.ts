@@ -12,7 +12,9 @@ import { HistoryService } from 'src/app/services/history/history.service';
 import { Report, Widget } from 'src/app/interfaces/report';
 import { LinkWidgetDialog } from './link/link.dialog';
 import { CdkDragDrop, moveItemInArray } from '@angular/cdk/drag-drop';
+import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { OnInit, Component, OnDestroy, ViewChild } from '@angular/core';
+import { FormErrorService } from 'src/app/services/form-error/form-error.service';
 
 @Component({
     selector: 'app-report-editor-page',
@@ -24,9 +26,13 @@ export class ReportEditorPage implements OnInit, OnDestroy {
 
     @ViewChild(BloxComponent, {'static': true}) private blox: BloxComponent;
 
-    constructor(private route: ActivatedRoute, private dialog: MatDialog, private toast: ToastService, public history: HistoryService, private service: ReportsService) { };
+    constructor(private route: ActivatedRoute, private dialog: MatDialog, private toast: ToastService, public history: HistoryService, private service: ReportsService, private formerror: FormErrorService) { };
 
     public row: any;
+    public form: FormGroup = new FormGroup({
+        'url': new FormControl(''),
+        'description': new FormControl('')
+    });
     public rows: any[] = [];
     public mode: string;
     public axis: string;
@@ -34,9 +40,18 @@ export class ReportEditorPage implements OnInit, OnDestroy {
         'x': 0,
         'y': 0
     };
+    public errors: any = {
+        'url': '',
+        'description': ''
+    };
     public layout: string = 'desktop';
     public report: Report = {
-        'theme': {},
+        'theme': {
+            'name': 'dark',
+            'color': 'rgba(255, 255, 255, 1)',
+            'board': 'rgba(0, 0, 0, 1)',
+            'column': 'rgba(255, 255, 255, 0.25)'
+        },
         'layout': {
             'mobile': {
                 'rows': []
@@ -77,7 +92,8 @@ export class ReportEditorPage implements OnInit, OnDestroy {
                     row.columns.push({
                         'style': {
                             'width': parseFloat((100 / count).toFixed(2)),
-                            'background': '#FFF'
+                            'color': this.report.theme.color,
+                            'background': this.report.theme.column
                         },
                         'columnId': ObjectId(),
                         'position': i + 1
@@ -95,6 +111,8 @@ export class ReportEditorPage implements OnInit, OnDestroy {
 
         const response = await this.service.get({
             'filter': [
+                'url',
+                'type',
                 'role',
                 'theme',
                 'layout',
@@ -106,7 +124,16 @@ export class ReportEditorPage implements OnInit, OnDestroy {
         });
 
         if (response.ok) {
+            if (response.result.type == 'ds') {
+                this.form.controls['url'].setValue(response.result.url);
+                this.form.controls['url'].setValidators([Validators.required]);
+                this.form.controls['url'].updateValueAndValidity();
+                this.form.controls['description'].setValue(response.result.description);
+                this.form.controls['description'].setValidators([Validators.required]);
+                this.form.controls['description'].updateValueAndValidity();
+            };
             this.report.role = response.result.role;
+            this.report.type = response.result.type;
             this.report.theme = response.result.theme;
             this.report.reportId = response.result.reportId;
             this.report.description = response.result.description;
@@ -119,6 +146,25 @@ export class ReportEditorPage implements OnInit, OnDestroy {
         } else {
             this.toast.error(response.error.message);
             this.history.back();
+        };
+
+        this.loading = false;
+    };
+
+    public async update() {
+        this.loading = true;
+
+        const response = await this.service.update({
+            'url': this.form.value.url,
+            'reportId': this.reportId,
+            'description': this.form.value.description
+        });
+
+        if (response.ok) {
+            this.history.back();
+            this.toast.success('report updated!');
+        } else {
+            this.toast.error(response.error.message);
         };
 
         this.loading = false;
@@ -197,6 +243,15 @@ export class ReportEditorPage implements OnInit, OnDestroy {
                 const diff = parseFloat((((event.pageX - this.start.x) / this.blox.element.clientWidth) * 100).toFixed(2));
                 this.column.style.width += diff;
                 this.start.x = event.pageX;
+                this.row.columns = this.row.columns.sort((a, b) => {
+                    if (a.position < b.position) {
+                        return -1;
+                    } else if (a.position > b.position) {
+                        return 1;
+                    } else {
+                        return 0;
+                    };
+                });
                 this.row.columns.map(col => {
                     if (col.position - 1 == this.column.position) {
                         col.style.width -= diff;
@@ -211,17 +266,30 @@ export class ReportEditorPage implements OnInit, OnDestroy {
 
     public async remove(row, columnId) {
         if (row.columns.length > 1) {
+            row.columns = row.columns.sort((a, b) => {
+                if (a.position < b.position) {
+                    return -1;
+                } else if (a.position > b.position) {
+                    return 1;
+                } else {
+                    return 0;
+                };
+            });
+            let width: number = 0;
             for (let i = 0; i < row.columns.length; i++) {
                 if (row.columns[i].columnId == columnId) {
+                    width = row.columns[i].style.width;
                     row.columns.splice(i, 1);
                     break;
                 };
             };
-            let max: number = 0;
-            row.columns.map(o => (max += o.style.width));
+            
             row.columns.map(column => {
-                column.style.width = parseFloat((column.style.width / max).toFixed(2)) * 100;
+                column.style.width += parseFloat((width / row.columns.length).toFixed(2));
             });
+            for (let i = 0; i < row.columns.length; i++) {
+                row.columns[i].position = i + 1;
+            }
         } else {
             for (let i = 0; i < this.report.layout[this.layout].rows.length; i++) {
                 if (this.report.layout[this.layout].rows[i].rowId == row.rowId) {
@@ -333,17 +401,6 @@ export class ReportEditorPage implements OnInit, OnDestroy {
         });
     };
 
-    public async DropColumn(row, event: CdkDragDrop<string[]>) {
-        moveItemInArray(row, event.previousIndex, event.currentIndex);
-        for (let a = 0; a < this.report.layout[this.layout].rows.length; a++) {
-            this.report.layout[this.layout].rows[a].position = a + 1;
-            for (let b = 0; b < this.report.layout[this.layout].rows.length; b++) {
-                this.report.layout[this.layout].rows[a].columns[b].position = b + 1;
-            };
-        };
-        this.save('layout', this.report.layout);
-    };
-
     public async StartResizing(axis, event: MouseEvent, row, column) {
         this.row = row;
         this.axis = axis;
@@ -354,6 +411,10 @@ export class ReportEditorPage implements OnInit, OnDestroy {
     };
 
     ngOnInit(): void {
+        this.subscriptions.form = this.form.valueChanges.subscribe(data => {
+            this.errors = this.formerror.validateForm(this.form, this.errors, true);
+        });
+
         this.subscriptions.route = this.route.queryParams.subscribe(params => {
             this.mode = params.mode;
             this.reportId = params.reportId;
@@ -364,6 +425,7 @@ export class ReportEditorPage implements OnInit, OnDestroy {
     };
 
     ngOnDestroy(): void {
+        this.subscriptions.form.unsubscribe();
         this.subscriptions.route.unsubscribe();
     };
 

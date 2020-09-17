@@ -21,9 +21,18 @@
         </div>
     </div>
     
-    <button mat-fab (click)="add()">
+    <button mat-fab [matMenuTriggerFor]="create">
         <mat-icon>
             add
         </mat-icon>
     </button>
+
+    <mat-menu #create="matMenu">
+        <button mat-menu-item (click)="add('dashboard')">
+            New Dashboard
+        </button>
+        <button mat-menu-item (click)="add('ds')">
+            Google Data Studio
+        </button>
+    </mat-menu>
 </div>

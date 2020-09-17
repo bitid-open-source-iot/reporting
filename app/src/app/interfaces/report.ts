@@ -13,6 +13,8 @@ export interface Report {
             'rows'?: Row[];
         };
     };
+    'url'?: string;
+    'type'?: string;
     'role'?: number;
     'users'?: User[];
     'theme'?: Theme;

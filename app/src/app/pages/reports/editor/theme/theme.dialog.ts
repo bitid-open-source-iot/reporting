@@ -15,12 +15,14 @@ export class ThemeDialog implements OnInit, OnDestroy {
     public themes: Theme[] = [
         {
             'name': 'dark',
+            'type': 'default',
             'color': 'rgba(255, 255, 255, 1)',
             'board': 'rgba(0, 0, 0, 1)',
             'column': 'rgba(255, 255, 255, 0.25)'
         },
         {
             'name': 'light',
+            'type': 'default',
             'color': 'rgba(0, 0, 0, 1)',
             'board': 'rgba(255, 255, 255, 1)',
             'column': 'rgba(0, 0, 0, 0.05)'

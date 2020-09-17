@@ -34,7 +34,7 @@ export class ReportsPage implements OnInit, OnDestroy {
     public loading: boolean;
     private subscriptions: any = {};
 
-    public async add() {
+    public async add(type: string) {
         this.loading = true;
 
         const response = await this.service.add({
@@ -51,11 +51,12 @@ export class ReportsPage implements OnInit, OnDestroy {
             },
             'theme': {
                 'name': 'dark',
+                'type': 'default',
                 'color': 'rgba(255, 255, 255, 1)',
                 'board': 'rgba(0, 0, 0, 1)',
-                'column': 'rgba(255, 255, 255, 1)'
+                'column': 'rgba(255, 255, 255, 0.25)'
             },
-            'type': 'dashboard',
+            'type': type,
             'widgets': [],
             'description': 'Untitled Report'
         });
@@ -87,7 +88,7 @@ export class ReportsPage implements OnInit, OnDestroy {
                 'reportId',
                 'description'
             ],
-            'type': 'dashboard'
+            'type': ['ds', 'dashboard']
         });
 
         this.loading = false;

@@ -15,8 +15,28 @@ mat-toolbar {
         background-color: transparent !important;
     }
 }
+.dot {
+    width: 5px;
+    height: 5px;
+    margin: 10px;
+    border-radius: 100%;
+    background-color: #fff;
+}
 .add {
     margin-left: 38px;
+}
+form {
+    width:  400px;
+    margin: auto;
+    padding-top: 20px;
+    [mat-stroked-button] {
+        margin-top: 20px;
+    }
+}
+@media screen and (max-width: 420px) {
+    form {
+        width: calc(100% - 20px);
+    }
 }
 .mobile {
     margin: auto;
