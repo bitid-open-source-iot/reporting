@@ -144,8 +144,11 @@ var module = function () {
 									var result = [];
 									for (let i = 0; i < args.result.length; i++) {
 										if (i + 1 < args.result.length) {
-											args.result[i].value = (args.result[i + 1].value - args.result[i].value);
-											result.push(args.result[i]);
+											const value = (args.result[i + 1].value - args.result[i].value);
+											result.push({
+												'date': args.result[i].date,
+												'value': value
+											});
 										};
 									};
 									args.result = result;
