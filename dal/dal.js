@@ -1149,13 +1149,13 @@ var module = function () {
 
 			var field = args.connector.authenticate.field;
 
-			if (typeof(args.req.body[field]) != 'undefined' && args.req.body[field] != null && args.req.body[field] != '') {
-				if (Array.isArray(args.req.body[field]) && args.req.body[field].length > 0) {
+			if (typeof(args.req.body.query[field]) != 'undefined' && args.req.body.query[field] != null && args.req.body.query[field] != '') {
+				if (Array.isArray(args.req.body.query[field]) && args.req.body.query[field].length > 0) {
 					params._id = {
-						$in: args.req.body[field].map(id => ObjectId(id))
+						$in: args.req.body.query[field].map(id => ObjectId(id))
 					};
-				} else if (typeof(args.req.body[field]) == 'string' && args.req.body[field].length == 24) {
-					params._id = ObjectId(args.req.body[field]);
+				} else if (typeof(args.req.body.query[field]) == 'string' && args.req.body.query[field].length == 24) {
+					params._id = ObjectId(args.req.body.query[field]);
 				};
 			};
 

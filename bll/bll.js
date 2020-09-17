@@ -143,12 +143,10 @@ var module = function () {
 								if (args.req.body.query.counter) {
 									var step = args.result[0].value;
 									args.result = args.result.map(row => {
-										var tmp =  {
-											'date': row.date,
-											'value': row.value - step
-										};
+										delete row._id;
+										row.value =  row.value - step
 										step = row.value;
-										return tmp;
+										return row;
 									});
 								};
 								break;
