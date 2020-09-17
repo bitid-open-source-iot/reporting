@@ -16,8 +16,8 @@
 
 <mat-progress-bar mode="indeterminate" color="accent" *ngIf="loading"></mat-progress-bar>
 
-<div class="page-body">
-    <iframe #frame src="" frameborder="0" allowfullscreen [hidden]="!report && loading && report.type == 'dashboard'"></iframe>
+<div class="page-body frame" [class.showframe]="report && !loading && report.type == 'ds'">
+    <iframe #frame src="" frameborder="0" allowfullscreen [class.showframe]="report && !loading && report.type == 'ds'"></iframe>
 </div>
 
 <div id="dashboard" class="page-body" *ngIf="layout && report && !loading && report.type == 'dashboard'" [style.color]="report.theme.color" [style.background]="report.theme.board">

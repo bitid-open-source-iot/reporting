@@ -3,12 +3,18 @@ iframe {
     border: 0;
     height: 100%;
     margin: auto;
-    display: block;
+    display: none;
 }
 @media screen and (max-width: 1000px) {
     iframe {
         width: 100%;
     }
+}
+.frame {
+    display: none;
+}
+.showframe {
+    display: block;
 }
 mat-toolbar img {
     width: 45px;

@@ -146,8 +146,15 @@ export class WidgetDialog implements OnInit, OnDestroy {
             this.SetupTypeForm();
         });
 
-        const form: FormGroup = <any>this.form.controls['query'];
-        this.subscriptions.deviceId = form.controls['deviceId'].valueChanges.subscribe(deviceId => {
+        this.subscriptions.inputId = (<any>this.form.controls['query']).controls['inputId'].valueChanges.subscribe(inputId => {
+            this.inputs.map(input => {
+                if (input.inputId == inputId && (typeof(this.form.value.label.value) == 'undefined' || this.form.value.label.value == null || this.form.value.label.value == '')) {
+                    (<any>this.form.controls['label']).controls['value'].setValue(input.description);
+                };
+            });
+        });
+
+        this.subscriptions.deviceId = (<any>this.form.controls['query']).controls['deviceId'].valueChanges.subscribe(deviceId => {
             for (let i = 0; i < this.devices.data.length; i++) {
                 if (this.devices.data[i].deviceId == deviceId) {
                     this.inputs = this.devices.data[i].inputs;
@@ -160,6 +167,7 @@ export class WidgetDialog implements OnInit, OnDestroy {
     ngOnDestroy(): void {
         this.subscriptions.form.unsubscribe();
         this.subscriptions.type.unsubscribe();
+        this.subscriptions.inputId.unsubscribe();
         this.subscriptions.deviceId.unsubscribe();
     };
 
