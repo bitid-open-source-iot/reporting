@@ -90,6 +90,7 @@ var module = function () {
 								break;
 							case ('chart'):
 								args.params = telemetry.historical.inputs.data(args.req.body.query);
+								console.log("QUERY: ", args.params);
 								deferred.resolve(args);
 								break;
 							case ('table'):
