@@ -191,7 +191,7 @@ var module = function () {
 												
 												args.result = average * max;
 											} catch (error) {
-												console.log(error.max);
+												console.log(error.message);
 											};
 										} else {
 											var total = args.result.reduce((a, b) => a + b);
