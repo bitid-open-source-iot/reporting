@@ -6,6 +6,7 @@ import { WidgetDialog } from './editor/widget/widget.dialog';
 import { LinkWidgetDialog } from './editor/link/link.dialog';
 import { ReportViewerPage } from './viewer/viewer.page';
 import { ReportEditorPage } from './editor/editor.page';
+import { CustomDatesDialog } from './viewer/custom-dates/custom-dates.dialog';
 
 /* --- MODULES --- */
 import { NgModule } from '@angular/core';
@@ -79,7 +80,8 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
         WidgetDialog,
         LinkWidgetDialog,
         ReportViewerPage,
-        ReportEditorPage
+        ReportEditorPage,
+        CustomDatesDialog
     ]
 })
 

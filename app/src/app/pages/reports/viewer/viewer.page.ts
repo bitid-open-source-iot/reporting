@@ -2,10 +2,13 @@ import canvas from 'html2canvas';
 import * as jspdf from 'jspdf';
 import * as moment from 'moment';
 import { Report } from 'src/app/interfaces/report';
+import { DateGroup } from 'src/app/date-group';
+import { MatDialog } from '@angular/material/dialog';
 import { ToastService } from 'src/app/services/toast/toast.service';
 import { ReportsService } from 'src/app/services/reports/reports.service';
 import { ActivatedRoute } from '@angular/router';
 import { HistoryService } from 'src/app/services/history/history.service';
+import { CustomDatesDialog } from './custom-dates/custom-dates.dialog';
 import { OnInit, Component, OnDestroy, ViewChild, ElementRef, HostListener } from '@angular/core';
 
 @Component({
@@ -18,7 +21,7 @@ export class ReportViewerPage implements OnInit, OnDestroy {
 
     @ViewChild('frame', {'static': true}) private frame: ElementRef;
 
-    constructor(private route: ActivatedRoute, private toast: ToastService, public history: HistoryService, private service: ReportsService) { };
+    constructor(private route: ActivatedRoute, private toast: ToastService, private dialog: MatDialog, public history: HistoryService, private service: ReportsService) { };
 
     @HostListener('window:resize', ['$event']) function() {
         this.SetLayout();
@@ -28,8 +31,8 @@ export class ReportViewerPage implements OnInit, OnDestroy {
         'tense': 'current',
         'frame': 'month'
     };
+    public date: any = new DateGroup(new Date(), new Date());
     public layout: string;
-    public format: string = 'YYYY/MM/DD HH:mm';
     public report: Report = {
         'theme': {
             'name': 'dark',
@@ -115,88 +118,91 @@ export class ReportViewerPage implements OnInit, OnDestroy {
 
     public async load() {
         this.loading = true;
-
-        const date = {
-            'to': new Date(),
-            'from': new Date()
-        };
-        date.to.setHours(23);
-        date.to.setMinutes(59);
-        date.to.setSeconds(59);
-        date.to.setMilliseconds(999);
-
-        date.from.setHours(0);
-        date.from.setMinutes(0);
-        date.from.setSeconds(0);
-        date.from.setMilliseconds(0);
-
-        const range = [this.period.tense, this.period.frame].join('-');
-        switch (range) {
-            case('current-day'):
-                break;
-            case('previous-day'):
-                date.to.setDate(date.to.getDate() - 1);
-                date.from.setDate(date.from.getDate() - 1);
-                break;
-            case('current-week'):
-                date.to.setDate(date.to.getDate() - date.to.getDay() + 7);
-                date.from.setDate(date.from.getDate() - date.from.getDay() + 1);
-                break;
-            case('previous-week'):
-                date.to.setDate(date.to.getDate() - date.to.getDay());
-                date.from.setDate(date.from.getDate() - date.from.getDay() - 6);
-                break;
-            case('current-month'):
-                date.to.setDate(new Date(date.to.getFullYear(), date.to.getMonth() + 1, 0).getDate());
-                date.from.setDate(1);
-                break;
-            case('previous-month'):
-                date.to.setMonth(date.to.getMonth() - 1);
-                date.from.setMonth(date.from.getMonth() - 1);
-                date.to.setDate(new Date(date.to.getFullYear(), date.to.getMonth() + 1, 0).getDate());
-                date.from.setDate(1);
-                break;
-            case('current-year'):
-                date.to.setMonth(11);
-                date.from.setMonth(0);
-                date.to.setDate(new Date(date.to.getFullYear(), date.to.getMonth() + 1, 0).getDate());
-                date.from.setDate(1);
-                break;
-            case('previous-year'):
-                date.to.setFullYear(date.to.getFullYear() - 1);
-                date.from.setFullYear(date.from.getFullYear() - 1);
-                date.to.setMonth(11);
-                date.from.setMonth(0);
-                date.to.setDate(new Date(date.to.getFullYear(), date.to.getMonth() + 1, 0).getDate());
-                date.from.setDate(1);
-                break;
+        
+        if (this.period.tense != 'custom-dates') {
+            this.date = new DateGroup(new Date(), new Date());
+            const range = [this.period.tense, this.period.frame].join('-');
+            switch (range) {
+                case('current-day'):
+                    break;
+                case('previous-day'):
+                    this.date.to.setDate(this.date.to.getDate() - 1);
+                    this.date.from.setDate(this.date.from.getDate() - 1);
+                    break;
+                case('current-week'):
+                    this.date.to.setDate(this.date.to.getDate() - this.date.to.getDay() + 7);
+                    this.date.from.setDate(this.date.from.getDate() - this.date.from.getDay() + 1);
+                    break;
+                case('previous-week'):
+                    this.date.to.setDate(this.date.to.getDate() - this.date.to.getDay());
+                    this.date.from.setDate(this.date.from.getDate() - this.date.from.getDay() - 6);
+                    break;
+                case('current-month'):
+                    this.date.to.setDate(new Date(this.date.to.getFullYear(), this.date.to.getMonth() + 1, 0).getDate());
+                    this.date.from.setDate(1);
+                    break;
+                case('previous-month'):
+                    this.date.to.setMonth(this.date.to.getMonth() - 1);
+                    this.date.from.setMonth(this.date.from.getMonth() - 1);
+                    this.date.to.setDate(new Date(this.date.to.getFullYear(), this.date.to.getMonth() + 1, 0).getDate());
+                    this.date.from.setDate(1);
+                    break;
+                case('current-year'):
+                    this.date.to.setMonth(11);
+                    this.date.from.setMonth(0);
+                    this.date.to.setDate(new Date(this.date.to.getFullYear(), this.date.to.getMonth() + 1, 0).getDate());
+                    this.date.from.setDate(1);
+                    break;
+                case('previous-year'):
+                    this.date.to.setFullYear(this.date.to.getFullYear() - 1);
+                    this.date.from.setFullYear(this.date.from.getFullYear() - 1);
+                    this.date.to.setMonth(11);
+                    this.date.from.setMonth(0);
+                    this.date.to.setDate(new Date(this.date.to.getFullYear(), this.date.to.getMonth() + 1, 0).getDate());
+                    this.date.from.setDate(1);
+                    break;
+            };
         };
 
+        await this.date.process();
+        
         await this.report.widgets.reduce(async (promise, widget, index) => {
-            widget.query.date = date
+            widget.query.date = this.date;
             const response = await this.service.load(widget);
             if (response.ok) {
                 widget.data = response.result;
-                switch (range) {
-                    case('current-day'):
-                    case('previous-day'):
-                        widget.data.format = 'YYYY/MM/DD HH:mm';
+            } else {
+                switch (widget.type) {
+                    case('chart'):
+                        widget.data = {
+                            'value': [],
+                            'analog': {},
+                            'digital': {}
+                        };
                         break;
-                    case('current-week'):
-                    case('previous-week'):
-                    case('current-month'):
-                    case('previous-month'):
-                        widget.data.format = 'YYYY/MM/DD';
-                        break;
-                    case('current-year'):
-                    case('previous-year'):
-                        widget.data.format = 'YYYY/MM';
+                    case('value'):
+                        widget.data = {
+                            'value': 0,
+                            'analog': {},
+                            'digital': {}
+                        };
                         break;
                 };
             };
         }, Promise.resolve());
 
         this.loading = false;
+    };
+
+    private SetLayout() {
+        const width = window.innerWidth;
+        if (width <= 400) {
+            this.layout = 'mobile';
+        } else if (width > 400 && width <= 1000) {
+            this.layout = 'tablet';
+        } else if (width > 1000) {
+            this.layout = 'desktop';
+        };
     };
 
     public async download() {
@@ -209,15 +215,23 @@ export class ReportViewerPage implements OnInit, OnDestroy {
         });
     };
 
-    private SetLayout() {
-        const width = window.innerWidth;
-        if (width <= 400) {
-            this.layout = 'mobile';
-        } else if (width > 400 && width <= 1000) {
-            this.layout = 'tablet';
-        } else if (width > 1000) {
-            this.layout = 'desktop';
-        };
+    public async SelectDates() {
+        const dialog = await this.dialog.open(CustomDatesDialog, {
+            'data': {
+                'to': this.date.to,
+                'from': this.date.from
+            },
+            'panelClass': 'custom-dates-dialog',
+            'disableClose': true
+        });
+
+        await dialog.afterClosed().subscribe(async result => {
+            if (result) {
+                this.date.to = new Date(result.to);
+                this.date.from = new Date(result.from);
+                this.load();
+            };
+        });
     };
 
     ngOnInit(): void {

@@ -1,0 +1,43 @@
+<mat-toolbar color="primary">
+    <div class="spacer">
+        Select Dates
+    </div>
+    
+    <button type="button" mat-icon-button (click)="close()">
+        <mat-icon>
+            close
+        </mat-icon>
+    </button>
+</mat-toolbar>
+
+<form [formGroup]="form" (ngSubmit)="!form.invalid && submit()">
+    <section>
+        <mat-form-field appearance="outline">
+            <mat-label text-uppercase>
+                from
+            </mat-label>
+            
+            <input matInput type="datetime-local" name="from" placeholder="from" formControlName="from" required>
+
+            <mat-error *ngIf="errors.from">
+                {{ errors.from }}
+            </mat-error>
+        </mat-form-field>
+
+        <mat-form-field appearance="outline">
+            <mat-label text-uppercase>
+                to
+            </mat-label>
+            
+            <input matInput type="datetime-local" name="to" placeholder="to" formControlName="to" required>
+
+            <mat-error *ngIf="errors.to">
+                {{ errors.to }}
+            </mat-error>
+        </mat-form-field>
+    </section>
+
+    <button type="submit" mat-flat-button color="primary">
+        apply selection
+    </button>
+</form>
