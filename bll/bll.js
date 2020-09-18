@@ -170,7 +170,9 @@ var module = function () {
 													result.push(args.result[i + 1].value - args.result[i].value);
 												};
 											};
-											args.result = result.reduce((a, b) => a + b);
+											var total = result.reduce((a, b) => a + b);
+											var average = total / result.length;
+											args.result = parseFloat(average.toFixed(2));
 										} else {
 											var total = args.result.reduce((a, b) => a + b);
 											var average = total / args.result.length;
