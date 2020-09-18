@@ -106,6 +106,7 @@ var module = function () {
 										break;
 									case ('predicted-value'):
 										args.params = telemetry.historical.inputs.value.predict(args.req.body.query);
+										console.log('PREDICT VALUE: ', JSON.stringify(args.params));
 										deferred.resolve(args);
 										break;
 									default:
