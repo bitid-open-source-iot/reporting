@@ -98,10 +98,12 @@ var module = function () {
 								switch (args.req.body.value.expression) {
 									case ('last-value'):
 										args.params = telemetry.historical.inputs.value.last(args.req.body.query);
+										console.log('LAST VALUE: ', JSON.stringify(args.params));
 										deferred.resolve(args);
 										break;
 									case ('first-value'):
 										args.params = telemetry.historical.inputs.value.first(args.req.body.query);
+										console.log('FIRST VALUE: ', JSON.stringify(args.params));
 										deferred.resolve(args);
 										break;
 									case ('predicted-value'):
