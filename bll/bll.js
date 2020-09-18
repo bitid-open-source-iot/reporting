@@ -98,12 +98,10 @@ var module = function () {
 								switch (args.req.body.value.expression) {
 									case ('last-value'):
 										args.params = telemetry.historical.inputs.value.last(args.req.body.query);
-										console.log('LAST VALUE: ', JSON.stringify(args.params));
 										deferred.resolve(args);
 										break;
 									case ('first-value'):
 										args.params = telemetry.historical.inputs.value.first(args.req.body.query);
-										console.log('FIRST VALUE: ', JSON.stringify(args.params));
 										deferred.resolve(args);
 										break;
 									case ('predicted-value'):
@@ -153,7 +151,21 @@ var module = function () {
 											});
 										};
 									};
-									args.result = result;
+									
+									var max = 0;
+									var gap = new Date(args.req.body.query.date.to) - new Date(args.req.body.query.date.from);
+
+									if (gap > 0 && gap <= (60 * 60 * 1000)) { /* --- HOUR --- */
+										max = 60;
+									} else if (gap > (60 * 60 * 1000) && gap <= (24 * 60 * 60 * 1000)) { /* --- DAY --- */
+										max = 24;
+									} else if (gap > (24 * 60 * 60 * 1000) && gap <= (days * 7 * 24 * 60 * 60 * 1000)) { /* --- MONTH --- */
+										max = new Date(query.date.to.getFullYear(), query.date.to.getMonth() + 1, 0).getDate();
+									} else { /* --- YEAR --- */
+										max = 12;
+									};
+									
+									args.result = result * max;
 								};
 								break;
 							case ('table'):
