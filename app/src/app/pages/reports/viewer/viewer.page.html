@@ -55,8 +55,8 @@
                 </column-label>
 
                 <column-content *ngIf="column.widget">
-                    <h1 class="value" *ngIf="column.widget && column.widget.type == 'value'" [style.color]="column.widget.value.color">
-                        {{ column.widget.data }}
+                    <h1 class="value" *ngIf="column.widget && column.widget.data && column.widget.type == 'value'" [style.color]="column.widget.value.color">
+                        {{ column.widget.data.type == 'analog' ? (column.widget.data.value | number : '0.2-2') : (column.widget.data.value == 0 ? column.widget.data.digital.low : column.widget.data.digital.high) }}
                     </h1>
                 </column-content>
                     
