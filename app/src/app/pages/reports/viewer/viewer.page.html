@@ -57,10 +57,13 @@
                 <column-content *ngIf="column.widget">
                     <h1 class="value" *ngIf="column.widget && column.widget.data && column.widget.type == 'value'" [style.color]="column.widget.value.color">
                         {{ column.widget.data.type == 'analog' ? (column.widget.data.value | number : '0.2-2') : (column.widget.data.value == 0 ? column.widget.data.digital.low : column.widget.data.digital.high) }}
+                        <small *ngIf="column.widget.data.type == 'analog' && column.widget.data.analog.units">
+                            {{ column.widget.data.analog.units }}
+                        </small>
                     </h1>
                 </column-content>
                     
-                <chart *ngIf="column.widget && column.widget.type == 'chart'" [type]="column.widget.chart.type" [data]="column.widget.data" units="kl" [color]="column.style.color" [background]="column.widget.chart.color" [label]="column.widget.label.value"></chart>
+                <chart *ngIf="column.widget && column.widget.data && column.widget.type == 'chart'" [type]="column.widget.chart.type" [data]="column.widget.data" units="kl" [color]="column.style.color" [background]="column.widget.chart.color" [label]="column.widget.label.value"></chart>
             </column>
         </row>
     </blox>

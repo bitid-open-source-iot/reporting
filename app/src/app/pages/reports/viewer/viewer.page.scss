@@ -48,6 +48,10 @@ column {
     align-items: center;
     font-weight: 300;
     justify-content: center;
+    small {
+        padding-top: 4px;
+        padding-left: 10px;
+    }
 }
 .hidden {
     display: none;
