@@ -15,7 +15,7 @@ export class BloxComponent {
 
     constructor(private el: ElementRef, private renderer: Renderer2) {
         this.renderer.setStyle(this.el.nativeElement, 'background', this.background);
-        this.element = el.nativeElement;
+        this.element = this.el.nativeElement;
     };
 
 }

@@ -1,4 +1,5 @@
 var Q = require('q');
+var moment = require('moment');
 var tools = require('../lib/tools');
 var telemetry = require('../lib/telemetry');
 var dalModule = require('../dal/dal');
@@ -136,22 +137,55 @@ var module = function () {
 					var deferred = Q.defer();
 
 					try {
+						args.req.body.query.date.to = new Date(args.req.body.query.date.to);
+						args.req.body.query.date.from = new Date(args.req.body.query.date.from);
+						
+						var gap = args.req.body.query.date.to - args.req.body.query.date.from;
+						var days = new Date(args.req.body.query.date.to.getFullYear(), args.req.body.query.date.to.getMonth() + 1, 0).getDate();
+						var format = 'YYYY/MM/DD HH:mm';
+						var grouping = null;
+
+						if (gap > 0 && gap <= (60 * 60 * 1000)) { /* --- HOUR --- */
+							format = 'YYYY/MM/DD HH:mm';
+							grouping = 'minute';
+						} else if (gap > (60 * 60 * 1000) && gap <= (24 * 60 * 60 * 1000)) { /* --- DAY --- */
+							format = 'YYYY/MM/DD HH:00';
+							grouping = 'hour';
+						} else if (gap > (24 * 60 * 60 * 1000) && gap <= (days * 7 * 24 * 60 * 60 * 1000)) { /* --- MONTH --- */
+							format = 'YYYY/MM/DD';
+							grouping = 'day';
+						} else { /* --- YEAR --- */
+							format = 'YYYY/MM';
+							grouping = 'month';
+						};
+
 						switch (args.req.body.type) {
 							case ('map'):
 								break;
 							case ('chart'):
 								if (args.req.body.query.counter) {
+									var item = args.result[args.result.length - 1];
 									var result = [];
 									for (let i = 0; i < args.result.length; i++) {
 										if (i + 1 < args.result.length) {
 											const value = (args.result[i + 1].value - args.result[i].value);
 											result.push({
-												'date': args.result[i].date,
+												'date': moment(args.result[i].date).format(format),
 												'value': value
 											});
 										};
 									};
-									args.result = result;
+									item.value = result;
+									args.result = item;
+								} else {
+									var item = args.result[args.result.length - 1];
+									item.value = args.result.map(o => {
+										return {
+											'date': moment(o.date).format(format),
+											'value': o.value
+										};
+									});
+									args.result = item;
 								};
 								break;
 							case ('table'):
@@ -161,6 +195,7 @@ var module = function () {
 									case ('last-value'):
 									case ('first-value'):
 										args.result = args.result[0];
+										args.result.date = moment(args.result.date).format(format);
 										break;
 									case ('predicted-value'):
 										if (args.req.body.query.counter) {
@@ -192,6 +227,7 @@ var module = function () {
 												};
 												item.value = parseFloat((average * max).toFixed(2));
 												args.result = item;
+												args.result.date = moment(args.result.date).format(format);
 											} catch (error) {
 												console.log(error.message);
 											};
@@ -201,6 +237,7 @@ var module = function () {
 											var average = total / args.result.length;
 											item.value = parseFloat(average.toFixed(2));
 											args.result = item;
+											args.result.date = moment(args.result.date).format(format);
 										};
 										break;
 								};

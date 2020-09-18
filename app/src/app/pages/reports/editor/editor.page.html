@@ -66,7 +66,7 @@
     </form>
 </div>
 
-<div class="page-body editor" [style.background]="report.theme.board" *ngIf="report.type == 'dashboard'">
+<div class="page-body editor" [style.background]="report.theme.board" [class.hide]="report && report.type != 'dashboard'">
     <div class="widgets" [style.background]="report.theme.column">
         <header [style.color]="report.theme.color">
             widgets
