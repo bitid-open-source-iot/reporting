@@ -163,38 +163,14 @@ var module = function () {
 										args.result = parseFloat(args.result[0].value.toFixed(2));
 										break;
 									case ('predicted-value'):
-										args.result = args.result.map(o => o.value);
-										var max = 0;
-										switch (args.req.body.query.range) {
-											case ('current-day'):
-											case ('previous-day'):
-												max = 24;
-												break;
-											case ('current-week'):
-											case ('previous-week'):
-												max = 7;
-												break;
-											case ('current-month'):
-												max = new Date(new Date().getFullYear(), new Date().getMonth(), 0).getDate();
-												break;
-											case ('previous-month'):
-												max = new Date(new Date().getFullYear(), new Date().getMonth() - 1, 0).getDate();
-												break;
-											case ('current-year'):
-											case ('previous-year'):
-												max = 12;
-												break;
-										};
 										if (args.req.body.query.counter) {
-											var step = args.result[0];
-											var total = args.result.map(value => {
-												var tmp = value - step;
-												step = value;
-												return tmp;
-											}).reduce((a, b) => a + b);
-											var average = total / args.result.length;
-											args.result = average * max;
-											args.result = parseFloat(average * max.toFixed(2));
+											var result = [];
+											for (let i = 0; i < args.result.length; i++) {
+												if (i + 1 < args.result.length) {
+													result.push(args.result[i + 1].value - args.result[i].value);
+												};
+											};
+											args.result = result.reduce((a, b) => a + b);
 										} else {
 											var total = args.result.reduce((a, b) => a + b);
 											var average = total / args.result.length;
