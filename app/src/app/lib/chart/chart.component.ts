@@ -134,7 +134,7 @@ export class ChartComponent implements OnChanges, AfterViewInit {
                 'tooltips': {
                     'enabled': true,
                     'callbacks': {
-                        label: (item) => ([this.label, ': ', item.value, ' ', this.units].join(''))
+                        label: (item) => ([this.label, ': ', parseFloat(item.value.toFixed(2)), ' ', this.units].join(''))
                     }
                 }
             }
