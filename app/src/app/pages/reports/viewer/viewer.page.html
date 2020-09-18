@@ -63,7 +63,7 @@
                     </h1>
                 </column-content>
                     
-                <chart *ngIf="column.widget && column.widget.data && column.widget.type == 'chart'" [type]="column.widget.chart.type" [data]="column.widget.data" units="kl" [color]="column.style.color" [background]="column.widget.chart.color" [label]="column.widget.label.value"></chart>
+                <chart *ngIf="column.widget && column.widget.data && column.widget.type == 'chart'" [type]="column.widget.chart.type" [data]="column.widget.data.value" [units]="column.widget.data.analog.units" [color]="column.style.color" [format]="column.widget.data.format" [background]="column.widget.chart.color" [label]="column.widget.label.value"></chart>
             </column>
         </row>
     </blox>

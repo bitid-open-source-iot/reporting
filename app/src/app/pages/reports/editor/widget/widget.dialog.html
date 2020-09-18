@@ -63,7 +63,7 @@
                     </mat-label>
                     
                     <mat-select name="deviceId" placeholder="device" formControlName="deviceId" required>
-                        <mat-option *ngFor="let device of devices.data | orderBy : 'description'" [value]="device.deviceId">
+                        <mat-option *ngFor="let device of devices | orderBy : 'description'" [value]="device.deviceId">
                             {{ device.description }}
                         </mat-option>
                     </mat-select>
@@ -91,43 +91,6 @@
             </section>
 
             <section formGroupName="query">
-                <mat-form-field appearance="outline">
-                    <mat-label text-uppercase>
-                        date range
-                    </mat-label>
-                    
-                    <mat-select name="range" placeholder="date range" formControlName="range" required>
-                        <mat-option value="current-day">
-                            Current Day
-                        </mat-option>
-                        <mat-option value="previous-day">
-                            Previous Day
-                        </mat-option>
-                        <mat-option value="current-week" disabled>
-                            Current Week
-                        </mat-option>
-                        <mat-option value="previous-week" disabled>
-                            Previous Week
-                        </mat-option>
-                        <mat-option value="current-month">
-                            Current Month
-                        </mat-option>
-                        <mat-option value="previous-month">
-                            Previous Month
-                        </mat-option>
-                        <mat-option value="current-year" disabled>
-                            Current Year
-                        </mat-option>
-                        <mat-option value="previous-year" disabled>
-                            Previous Year
-                        </mat-option>
-                    </mat-select>
-    
-                    <mat-error *ngIf="errors.query.range">
-                        {{ errors.query.range }}
-                    </mat-error>
-                </mat-form-field>
-
                 <mat-form-field appearance="outline">
                     <mat-label text-uppercase>
                         counter
@@ -159,7 +122,7 @@
                     </mat-label>
                     
                     <mat-select name="connectorId" placeholder="data connector" formControlName="connectorId" required>
-                        <mat-option *ngFor="let connector of connectors.data" [value]="connector.connectorId">
+                        <mat-option *ngFor="let connector of connectors | orderBy : 'description'" [value]="connector.connectorId">
                             {{ connector.description }}
                         </mat-option>
                     </mat-select>
@@ -267,7 +230,7 @@
                         color
                     </mat-label>
                     
-                    <input matInput type="color" name="color" placeholder="color" formControlName="color" [required]="form.value.type == 'value'">
+                    <input matInput type="color" color-input name="color" placeholder="color" formControlName="color" [required]="form.value.type == 'value'">
     
                     <mat-error *ngIf="errors.value.color">
                         {{ errors.value.color }}

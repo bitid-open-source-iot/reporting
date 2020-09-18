@@ -10,11 +10,13 @@ import { ReportsService } from 'src/app/services/reports/reports.service';
 import { ActivatedRoute } from '@angular/router';
 import { HistoryService } from 'src/app/services/history/history.service';
 import { Report, Widget } from 'src/app/interfaces/report';
+import { DevicesService } from 'src/app/services/devices/devices.service';
 import { LinkWidgetDialog } from './link/link.dialog';
+import { FormErrorService } from 'src/app/services/form-error/form-error.service';
+import { ConnectorsService } from 'src/app/services/connectors/connectors.service';
 import { CdkDragDrop, moveItemInArray } from '@angular/cdk/drag-drop';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { OnInit, Component, OnDestroy, ViewChild } from '@angular/core';
-import { FormErrorService } from 'src/app/services/form-error/form-error.service';
 
 @Component({
     selector: 'app-report-editor-page',
@@ -26,7 +28,7 @@ export class ReportEditorPage implements OnInit, OnDestroy {
 
     @ViewChild(BloxComponent, {'static': true}) private blox: BloxComponent;
 
-    constructor(private route: ActivatedRoute, private dialog: MatDialog, private toast: ToastService, public history: HistoryService, private service: ReportsService, private formerror: FormErrorService) { };
+    constructor(private route: ActivatedRoute, private dialog: MatDialog, private toast: ToastService, private devices: DevicesService, public history: HistoryService, private service: ReportsService, private connectors: ConnectorsService, private formerror: FormErrorService) { };
 
     public row: any;
     public form: FormGroup = new FormGroup({
@@ -83,8 +85,8 @@ export class ReportEditorPage implements OnInit, OnDestroy {
                     'style': {
                         'height': 100
                     },
-                    'columns': [],
                     'rowId': ObjectId(),
+                    'columns': [],
                     'position': this.report.layout[this.layout].rows.length
                 };
 
@@ -109,7 +111,7 @@ export class ReportEditorPage implements OnInit, OnDestroy {
     private async get() {
         this.loading = true;
 
-        const response = await this.service.get({
+        const report = await this.service.get({
             'filter': [
                 'url',
                 'type',
@@ -123,28 +125,47 @@ export class ReportEditorPage implements OnInit, OnDestroy {
             'reportId': this.reportId
         });
 
-        if (response.ok) {
-            if (response.result.type == 'ds') {
-                this.form.controls['url'].setValue(response.result.url);
+        if (report.ok) {
+            if (report.result.type == 'ds') {
+                this.form.controls['url'].setValue(report.result.url);
                 this.form.controls['url'].setValidators([Validators.required]);
                 this.form.controls['url'].updateValueAndValidity();
-                this.form.controls['description'].setValue(response.result.description);
+                this.form.controls['description'].setValue(report.result.description);
                 this.form.controls['description'].setValidators([Validators.required]);
                 this.form.controls['description'].updateValueAndValidity();
             };
-            this.report.role = response.result.role;
-            this.report.type = response.result.type;
-            this.report.theme = response.result.theme;
-            this.report.reportId = response.result.reportId;
-            this.report.description = response.result.description;
-            if (Array.isArray(response.result.widgets)) {
-                this.report.widgets = response.result.widgets;
+            this.report.role = report.result.role;
+            this.report.type = report.result.type;
+            this.report.theme = report.result.theme;
+            this.report.reportId = report.result.reportId;
+            this.report.description = report.result.description;
+            if (Array.isArray(report.result.widgets)) {
+                this.report.widgets = report.result.widgets;
             };
-            if (typeof(response.result.layout) != 'undefined' && response.result.layout != null && response.result.layout != '') {
-                this.report.layout = response.result.layout;
+            if (typeof(report.result.layout) != 'undefined' && report.result.layout != null && report.result.layout != '') {
+                this.report.layout = report.result.layout;
+            };
+            const devices = await this.devices.list({
+                'filter': [
+                    'inputs',
+                    'deviceId',
+                    'description'
+                ]
+            });
+            if (devices.ok) {
+                this.devices.data = devices.result;
+            };
+            const connectors = await this.connectors.list({
+                'filter': [
+                    'connectorId',
+                    'description'
+                ]
+            });
+            if (connectors.ok) {
+                this.connectors.data = connectors.result;
             };
         } else {
-            this.toast.error(response.error.message);
+            this.toast.error(report.error.message);
             this.history.back();
         };
 
@@ -364,19 +385,27 @@ export class ReportEditorPage implements OnInit, OnDestroy {
         this.save('layout', this.report.layout);
     };
 
-    public async EditWidget(mode: string, widget?: Widget) {
+    public async EditWidget(mode: string, widget?: any) {
         if (mode == 'add') {
             widget = {
                 'label': {
                     'value': '',
                     'visable': true
                 },
-                'chart': {},
-                'value': {},
+                'chart': {
+                    'type': 'bar',
+                    'color': '#2196F3'
+                },
+                'value': {
+                    'color': '#FFFFFF'
+                },
                 'query': {},
-                'widgetId': ObjectId()
+                'widgetId': ObjectId(),
+                'connectorId': '000000000000000000000001'
             };
         };
+        widget.devices = this.devices.data;
+        widget.connectors = this.connectors.data;
         const dialog = await this.dialog.open(WidgetDialog, {
             'data': widget,
             'panelClass': 'fullscreen-dialog',

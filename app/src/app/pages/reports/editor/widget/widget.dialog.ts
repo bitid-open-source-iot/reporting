@@ -1,7 +1,4 @@
-import { Widget } from 'src/app/interfaces/report';
-import { DevicesService } from 'src/app/services/devices/devices.service';
 import { FormErrorService } from 'src/app/services/form-error/form-error.service';
-import { ConnectorsService } from 'src/app/services/connectors/connectors.service';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { FormGroup, FormControl, Validators } from '@angular/forms';
 import { OnInit, Inject, Component, OnDestroy } from '@angular/core';
@@ -14,30 +11,29 @@ import { OnInit, Inject, Component, OnDestroy } from '@angular/core';
 
 export class WidgetDialog implements OnInit, OnDestroy {
 
-    constructor(private dialog: MatDialogRef<WidgetDialog>, @Inject(MAT_DIALOG_DATA) private widget: Widget, public devices: DevicesService, public connectors: ConnectorsService, private formerror: FormErrorService) { };
+    constructor(private dialog: MatDialogRef<WidgetDialog>, @Inject(MAT_DIALOG_DATA) private config: any, private formerror: FormErrorService) { };
 
     public form: FormGroup = new FormGroup({
         'label': new FormGroup({
-            'value': new FormControl(this.widget.label.value, [Validators.required]),
-            'visable': new FormControl(this.widget.label.visable, [Validators.required])
+            'value': new FormControl(this.config.label.value, [Validators.required]),
+            'visable': new FormControl(this.config.label.visable, [Validators.required])
         }),
         'query': new FormGroup({
-            'range': new FormControl(this.widget.query.range, [Validators.required]),
-            'counter': new FormControl(this.widget.query.counter, [Validators.required]),
-            'inputId': new FormControl(this.widget.query['inputId'], [Validators.required]),
-            'deviceId': new FormControl(this.widget.query.deviceId, [Validators.required])
+            'counter': new FormControl(this.config.query.counter, [Validators.required]),
+            'inputId': new FormControl(this.config.query['inputId'], [Validators.required]),
+            'deviceId': new FormControl(this.config.query.deviceId, [Validators.required])
         }),
         'chart': new FormGroup({
-            'type': new FormControl(this.widget.chart.type),
-            'color': new FormControl(this.widget.chart.color)
+            'type': new FormControl(this.config.chart.type),
+            'color': new FormControl(this.config.chart.color)
         }),
         'value': new FormGroup({
-            'color': new FormControl(this.widget.chart.color),
-            'expression': new FormControl(this.widget.value.expression)
+            'color': new FormControl(this.config.chart.color),
+            'expression': new FormControl(this.config.value.expression)
         }),
-        'type': new FormControl(this.widget.type, [Validators.required]),
-        'widgetId': new FormControl(this.widget.widgetId, [Validators.required]),
-        'connectorId': new FormControl(this.widget.connectorId, [Validators.required])
+        'type': new FormControl(this.config.type, [Validators.required]),
+        'widgetId': new FormControl(this.config.widgetId, [Validators.required]),
+        'connectorId': new FormControl(this.config.connectorId, [Validators.required])
     });
     public errors: any = {
         'label': {
@@ -45,7 +41,6 @@ export class WidgetDialog implements OnInit, OnDestroy {
             'visable': ''
         },
         'query': {
-            'range': '',
             'counter': '',
             'inputId': '',
             'deviceId': ''
@@ -64,37 +59,9 @@ export class WidgetDialog implements OnInit, OnDestroy {
     };
     public inputs: any[] = [];
     public loading: boolean;
+    public devices: any[] = this.config.devices;
+    public connectors: any[] = this.config.connectors;
     private subscriptions: any = {};
-
-    public async load() {
-        this.loading = true;
-
-        this.form.disable();
-
-        const devices = await this.devices.list({
-            'filter': [
-                'inputs',
-                'deviceId',
-                'description'
-            ]
-        });
-        if (devices.ok) {
-            this.devices.data = devices.result;
-        } else {
-            this.devices.data = [];
-        };
-
-        const connectors = await this.connectors.list({});
-        if (connectors.ok) {
-            this.connectors.data = connectors.result;
-        } else {
-            this.connectors.data = [];
-        };
-
-        this.form.enable();
-
-        this.loading = false;
-    };
 
     public close() {
         this.dialog.close(false);
@@ -134,8 +101,6 @@ export class WidgetDialog implements OnInit, OnDestroy {
     };
 
     ngOnInit(): void {
-        this.load();
-
         this.SetupTypeForm();
 
         this.subscriptions.form = this.form.valueChanges.subscribe(data => {
@@ -155,9 +120,9 @@ export class WidgetDialog implements OnInit, OnDestroy {
         });
 
         this.subscriptions.deviceId = (<any>this.form.controls['query']).controls['deviceId'].valueChanges.subscribe(deviceId => {
-            for (let i = 0; i < this.devices.data.length; i++) {
-                if (this.devices.data[i].deviceId == deviceId) {
-                    this.inputs = this.devices.data[i].inputs;
+            for (let i = 0; i < this.devices.length; i++) {
+                if (this.devices[i].deviceId == deviceId) {
+                    this.inputs = this.devices[i].inputs;
                     break;
                 };
             };

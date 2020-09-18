@@ -15,6 +15,7 @@ export class ChartComponent implements OnChanges, AfterViewInit {
     @Input('units') private units: string = '';
     @Input('label') private label: string = '';
     @Input('color') private color: string = '#000000';
+    @Input('format') private format: string = 'YYYY/MM/DD HH:mm';
     @Input('background') private background: string = '#2196F3';
     @ViewChild('canvas', { 'static': true }) private canvas: ElementRef;
 
@@ -40,9 +41,8 @@ export class ChartComponent implements OnChanges, AfterViewInit {
     };
 
     ngAfterViewInit(): void {
+        const labels = this.data.map(o => o.date);
         const values = this.data.map(o => parseFloat(o.value.toFixed(2)));
-        const labels = this.data.map(o => moment(o.date).format('YYYY/MM/DD HH:mm'));
-        // const labels = this.data.map(o => new Date(o.date));
 
         const element: HTMLCanvasElement = this.canvas.nativeElement;
 
@@ -114,16 +114,20 @@ export class ChartComponent implements OnChanges, AfterViewInit {
                 'scales': {
                     'xAxes': [
                         {
-                            'display': false,
-                            'fontColor': this.color
+                            'ticks': {
+                                'callback': (value) => moment(new Date(value)).format(this.format),
+                                'fontColor': this.color
+                            },
+                            'display': true
                         }
                     ],
                     'yAxes': [
                         {
                             'ticks': {
-                                'beginAtZero': true,
-                                'fontColor': this.color
-                            }
+                                'fontColor': this.color,
+                                'beginAtZero': true
+                            },
+                            'display': true
                         }
                     ]
                 },

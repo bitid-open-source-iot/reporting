@@ -29,6 +29,7 @@ export class ReportViewerPage implements OnInit, OnDestroy {
         'frame': 'month'
     };
     public layout: string;
+    public format: string = 'YYYY/MM/DD HH:mm';
     public report: Report = {
         'theme': {
             'name': 'dark',
@@ -176,6 +177,22 @@ export class ReportViewerPage implements OnInit, OnDestroy {
             const response = await this.service.load(widget);
             if (response.ok) {
                 widget.data = response.result;
+                switch (range) {
+                    case('current-day'):
+                    case('previous-day'):
+                        widget.data.format = 'YYYY/MM/DD HH:mm';
+                        break;
+                    case('current-week'):
+                    case('previous-week'):
+                    case('current-month'):
+                    case('previous-month'):
+                        widget.data.format = 'YYYY/MM/DD';
+                        break;
+                    case('current-year'):
+                    case('previous-year'):
+                        widget.data.format = 'YYYY/MM';
+                        break;
+                };
             };
         }, Promise.resolve());
 

@@ -53,7 +53,6 @@ export interface Widget {
             'to'?: Date;
             'from'?: Date;
         };
-        'range'?: string;
         'counter'?: string;
         'inputId'?: string;
         'deviceId'?: string;
@@ -63,6 +62,7 @@ export interface Widget {
         'color'?: string;
     };
     'value'?: {
+        'color'?: string;
         'expression'?: string;
     };
     'status'?: {};
