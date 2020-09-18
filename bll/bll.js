@@ -164,35 +164,31 @@ var module = function () {
 										break;
 									case ('predicted-value'):
 										if (args.req.body.query.counter) {
-											try {
-												var result = [];
-												for (let i = 0; i < args.result.length; i++) {
-													if (i + 1 < args.result.length) {
-														result.push(args.result[i + 1].value - args.result[i].value);
-													};
+											var result = [];
+											for (let i = 0; i < args.result.length; i++) {
+												if (i + 1 < args.result.length) {
+													result.push(args.result[i + 1].value - args.result[i].value);
 												};
-												args.req.body.query.date.to = new Date(args.req.body.query.date.to);
-												args.req.body.query.date.from = new Date(args.req.body.query.date.from);
-												
-												var max = 0;
-												var gap = query.date.to - query.date.from;
-												var total = result.reduce((a, b) => a + b);
-												var average = total / result.length;
-			
-												if (gap > 0 && gap <= (60 * 60 * 1000)) { /* --- HOUR --- */
-													max = 60;
-												} else if (gap > (60 * 60 * 1000) && gap <= (24 * 60 * 60 * 1000)) { /* --- DAY --- */
-													max = 24;
-												} else if (gap > (24 * 60 * 60 * 1000) && gap <= (days * 7 * 24 * 60 * 60 * 1000)) { /* --- MONTH --- */
-													max = new Date(args.req.body.query.date.to.getFullYear(), args.req.body.query.date.to.getMonth() + 1, 0).getDate();
-												} else { /* --- YEAR --- */
-													max = 12;
-												};
-												
-												args.result = average * max;
-											} catch (error) {
-												console.log(error.message);
 											};
+											args.req.body.query.date.to = new Date(args.req.body.query.date.to);
+											args.req.body.query.date.from = new Date(args.req.body.query.date.from);
+											
+											var max = 0;
+											var gap = args.req.body.query.date.to - args.req.body.query.date.from;
+											var total = result.reduce((a, b) => a + b);
+											var average = total / result.length;
+		
+											if (gap > 0 && gap <= (60 * 60 * 1000)) { /* --- HOUR --- */
+												max = 60;
+											} else if (gap > (60 * 60 * 1000) && gap <= (24 * 60 * 60 * 1000)) { /* --- DAY --- */
+												max = 24;
+											} else if (gap > (24 * 60 * 60 * 1000) && gap <= (days * 7 * 24 * 60 * 60 * 1000)) { /* --- MONTH --- */
+												max = new Date(args.req.body.query.date.to.getFullYear(), args.req.body.query.date.to.getMonth() + 1, 0).getDate();
+											} else { /* --- YEAR --- */
+												max = 12;
+											};
+											
+											args.result = average * max;
 										} else {
 											var total = args.result.reduce((a, b) => a + b);
 											var average = total / args.result.length;
