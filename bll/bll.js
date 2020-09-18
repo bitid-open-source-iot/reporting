@@ -160,11 +160,12 @@ var module = function () {
 								switch (args.req.body.value.expression) {
 									case ('last-value'):
 									case ('first-value'):
-										args.result = parseFloat(args.result[0].value.toFixed(2));
+										args.result = args.result[0];
 										break;
 									case ('predicted-value'):
 										if (args.req.body.query.counter) {
 											try {
+												var item = args.result[args.result.length - 1];
 												var result = [];
 												for (let i = 0; i < args.result.length; i++) {
 													if (i + 1 < args.result.length) {
@@ -189,15 +190,17 @@ var module = function () {
 												} else { /* --- YEAR --- */
 													max = 12;
 												};
-												
-												args.result =parseFloat((average * max).toFixed(2));
+												item.value = parseFloat((average * max).toFixed(2));
+												args.result = item;
 											} catch (error) {
 												console.log(error.message);
 											};
 										} else {
+											var item = args.result[args.result.length - 1];
 											var total = args.result.reduce((a, b) => a + b);
 											var average = total / args.result.length;
-											args.result = parseFloat(average.toFixed(2));
+											item.value = parseFloat(average.toFixed(2));
+											args.result = item;
 										};
 										break;
 								};
