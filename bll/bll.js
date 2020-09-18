@@ -190,7 +190,7 @@ var module = function () {
 													max = 12;
 												};
 												
-												args.result = average * max;
+												args.result =parseFloat((average * max).toFixed(2));
 											} catch (error) {
 												console.log(error.message);
 											};
