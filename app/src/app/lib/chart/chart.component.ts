@@ -34,8 +34,8 @@ export class ChartComponent implements OnChanges, AfterViewInit {
 
     ngOnChanges(): void {
         if (this.chart) {
-            this.chart.data.labels = this.data.map(item => new Date(item.date));
-            this.chart.data.datasets[0].data = this.data.map(item => item.value);
+            this.chart.data.labels = this.data.map(o => o.date);
+            this.chart.data.datasets[0].data = this.data.map(o => parseInt(o.value));
             this.chart.update();
         };
     };
@@ -134,7 +134,7 @@ export class ChartComponent implements OnChanges, AfterViewInit {
                 'tooltips': {
                     'enabled': true,
                     'callbacks': {
-                        label: (item) => ([this.label, ': ', parseFloat(item.value.toFixed(2)), ' ', this.units].join(''))
+                        label: (item) => ([this.label, ': ', item.value, ' ', this.units].join(''))
                     }
                 }
             }
