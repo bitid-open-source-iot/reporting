@@ -2,6 +2,7 @@ import { Report } from 'src/app/interfaces/report';
 import { Router } from '@angular/router';
 import { MatDialog } from '@angular/material/dialog';
 import { ToastService } from 'src/app/services/toast/toast.service';
+import { AccountService } from 'src/app/services/account/account.service';
 import { ReportsService } from 'src/app/services/reports/reports.service';
 import { MatBottomSheet } from '@angular/material/bottom-sheet';
 import { ShareComponent } from 'src/app/components/share/share.component';
@@ -23,7 +24,7 @@ export class ReportsPage implements OnInit, OnDestroy {
 
     @ViewChild(SearchComponent, { 'static': true }) private search: SearchComponent;
 
-    constructor(private toast: ToastService, private sheet: MatBottomSheet, private dialog: MatDialog, private router: Router, private service: ReportsService, private localstorage: LocalstorageService) { };
+    constructor(private toast: ToastService, private sheet: MatBottomSheet, private account: AccountService, private dialog: MatDialog, private router: Router, private service: ReportsService, private localstorage: LocalstorageService) { };
 
     public sort: any = {
         'key': 'description',
@@ -33,6 +34,10 @@ export class ReportsPage implements OnInit, OnDestroy {
     public reports: Report[] = [];
     public loading: boolean;
     private subscriptions: any = {};
+
+    public async logout() {
+        this.account.logout();
+    };
 
     public async add(type: string) {
         this.loading = true;

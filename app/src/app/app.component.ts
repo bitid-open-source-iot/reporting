@@ -25,8 +25,9 @@ export class AppComponent implements OnInit {
         this.registry.addSvgIcon('theme', this.sanitizer.bypassSecurityTrustResourceUrl('./assets/theme.svg'));
         this.registry.addSvgIcon('mobile', this.sanitizer.bypassSecurityTrustResourceUrl('./assets/mobile.svg'));
         this.registry.addSvgIcon('tablet', this.sanitizer.bypassSecurityTrustResourceUrl('./assets/tablet.svg'));
-        this.registry.addSvgIcon('desktop', this.sanitizer.bypassSecurityTrustResourceUrl('./assets/desktop.svg'));
         this.registry.addSvgIcon('delete', this.sanitizer.bypassSecurityTrustResourceUrl('./assets/delete.svg'));
+        this.registry.addSvgIcon('logout', this.sanitizer.bypassSecurityTrustResourceUrl('./assets/logout.svg'));
+        this.registry.addSvgIcon('desktop', this.sanitizer.bypassSecurityTrustResourceUrl('./assets/desktop.svg'));
         this.registry.addSvgIcon('download', this.sanitizer.bypassSecurityTrustResourceUrl('./assets/download.svg'));
         this.registry.addSvgIcon('unsubscribe', this.sanitizer.bypassSecurityTrustResourceUrl('./assets/unsubscribe.svg'));
         this.registry.addSvgIcon('subscribers', this.sanitizer.bypassSecurityTrustResourceUrl('./assets/subscribers.svg'));

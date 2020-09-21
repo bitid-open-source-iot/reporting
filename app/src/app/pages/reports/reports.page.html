@@ -6,6 +6,10 @@
     </div>
 
     <search placeholder="filter reports"></search>
+
+    <button mat-icon-button (click)="logout()">
+        <mat-icon svgIcon="logout"></mat-icon>
+    </button>
 </mat-toolbar>
 
 <mat-progress-bar mode="indeterminate" color="accent" *ngIf="loading"></mat-progress-bar>

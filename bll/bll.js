@@ -213,7 +213,7 @@ var module = function () {
 												var max = 0;
 												var gap = args.req.body.query.date.to - args.req.body.query.date.from;
 												var days = new Date(args.req.body.query.date.to.getFullYear(), args.req.body.query.date.to.getMonth() + 1, 0).getDate();
-												var total = result.reduce((a, b) => a + b);
+												var total = result.reduce((a, b) => a + b, 0);
 												var average = total / result.length;
 			
 												if (gap > 0 && gap <= (60 * 60 * 1000)) { /* --- HOUR --- */
@@ -233,7 +233,7 @@ var module = function () {
 											};
 										} else {
 											var item = args.result[args.result.length - 1];
-											var total = args.result.reduce((a, b) => a + b);
+											var total = args.result.reduce((a, b) => a + b, 0);
 											var average = total / args.result.length;
 											item.value = parseFloat(average.toFixed(2));
 											args.result = item;
