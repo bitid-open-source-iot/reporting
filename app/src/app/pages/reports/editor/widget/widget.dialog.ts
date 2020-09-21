@@ -14,6 +14,12 @@ export class WidgetDialog implements OnInit, OnDestroy {
     constructor(private dialog: MatDialogRef<WidgetDialog>, @Inject(MAT_DIALOG_DATA) private config: any, private formerror: FormErrorService) { };
 
     public form: FormGroup = new FormGroup({
+        'map': new FormGroup({}),
+        'text': new FormGroup({
+            'value': new FormControl(this.config.text.value),
+        }),
+        'table': new FormGroup({}),
+        'gauge': new FormGroup({}),
         'label': new FormGroup({
             'value': new FormControl(this.config.label.value, [Validators.required]),
             'visable': new FormControl(this.config.label.visable, [Validators.required])
@@ -36,6 +42,12 @@ export class WidgetDialog implements OnInit, OnDestroy {
         'connectorId': new FormControl(this.config.connectorId, [Validators.required])
     });
     public errors: any = {
+        'map': {},
+        'text': {
+            'value': ''
+        },
+        'table': {},
+        'gauge': {},
         'label': {
             'value': '',
             'visable': ''
@@ -60,6 +72,7 @@ export class WidgetDialog implements OnInit, OnDestroy {
     public inputs: any[] = [];
     public loading: boolean;
     public devices: any[] = this.config.devices;
+    public conditions: any[] = this.config.conditions;
     public connectors: any[] = this.config.connectors;
     private subscriptions: any = {};
 

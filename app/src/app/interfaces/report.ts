@@ -69,5 +69,18 @@ export interface Widget {
     'type'?: string;
     'data'?: any;
     'widgetId'?: string;
+    'conditions': Condition[];
     'connectorId'?: string;
-};
+}
+
+export interface Condition {
+    'active'?: {
+        'min'?: number;
+        'max'?: number;
+    };
+    'style'?: {
+        'color'?: string;
+        'background'?: string;
+    };
+    'conditionId'?: string;
+}

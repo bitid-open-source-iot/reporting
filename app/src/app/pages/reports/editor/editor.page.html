@@ -101,11 +101,11 @@
                 <mat-icon class="drag-handle" svgIcon="drag" [style.color]="report.theme.color" cdkDragHandle></mat-icon>
         
                 <column *ngFor="let column of row.columns | orderBy : 'position'; let i = index" [width]="column.style.width" [style.color]="column.style.color" [background]="column.style.background">
-                    <column-label *ngIf="column.widgetId">
+                    <column-label *ngIf="column.widgetId" [style.color]="column.style.color">
                         {{ GetWidgetLabel(column.widgetId) }}
                     </column-label>
     
-                    <column-content>
+                    <column-content [style.color]="column.style.color">
                         {{ column.widgetId ? 'data will show here' : '' }}
                     </column-content>
                     

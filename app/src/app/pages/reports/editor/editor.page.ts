@@ -388,6 +388,9 @@ export class ReportEditorPage implements OnInit, OnDestroy {
     public async EditWidget(mode: string, widget?: any) {
         if (mode == 'add') {
             widget = {
+                'map': {},
+                'text': {},
+                'gauge': {},
                 'label': {
                     'value': '',
                     'visable': true

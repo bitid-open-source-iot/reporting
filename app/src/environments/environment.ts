@@ -3,8 +3,8 @@ export const environment = {
     "drive": "https://drive.bitid.co.za",
     "appId": "000000000000000000000002",
     "appName": "Reporting",
-    "reporting": "https://reporting.bitid.co.za",
-    // "reporting": "http://127.0.0.1:2000",
+    // "reporting": "https://reporting.bitid.co.za",
+    "reporting": "http://127.0.0.1:2000",
     "telemetry": "https://telemetry.bitid.co.za",
     "production": false,
     "roles": [
