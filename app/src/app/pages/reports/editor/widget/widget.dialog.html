@@ -15,6 +15,40 @@
 <div class="page-body">
     <div class="container">
         <form [formGroup]="form" (ngSubmit)="!form.invalid && submit()">
+            <mat-form-field appearance="outline">
+                <mat-label text-uppercase>
+                    display type
+                </mat-label>
+                
+                <mat-select name="type" placeholder="display type" formControlName="type" required>
+                    <mat-option value="map" disabled>
+                        Map
+                    </mat-option>
+                    <mat-option value="table" disabled>
+                        Table
+                    </mat-option>
+                    <mat-option value="gauge" disabled>
+                        Gauge
+                    </mat-option>
+                    <mat-option value="image">
+                        Image
+                    </mat-option>
+                    <mat-option value="chart">
+                        Chart
+                    </mat-option>
+                    <mat-option value="value">
+                        Value
+                    </mat-option>
+                    <mat-option value="text">
+                        Free Text
+                    </mat-option>
+                </mat-select>
+
+                <mat-error *ngIf="errors.type">
+                    {{ errors.type }}
+                </mat-error>
+            </mat-form-field>
+            
             <h2>
                 label
             </h2>
@@ -52,17 +86,17 @@
                 </mat-form-field>
             </section>
 
-            <h2>
+            <h2 *ngIf="form.value.type == 'value' || form.value.type == 'gauge' || form.value.type == 'chart' || form.value.type == 'table'">
                 filter
             </h2>
 
-            <section formGroupName="query">
+            <section formGroupName="query" *ngIf="form.value.type == 'value' || form.value.type == 'gauge' || form.value.type == 'chart' || form.value.type == 'table'">
                 <mat-form-field appearance="outline">
                     <mat-label text-uppercase>
                         device
                     </mat-label>
                     
-                    <mat-select name="deviceId" placeholder="device" formControlName="deviceId" required>
+                    <mat-select name="deviceId" placeholder="device" formControlName="deviceId" [required]="form.value.type == 'value' || form.value.type == 'gauge' || form.value.type == 'chart' || form.value.type == 'table'">
                         <mat-option *ngFor="let device of devices | orderBy : 'description'" [value]="device.deviceId">
                             {{ device.description }}
                         </mat-option>
@@ -78,7 +112,7 @@
                         input
                     </mat-label>
                     
-                    <mat-select name="inputId" placeholder="input" formControlName="inputId" required>
+                    <mat-select name="inputId" placeholder="input" formControlName="inputId" [required]="form.value.type == 'value' || form.value.type == 'gauge' || form.value.type == 'chart' || form.value.type == 'table'">
                         <mat-option *ngFor="let input of inputs | orderBy : 'description'" [value]="input.inputId">
                             {{ input.description }}
                         </mat-option>
@@ -90,13 +124,13 @@
                 </mat-form-field>
             </section>
 
-            <section formGroupName="query">
+            <section formGroupName="query" *ngIf="form.value.type == 'value' || form.value.type == 'gauge' || form.value.type == 'chart' || form.value.type == 'table'">
                 <mat-form-field appearance="outline">
                     <mat-label text-uppercase>
                         counter
                     </mat-label>
                     
-                    <mat-select name="counter" placeholder="counter" formControlName="counter" required>
+                    <mat-select name="counter" placeholder="counter" formControlName="counter" [required]="form.value.type == 'value' || form.value.type == 'gauge' || form.value.type == 'chart' || form.value.type == 'table'">
                         <mat-option [value]="true">
                             Is Counter
                         </mat-option>
@@ -107,62 +141,6 @@
     
                     <mat-error *ngIf="errors.query.counter">
                         {{ errors.query.counter }}
-                    </mat-error>
-                </mat-form-field>
-            </section>
-
-            <h2>
-                connector
-            </h2>
-
-            <section>
-                <mat-form-field appearance="outline">
-                    <mat-label text-uppercase>
-                        data connector
-                    </mat-label>
-                    
-                    <mat-select name="connectorId" placeholder="data connector" formControlName="connectorId" required>
-                        <mat-option *ngFor="let connector of connectors | orderBy : 'description'" [value]="connector.connectorId">
-                            {{ connector.description }}
-                        </mat-option>
-                    </mat-select>
-    
-                    <mat-error *ngIf="errors.connectorId">
-                        {{ errors.connectorId }}
-                    </mat-error>
-                </mat-form-field>
-
-                <mat-form-field appearance="outline">
-                    <mat-label text-uppercase>
-                        display type
-                    </mat-label>
-                    
-                    <mat-select name="type" placeholder="display type" formControlName="type" required>
-                        <mat-option value="map" disabled>
-                            Map
-                        </mat-option>
-                        <mat-option value="table" disabled>
-                            Table
-                        </mat-option>
-                        <mat-option value="gauge" disabled>
-                            Gauge
-                        </mat-option>
-                        <mat-option value="image" disabled>
-                            Image
-                        </mat-option>
-                        <mat-option value="chart">
-                            Chart
-                        </mat-option>
-                        <mat-option value="value">
-                            Value
-                        </mat-option>
-                        <mat-option value="text" disabled>
-                            Free Text
-                        </mat-option>
-                    </mat-select>
-    
-                    <mat-error *ngIf="errors.type">
-                        {{ errors.type }}
                     </mat-error>
                 </mat-form-field>
             </section>
@@ -246,6 +224,28 @@
                     </mat-error>
                 </mat-form-field>
             </section>
+
+            <h2 *ngIf="form.value.type == 'text'">
+                free text settings
+            </h2>
+
+            <mat-form-field appearance="outline" formGroupName="text" *ngIf="form.value.type == 'text'">
+                <mat-label text-uppercase>
+                    value
+                </mat-label>
+                
+                <textarea matInput [matTextareaAutosize]="true" rows="5" name="value" placeholder="value" formControlName="value" [required]="form.value.type == 'text'"></textarea>
+
+                <mat-error *ngIf="errors.text.value">
+                    {{ errors.text.value }}
+                </mat-error>
+            </mat-form-field>
+
+            <h2 *ngIf="form.value.type == 'image'">
+                image settings
+            </h2>
+
+            <div *ngIf="form.value.type == 'image'" class="image-upload" [style.background-image]="'url(' + form.value.image.src + ')'" (click)="upload()" matRipple></div>
 
             <button type="submit" mat-flat-button color="primary">
                 submit

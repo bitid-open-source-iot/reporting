@@ -1,4 +1,5 @@
 import { Theme } from 'src/app/interfaces/theme';
+import { Report } from 'src/app/interfaces/report';
 import { ObjectId } from 'src/app/id';
 import { MatDialog } from '@angular/material/dialog';
 import { ThemeDialog } from './theme/theme.dialog';
@@ -9,11 +10,9 @@ import { BloxComponent } from 'src/app/lib/blox/blox.component';
 import { ReportsService } from 'src/app/services/reports/reports.service';
 import { ActivatedRoute } from '@angular/router';
 import { HistoryService } from 'src/app/services/history/history.service';
-import { Report, Widget } from 'src/app/interfaces/report';
 import { DevicesService } from 'src/app/services/devices/devices.service';
 import { LinkWidgetDialog } from './link/link.dialog';
 import { FormErrorService } from 'src/app/services/form-error/form-error.service';
-import { ConnectorsService } from 'src/app/services/connectors/connectors.service';
 import { CdkDragDrop, moveItemInArray } from '@angular/cdk/drag-drop';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { OnInit, Component, OnDestroy, ViewChild } from '@angular/core';
@@ -28,7 +27,7 @@ export class ReportEditorPage implements OnInit, OnDestroy {
 
     @ViewChild(BloxComponent, {'static': true}) private blox: BloxComponent;
 
-    constructor(private route: ActivatedRoute, private dialog: MatDialog, private toast: ToastService, private devices: DevicesService, public history: HistoryService, private service: ReportsService, private connectors: ConnectorsService, private formerror: FormErrorService) { };
+    constructor(private route: ActivatedRoute, private dialog: MatDialog, private toast: ToastService, private devices: DevicesService, public history: HistoryService, private service: ReportsService, private formerror: FormErrorService) { };
 
     public row: any;
     public form: FormGroup = new FormGroup({
@@ -154,15 +153,6 @@ export class ReportEditorPage implements OnInit, OnDestroy {
             });
             if (devices.ok) {
                 this.devices.data = devices.result;
-            };
-            const connectors = await this.connectors.list({
-                'filter': [
-                    'connectorId',
-                    'description'
-                ]
-            });
-            if (connectors.ok) {
-                this.connectors.data = connectors.result;
             };
         } else {
             this.toast.error(report.error.message);
@@ -391,6 +381,7 @@ export class ReportEditorPage implements OnInit, OnDestroy {
                 'map': {},
                 'text': {},
                 'gauge': {},
+                'image': {},
                 'label': {
                     'value': '',
                     'visable': true
@@ -408,7 +399,6 @@ export class ReportEditorPage implements OnInit, OnDestroy {
             };
         };
         widget.devices = this.devices.data;
-        widget.connectors = this.connectors.data;
         const dialog = await this.dialog.open(WidgetDialog, {
             'data': widget,
             'panelClass': 'fullscreen-dialog',

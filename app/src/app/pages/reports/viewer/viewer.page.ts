@@ -167,26 +167,28 @@ export class ReportViewerPage implements OnInit, OnDestroy {
         await this.date.process();
         
         await this.report.widgets.reduce(async (promise, widget, index) => {
-            widget.query.date = this.date;
-            const response = await this.service.load(widget);
-            if (response.ok) {
-                widget.data = response.result;
-            } else {
-                switch (widget.type) {
-                    case('chart'):
-                        widget.data = {
-                            'value': [],
-                            'analog': {},
-                            'digital': {}
-                        };
-                        break;
-                    case('value'):
-                        widget.data = {
-                            'value': 0,
-                            'analog': {},
-                            'digital': {}
-                        };
-                        break;
+            if (widget.type == 'value' || widget.type == 'chart') {
+                widget.query.date = this.date;
+                const response = await this.service.load(widget);
+                if (response.ok) {
+                    widget.data = response.result;
+                } else {
+                    switch (widget.type) {
+                        case('chart'):
+                            widget.data = {
+                                'value': [],
+                                'analog': {},
+                                'digital': {}
+                            };
+                            break;
+                        case('value'):
+                            widget.data = {
+                                'value': 0,
+                                'analog': {},
+                                'digital': {}
+                            };
+                            break;
+                    };
                 };
             };
         }, Promise.resolve());
