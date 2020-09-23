@@ -32,3 +32,15 @@ column {
         
     // }
 }
+row:hover,
+row:active,
+column:hover,
+column:active {
+    .resize {
+        opacity: 0.5;
+    }
+}
+.resize:hover {
+    opacity: 1 !important;
+    transition: all 0.5s ease-in-out;
+}

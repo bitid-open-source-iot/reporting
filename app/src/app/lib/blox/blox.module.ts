@@ -1,6 +1,10 @@
 /* --- MODULES --- */
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { DragDropModule } from '@angular/cdk/drag-drop';
+
+/* --- SERVICES --- */
+import { BloxService } from './blox.service';
 
 /* --- COMPONENTS --- */
 import { BloxComponent } from './blox.component';
@@ -11,7 +15,8 @@ import { BloxColumnContentComponent } from './column-content/column-content.comp
 
 @NgModule({
     imports: [
-        CommonModule
+        CommonModule,
+        DragDropModule
     ],
     exports: [
         BloxComponent,
@@ -19,6 +24,9 @@ import { BloxColumnContentComponent } from './column-content/column-content.comp
         BloxColumnComponent,
         BloxColumnLabelComponent,
         BloxColumnContentComponent
+    ],
+    providers: [
+        BloxService
     ],
     declarations: [
         BloxComponent,

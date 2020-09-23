@@ -94,41 +94,19 @@
             </mat-icon>
         </div>
     </div>
-
-    <div class="dashboard">
-        <blox class="bound-rows" [class]="layout" cdkDropList (cdkDropListDropped)="DropRow($event)" (mouseup)="FinishResizing($event)" (mousemove)="DoResizing($event)" [background]="report.theme.board">
-            <row *ngFor="let row of report.layout[layout].rows | orderBy : 'position'" class="bound-columns" [height]="row.style.height" [background]="row.style.background" cdkDragBoundary=".bound-rows"  cdkDragLockAxis="y" cdkDrag cdkDropList  [cdkDragDisabled]="resizing">
-                <mat-icon class="drag-handle" svgIcon="drag" [style.color]="report.theme.color" cdkDragHandle></mat-icon>
-        
-                <column *ngFor="let column of row.columns | orderBy : 'position'; let i = index" [width]="column.style.width" [style.color]="column.style.color" [background]="column.style.background">
-                    <column-label *ngIf="column.widgetId" [style.color]="column.style.color">
-                        {{ GetWidgetLabel(column.widgetId) }}
-                    </column-label>
     
-                    <column-content [style.color]="column.style.color">
-                        {{ column.widgetId ? 'data will show here' : '' }}
-                    </column-content>
+    <div class="dashboard">
+        <blox class="blox" [class]="layout" [background]="report.theme.board" cdkDropList (cdkDropListDropped)="reorder($event)">
+            <row *ngFor="let row of report.layout[layout].rows | orderBy : 'position'" type="dynamic" [id]="row.rowId" [height]="row.style.height" [background]="row.style.background" cdkDragBoundary=".blox"  cdkDragLockAxis="y" cdkDrag [cdkDragDisabled]="!editing || resizing">
+                <column *ngFor="let column of row.columns | orderBy : 'position'" [id]="column.columnId" [width]="column.style.width" [style.color]="column.style.color" [position]="column.position" [background]="column.style.background">
                     
-                    <div class="options">
-                        <button mat-icon-button matTooltip="Link Widget" (click)="link(row, column)">
-                            <mat-icon [style.color]="report.theme.color" svgIcon="data"></mat-icon>
-                        </button>
-        
-                        <button mat-icon-button matTooltip="Remove Column" color="warn" (click)="remove(row, column.columnId)">
-                            <mat-icon svgIcon="delete"></mat-icon>
-                        </button>
-                    </div>
-                    
-                    <div class="resize right" (mousedown)="StartResizing('x', $event, row, column)" *ngIf="i != row.columns.length - 1"></div>
                 </column>
-        
-                <div class="resize bottom" (mousedown)="StartResizing('y', $event, row, column)"></div>
 
-                <div class="drag-placeholder-row" *cdkDragPlaceholder></div>
+                <div class="drag-placeholder" *cdkDragPlaceholder></div>
             </row>
         
-            <row height="100">
-                <column class="add" width="100" [style.background]="report.theme.column" matRipple matTooltip="Add Row" (click)="add()">
+            <row type="static" height="100">
+                <column width="100" [style.background]="report.theme.column" matRipple matTooltip="Add Row" (click)="add()">
                     <mat-icon [style.color]="report.theme.color">
                         add
                     </mat-icon>

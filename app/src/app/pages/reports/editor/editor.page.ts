@@ -29,14 +29,10 @@ export class ReportEditorPage implements OnInit, OnDestroy {
 
     constructor(private route: ActivatedRoute, private dialog: MatDialog, private toast: ToastService, private devices: DevicesService, public history: HistoryService, private service: ReportsService, private formerror: FormErrorService) { };
 
-    public row: any;
     public form: FormGroup = new FormGroup({
         'url': new FormControl(''),
         'description': new FormControl('')
     });
-    public rows: any[] = [];
-    public mode: string;
-    public axis: string;
     public start: any = {
         'x': 0,
         'y': 0
@@ -66,10 +62,10 @@ export class ReportEditorPage implements OnInit, OnDestroy {
         },
         'widgets': []
     };
-    public column: any;
     public loading: boolean;
+    public editing: boolean = true;
     public reportId: string;
-    public resizing: boolean;
+    public resizing: boolean = false;
     private subscriptions: any = {};
 
     public async add() {
@@ -248,33 +244,6 @@ export class ReportEditorPage implements OnInit, OnDestroy {
         });
     };
 
-    public async DoResizing(event) {
-        if (this.resizing) {
-            if (this.axis == 'x') {
-                const diff = parseFloat((((event.pageX - this.start.x) / this.blox.element.clientWidth) * 100).toFixed(2));
-                this.column.style.width += diff;
-                this.start.x = event.pageX;
-                this.row.columns = this.row.columns.sort((a, b) => {
-                    if (a.position < b.position) {
-                        return -1;
-                    } else if (a.position > b.position) {
-                        return 1;
-                    } else {
-                        return 0;
-                    };
-                });
-                this.row.columns.map(col => {
-                    if (col.position - 1 == this.column.position) {
-                        col.style.width -= diff;
-                    };
-                });
-            } else if (this.axis == 'y') {
-                this.row.style.height = this.row.style.height + (event.pageY - this.start.y);
-                this.start.y = event.pageY;
-            };
-        };
-    };
-
     public async remove(row, columnId) {
         if (row.columns.length > 1) {
             row.columns = row.columns.sort((a, b) => {
@@ -352,23 +321,11 @@ export class ReportEditorPage implements OnInit, OnDestroy {
         this.save('layout', this.report.layout);
     };
 
-    public async FinishResizing(event: MouseEvent) {
-        if (typeof(this.row) != 'undefined' && this.row != null || typeof(this.column) != 'undefined' && this.column != null) {
-            this.save('layout', this.report.layout);
-        };
-        this.row = null;
-        this.axis = null;
-        this.column = null;
-        this.start.x = 0;
-        this.start.y = 0;
-        this.resizing = false;
-    };
-
-    public async DropRow(event: CdkDragDrop<string[]>) {
+    public async reorder(event: CdkDragDrop<string[]>) {
         moveItemInArray(this.report.layout[this.layout].rows, event.previousIndex, event.currentIndex);
         for (let a = 0; a < this.report.layout[this.layout].rows.length; a++) {
             this.report.layout[this.layout].rows[a].position = a + 1;
-            for (let b = 0; b < this.report.layout[this.layout].rows.length; b++) {
+            for (let b = 0; b < this.report.layout[this.layout].rows[a].columns.length; b++) {
                 this.report.layout[this.layout].rows[a].columns[b].position = b + 1;
             };
         };
@@ -423,32 +380,30 @@ export class ReportEditorPage implements OnInit, OnDestroy {
         });
     };
 
-    public async StartResizing(axis, event: MouseEvent, row, column) {
-        this.row = row;
-        this.axis = axis;
-        this.column = column;
-        this.start.x = event.pageX;
-        this.start.y = event.pageY;
-        this.resizing = true;
-    };
-
     ngOnInit(): void {
         this.subscriptions.form = this.form.valueChanges.subscribe(data => {
             this.errors = this.formerror.validateForm(this.form, this.errors, true);
         });
 
         this.subscriptions.route = this.route.queryParams.subscribe(params => {
-            this.mode = params.mode;
             this.reportId = params.reportId;
-            if (this.mode != 'add') {
-                this.get();
-            };
+            this.get();
+        });
+
+        this.subscriptions.resizing = this.blox.resizing.subscribe(resizing => {
+            this.resizing = resizing;
+        });
+    
+        this.subscriptions.changes = this.blox.changes.subscribe(changes => {
+            // this.save('layout', this.report.layout);
+            // console.log(changes);
         });
     };
 
     ngOnDestroy(): void {
         this.subscriptions.form.unsubscribe();
         this.subscriptions.route.unsubscribe();
+        this.subscriptions.resizing.unsubscribe();
     };
 
 }

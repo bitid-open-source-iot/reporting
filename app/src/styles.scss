@@ -84,10 +84,10 @@ h1, h2, h3, h4, h5, p {
     padding: 0px !important;
 }
 * {
-    user-select:            none;
-    -ms-user-select:        none;
-    -moz-user-select:       none;
-    -webkit-user-select:    none;
+    user-select: none;
+    -ms-user-select: none;
+    -moz-user-select: none;
+    -webkit-user-select: none;
 }
 form {
     display:        flex;
