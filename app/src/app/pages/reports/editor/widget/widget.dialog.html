@@ -223,10 +223,55 @@
             </h2>
 
             <div *ngIf="form.value.type == 'image'" class="image-upload" [style.background-image]="'url(' + form.value.image.src + ')'" (click)="upload()" matRipple></div>
-
-            <button type="submit" mat-flat-button color="primary">
-                submit
-            </button>
         </form>
+
+        <div class="conditions">
+            <h2>
+                conditions
+            </h2>
+
+            <div class="condition" *ngFor="let condition of conditions">
+                <div class="widget-container" [style.background-color]="theme.board">
+                    <widget [fill]="condition.fill" [stroke]="condition.stroke">
+                        <banner [font]="condition.banner">
+                            {{ form.value.label }}
+                        </banner>
+    
+                        <value [font]="condition.font">
+                            100%
+                        </value>
+                    </widget>
+                </div>
+
+                <div class="details">
+                    <h3>
+                        {{ GetDeviceDescription(condition.connector.deviceId) }}
+                    </h3>
+                    <p>
+                        {{ GetDeviceInputDescription(condition.connector.deviceId, condition.connector.inputId) }}: {{ condition.connector.type == 'analog' ? (condition.connector.analog.min + condition.connector.analog.units + ' - ' + condition.connector.analog.max + condition.connector.analog.units) : (condition.connector.digital.value == 0 ? condition.connector.digital.low : condition.connector.digital.high) }}
+                    </p>
+                </div>
+
+                <div class="options">
+                    <button mat-icon-button matTooltip="Edit Condition" (click)="EditCondition('edit', condition)">
+                        <mat-icon svgIcon="edit"></mat-icon>
+                    </button>
+
+                    <button mat-icon-button matTooltip="Copy Condition" (click)="EditCondition('copy', condition)">
+                        <mat-icon svgIcon="copy"></mat-icon>
+                    </button>
+    
+                    <button mat-icon-button matTooltip="Remove Condition" color="warn"(click)="RemoveCondition(condition.conditionId)">
+                        <mat-icon svgIcon="delete"></mat-icon>
+                    </button>
+                </div>
+            </div>
+
+            <div class="add condition" matRipple matTooltip="Add Condition" (click)="EditCondition('add')">
+                <mat-icon>
+                    add
+                </mat-icon>
+            </div>
+        </div>
     </div>
 </div>

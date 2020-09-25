@@ -29,6 +29,7 @@ export interface Condition {
         'analog'?: {
             'min'?: number;
             'max'?: number;
+            'units'?: string;
         };
         'digital'?: {
             'low'?: string;

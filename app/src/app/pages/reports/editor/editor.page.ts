@@ -151,8 +151,6 @@ export class ReportEditorPage implements OnInit, OnDestroy {
             if (devices.ok) {
                 this.devices.data = devices.result;
             };
-            console.warn('remove this line!');
-            this.EditWidget('add')
         } else {
             this.toast.error(report.error.message);
             this.history.back();
@@ -225,7 +223,9 @@ export class ReportEditorPage implements OnInit, OnDestroy {
         };
     };
 
-    public async link(row, column) {
+    public async link(event, row, column) {
+        event.preventDefault();
+        event.stopPropagation();
         const dialog = await this.dialog.open(LinkWidgetDialog, {
             'data': {
                 'widgets': this.report.widgets,
@@ -248,7 +248,9 @@ export class ReportEditorPage implements OnInit, OnDestroy {
         });
     };
 
-    public async remove(row, columnId) {
+    public async remove(event, row, columnId) {
+        event.preventDefault();
+        event.stopPropagation();
         if (row.columns.length > 1) {
             row.columns = row.columns.sort((a, b) => {
                 if (a.position < b.position) {
@@ -343,10 +345,6 @@ export class ReportEditorPage implements OnInit, OnDestroy {
                 'text': {},
                 'gauge': {},
                 'image': {},
-                'label': {
-                    'value': '',
-                    'visable': true
-                },
                 'chart': {
                     'type': 'bar',
                     'color': '#2196F3'
@@ -355,6 +353,7 @@ export class ReportEditorPage implements OnInit, OnDestroy {
                     'color': '#FFFFFF'
                 },
                 'query': {},
+                'label': '',
                 'widgetId': ObjectId(),
                 'connectorId': '000000000000000000000001'
             };

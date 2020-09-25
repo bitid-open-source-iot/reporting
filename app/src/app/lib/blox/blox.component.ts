@@ -39,11 +39,14 @@ export class BloxComponent implements OnInit, OnDestroy, OnChanges {
     private subscriptions: any = {};
 
     ngOnInit(): void {
-        this.subscriptions.end = this.blox.end.subscribe(event => {
-            this.end.next(event);
-            this.blox.changes.next(true);
-        });
+        this.blox.editing.next(this.editing);
 
+        this.subscriptions.end = this.blox.end.subscribe(event => {
+            if (this.blox.selected.value && this.blox.selected.value.id && this.blox.selected.value.type) {
+                this.blox.changes.next(true);
+            };
+        });
+        
         this.subscriptions.move = this.blox.move.subscribe(event => this.move.next(event));
 
         this.subscriptions.start = this.blox.start.subscribe(event => this.start.next(event));

@@ -15,7 +15,7 @@ export class BloxRowComponent implements OnInit, OnDestroy, OnChanges, AfterCont
     @Input('rowId') public rowId: string = ObjectId();
     @Input('config') public config: any = {
         'height': 100,
-        'background': 'rgba(0, 0, 0, 1)'
+        'background': 'transparent'
     };
     @Input('position') public position: number;
     
@@ -39,15 +39,23 @@ export class BloxRowComponent implements OnInit, OnDestroy, OnChanges, AfterCont
         this.renderer.setStyle(this.element, 'height', this.config.height + 'px');
         this.renderer.setStyle(this.element, 'background', this.config.background);
 
-        if (this.type == 'dynamic') {
+        if (this.blox.editing.value && this.type == 'dynamic') {
             this.resize = true;
-        };
 
-        if (this.columns) {
-            this.columns.forEach(column => {
-                column.resizer(true);
-            });
-            this.columns.last.resizer(false);
+            if (this.columns) {
+                this.columns.forEach(column => {
+                    column.resizer(true);
+                });
+                this.columns.last.resizer(false);
+            };
+        } else {
+            this.resize = false;
+
+            if (this.columns) {
+                this.columns.forEach(column => {
+                    column.resizer(false);
+                });
+            };
         };
     };
 
@@ -58,16 +66,6 @@ export class BloxRowComponent implements OnInit, OnDestroy, OnChanges, AfterCont
         });
         event.preventDefault();
         this.blox.resizing.next(true);
-    };
-
-    public async release(event: MouseEvent|TouchEvent) {
-        if (this.blox.selected.value) {
-            if (this.blox.selected.value.type == 'row') {
-                this.blox.selected.next(null);
-            };
-        };
-        event.preventDefault();
-        this.blox.resizing.next(false);
     };
 
     ngOnInit(): void {
@@ -145,23 +143,9 @@ export class BloxRowComponent implements OnInit, OnDestroy, OnChanges, AfterCont
             };
         });
         if (!first) {
-            this.blox.changes.next({
-                'row': {
-                    'columns': this.columns.map(column => {
-                        return {
-                            'config': column.config,
-                            'widget': column.widget,
-                            'widgetId': column.widgetId,
-                            'columnId': column.columnId,
-                            'position': column.position
-                        };
-                    }),
-                    'rowId': this.rowId,
-                    'config': this.config,
-                    'position': this.position
-                }
-            });
+            this.blox.changes.next(true);
         };
+        this.process();
     };
 
     ngAfterContentInit(): void {

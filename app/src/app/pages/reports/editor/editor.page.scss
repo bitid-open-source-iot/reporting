@@ -26,7 +26,9 @@ mat-toolbar {
     display: none;
 }
 .add {
-    margin-left: 38px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
 form {
     width:  400px;
@@ -160,7 +162,13 @@ column:active {
 }
 .dashboard {
     overflow-y: auto;
+    padding-left: 50px;
 }
 .dashboard::-webkit-scrollbar {
     display: none;
+}
+.drag-handle {
+    left: -35px;
+    position: absolute;
+    align-self: center;
 }

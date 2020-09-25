@@ -56,7 +56,18 @@
 
     <blox>
         <row *ngFor="let row of report.layout[layout].rows" [rowId]="row.rowId" [config]="row.config" [position]="row.position">
+            
             <column *ngFor="let column of row.columns" [config]="column.config" [columnId]="column.columnId" [position]="column.position">
+                <widget *ngIf="column.widget" [fill]="column.widget.fill" [stroke]="column.widget.stroke">
+                    <banner [font]="column.widget.banner">
+                        {{ column.widget.label }}
+                    </banner>
+    
+                    <value *ngIf="column.widget.type == 'value'" [font]="column.widget.font">
+                        {{ column.widget.data.type == 'analog' ? (column.widget.data.value | number : '0.2-2') : (column.widget.data.value == 0 ? column.widget.data.digital.low : column.widget.data.digital.high) }}{{ (column.widget.data.type == 'analog' && column.widget.data.analog.units) ? column.widget.data.analog.units : '' }}
+                    </value>
+                </widget>
+
                 <!-- <column-label *ngIf="column.widget" [class.hidden]="!column.widget.label.visable">
                     {{ column.widget.label.value }}
                 </column-label>
@@ -65,7 +76,7 @@
                     <h1 class="value" *ngIf="column.widget && column.widget.data && column.widget.type == 'value'" [style.color]="column.widget.value.color">
                         {{ column.widget.data.type == 'analog' ? (column.widget.data.value | number : '0.2-2') : (column.widget.data.value == 0 ? column.widget.data.digital.low : column.widget.data.digital.high) }}
                         <small *ngIf="column.widget.data.type == 'analog' && column.widget.data.analog.units">
-                            {{ column.widget.data.analog.units }}
+                            
                         </small>
                     </h1>
 

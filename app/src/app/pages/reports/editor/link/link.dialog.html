@@ -17,8 +17,8 @@
         </mat-label>
         
         <mat-select name="widgetId" placeholder="Widget" formControlName="widgetId" required>
-            <mat-option *ngFor="let widget of widgets" [value]="widget.widgetId">
-                {{ widget.label.value }}
+            <mat-option *ngFor="let widget of widgets | orderBy : 'label'" [value]="widget.widgetId">
+                {{ widget.label }}
             </mat-option>
         </mat-select>
 

@@ -13,7 +13,7 @@ export class BloxColumnComponent implements OnChanges, AfterContentInit {
     
     @Input('config') public config: any = {
         'width': 100,
-        'background': 'rgba(0, 0, 0, 1)'
+        'background': 'transparent'
     };
     @Input('widget') public widget: Widget;
     @Input('widgetId') public widgetId: string;
@@ -55,16 +55,6 @@ export class BloxColumnComponent implements OnChanges, AfterContentInit {
         this.blox.resizing.next(true);
     };
 
-    public async release(event: MouseEvent|TouchEvent) {
-        if (this.blox.selected.value) {
-            if (this.blox.selected.value.type == 'column') {
-                this.blox.selected.next(null);
-            };
-        };
-        event.preventDefault();
-        this.blox.resizing.next(false);
-    };
-
     ngOnChanges(changes: SimpleChanges): void {
         let first: boolean = true;
         Object.keys(changes).map(key => {
@@ -73,14 +63,9 @@ export class BloxColumnComponent implements OnChanges, AfterContentInit {
             };
         });
         if (!first) {
-            this.blox.changes.next({
-                'column': {
-                    'id': this.columnId,
-                    'width': this.config.width,
-                    'background': this.config.background
-                }
-            });
+            this.blox.changes.next(true);
         };
+        this.process();
     };
 
     ngAfterContentInit(): void {

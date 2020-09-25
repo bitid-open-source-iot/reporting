@@ -12,22 +12,22 @@
 
 <div class="page-body themes">
     <blox *ngFor="let theme of themes" [style.color]="theme.color" [style.background-color]="theme.board" (click)="submit(theme)" matRipple>
-        <row height="50">
-            <column [style]="{'width': 50, 'background': theme.column}">
+        <row type="type" rowId="1" [config]="{height: 50, 'background': 'transparent'}" position="1">
+            <column [config]="{'width': 50, 'background': theme.column}">
                 <label>
                     cloumn
                 </label>
             </column>
             
-            <column [style]="{'width': 50, 'background': theme.column}">
+            <column [config]="{'width': 50, 'background': theme.column}">
                 <label>
                     cloumn
                 </label>
             </column>
         </row>
 
-        <row height="100">
-            <column [style]="{'width': 100, 'background': theme.column}">
+        <row type="type" rowId="2" [config]="{height:100, 'background': 'transparent'}" position="2">
+            <column [config]="{'width': 100, 'background': theme.column}">
                 <label>
                     cloumn
                 </label>

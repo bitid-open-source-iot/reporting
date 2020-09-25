@@ -8,7 +8,7 @@ import { Input, Component, OnChanges, ViewChild, ElementRef, AfterViewInit } fro
     templateUrl: './chart.component.html'
 })
 
-export class ChartComponent implements OnChanges, AfterViewInit {
+export class WidgetChartComponent implements OnChanges, AfterViewInit {
 
     @Input('data') private data: any[] = [];
     @Input('type') private type: string = 'bar';

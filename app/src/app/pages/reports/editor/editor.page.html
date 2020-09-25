@@ -73,8 +73,8 @@
         </header>
 
         <div class="widget" *ngFor="let widget of report.widgets" [style.background]="report.theme.board">
-            <label [for]="widget.label.value" [style.color]="report.theme.color">
-                {{ widget.label.value }}
+            <label [style.color]="report.theme.color">
+                {{ widget.label }}
             </label>
 
             <div class="options">
@@ -96,17 +96,39 @@
     </div>
     
     <div class="dashboard">
-        <blox class="blox" [class]="layout" [background]="report.theme.board" cdkDropList (cdkDropListDropped)="reorder($event)">
+        <blox class="blox" [class]="layout" [editing]="true" [background]="report.theme.board" cdkDropList (cdkDropListDropped)="reorder($event)">
             <row *ngFor="let row of report.layout[layout].rows | orderBy : 'position'" type="dynamic" [rowId]="row.rowId" [config]="row.config" [position]="row.position" cdkDragBoundary=".blox"  cdkDragLockAxis="y" cdkDrag [cdkDragDisabled]="!editing || resizing">
                 <column *ngFor="let column of row.columns | orderBy : 'position'" [config]="column.config" [columnId]="column.columnId" [position]="column.position">
-                    
+                    <widget *ngIf="column.widget" [fill]="column.widget.fill" [stroke]="column.widget.stroke">
+                        <banner [font]="column.widget.banner">
+                            {{ column.widget.label }}
+                        </banner>
+    
+                        <value [font]="column.widget.font">
+                            NA
+                        </value>
+                    </widget>
+
+                    <div class="options">
+                        <button mat-icon-button matTooltip="Link Widget" (click)="link($event, row, column)" [style.color]="report.theme.color">
+                            <mat-icon svgIcon="data"></mat-icon>
+                        </button>
+        
+                        <button mat-icon-button matTooltip="Remove Column" color="warn" (click)="remove($event, row, column.columnId)">
+                            <mat-icon svgIcon="delete"></mat-icon>
+                        </button>
+                    </div>
                 </column>
+
+                <div class="drag-handle" cdkDragHandle>
+                    <mat-icon svgIcon="drag" [style.color]="report.theme.color"></mat-icon>
+                </div>
 
                 <div class="drag-placeholder" *cdkDragPlaceholder></div>
             </row>
         
-            <row type="static" [style]="{'height': 100}">
-                <column [style]="{'width': 100, 'background': report.theme.column}" matRipple matTooltip="Add Row" (click)="add()">
+            <row type="static" [style]="{'height': 100, 'background': 'transparent'}">
+                <column class="add" [style]="{'width': 100, 'background': report.theme.column}" matRipple matTooltip="Add Row" (click)="add()">
                     <mat-icon [style.color]="report.theme.color">
                         add
                     </mat-icon>

@@ -47,7 +47,8 @@ export class ConditionDialog implements OnInit, OnDestroy {
         'connector': new FormGroup({
             'analog': new FormGroup({
                 'min': new FormControl(this.condition.connector.analog.min, [Validators.required]),
-                'max': new FormControl(this.condition.connector.analog.max, [Validators.required])
+                'max': new FormControl(this.condition.connector.analog.max, [Validators.required]),
+                'units': new FormControl(this.condition.connector.analog.units, [Validators.required])
             }),
             'digital': new FormGroup({
                 'low': new FormControl(this.condition.connector.digital.low, [Validators.required]),
@@ -91,7 +92,8 @@ export class ConditionDialog implements OnInit, OnDestroy {
         'connector': {
             'analog': {
                 'min': '',
-                'max': ''
+                'max': '',
+                'units': ''
             },
             'digital': {
                 'low': '',
@@ -124,8 +126,14 @@ export class ConditionDialog implements OnInit, OnDestroy {
         analog.controls['min'].updateValueAndValidity();
         analog.controls['max'].setValidators(null);
         analog.controls['max'].updateValueAndValidity();
+        analog.controls['units'].setValidators(null);
+        analog.controls['units'].updateValueAndValidity();
         
         const digital: FormGroup = <any>(<any>this.form.controls['connector']).controls['digital'];
+        digital.controls['low'].setValidators(null);
+        digital.controls['low'].updateValueAndValidity();
+        digital.controls['high'].setValidators(null);
+        digital.controls['high'].updateValueAndValidity();
         digital.controls['value'].setValidators(null);
         digital.controls['value'].updateValueAndValidity();
 
@@ -134,7 +142,13 @@ export class ConditionDialog implements OnInit, OnDestroy {
             analog.controls['min'].updateValueAndValidity();
             analog.controls['max'].setValidators([Validators.required]);
             analog.controls['max'].updateValueAndValidity();
+            analog.controls['units'].setValidators([Validators.required]);
+            analog.controls['units'].updateValueAndValidity();
         } else if (this.form.value.connector.type == 'digital') {
+            digital.controls['low'].setValidators([Validators.required]);
+            digital.controls['low'].updateValueAndValidity();
+            digital.controls['high'].setValidators([Validators.required]);
+            digital.controls['high'].updateValueAndValidity();
             digital.controls['value'].setValidators([Validators.required]);
             digital.controls['value'].updateValueAndValidity();
         };
@@ -157,7 +171,9 @@ export class ConditionDialog implements OnInit, OnDestroy {
             this.inputs.map(input => {
                 if (input.inputId == inputId) {
                     (<any>this.form.controls['connector']).controls['type'].setValue(input.type);
-                    if (input.type == 'digital') {
+                    if (input.type == 'analog') {
+                        (<any>this.form.controls['connector']).controls['analog'].controls['units'].setValue(input.analog.units);
+                    } else if (input.type == 'digital') {
                         (<any>this.form.controls['connector']).controls['digital'].controls['low'].setValue(input.digital.low);
                         (<any>this.form.controls['connector']).controls['digital'].controls['high'].setValue(input.digital.high);
                     };
@@ -173,6 +189,26 @@ export class ConditionDialog implements OnInit, OnDestroy {
                 };
             };
         });
+
+        if (this.form.value.connector.deviceId) {
+            for (let a = 0; a < this.devices.data.length; a++) {
+                if (this.devices.data[a].deviceId == this.form.value.connector.deviceId) {
+                    this.inputs = this.devices.data[a].inputs;
+                    for (let b = 0; b < this.devices.data[a].inputs.length; b++) {
+                        if (this.devices.data[a].inputs[b].inputId == this.form.value.connector.inputId) {
+                            (<any>this.form.controls['connector']).controls['type'].setValue(this.devices.data[a].inputs[b].type);
+                            if (this.devices.data[a].inputs[b].type == 'analog') {
+                                (<any>this.form.controls['connector']).controls['analog'].controls['units'].setValue(this.devices.data[a].inputs[b].analog.units);
+                            } else if (this.devices.data[a].inputs[b].type == 'digital') {
+                                (<any>this.form.controls['connector']).controls['digital'].controls['low'].setValue(this.devices.data[a].inputs[b].digital.low);
+                                (<any>this.form.controls['connector']).controls['digital'].controls['high'].setValue(this.devices.data[a].inputs[b].digital.high);
+                            };
+                        };
+                    }
+                    break;
+                };
+            };
+        }
     };
 
     ngOnDestroy(): void {

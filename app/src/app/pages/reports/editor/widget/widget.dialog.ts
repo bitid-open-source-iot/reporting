@@ -1,13 +1,15 @@
+import { ObjectId } from 'src/app/id';
 import { Condition } from 'src/app/interfaces/condition';
 import { environment } from 'src/environments/environment';
 import { ToastService } from 'src/app/services/toast/toast.service';
+import { ReportsService } from 'src/app/services/reports/reports.service';
 import { ConditionDialog } from '../condition/condition.dialog';
 import { FormErrorService } from 'src/app/services/form-error/form-error.service';
 import { LocalstorageService } from 'src/app/services/localstorage/localstorage.service';
 import { FormGroup, FormControl, Validators } from '@angular/forms';
 import { OnInit, Inject, Component, OnDestroy } from '@angular/core';
 import { MatDialog, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
-import { ObjectId } from 'src/app/id';
+import { Theme } from 'src/app/interfaces/theme';
 
 @Component({
     selector: 'app-widget-dialog',
@@ -17,7 +19,7 @@ import { ObjectId } from 'src/app/id';
 
 export class WidgetDialog implements OnInit, OnDestroy {
 
-    constructor(private toast: ToastService, private dialog: MatDialogRef<WidgetDialog>, @Inject(MAT_DIALOG_DATA) private config: any, private matdialog: MatDialog, private formerror: FormErrorService, private localstorage: LocalstorageService) { };
+    constructor(private toast: ToastService, private dialog: MatDialogRef<WidgetDialog>, @Inject(MAT_DIALOG_DATA) private config: any, private reports: ReportsService, private matdialog: MatDialog, private formerror: FormErrorService, private localstorage: LocalstorageService) { };
 
     public form: FormGroup = new FormGroup({
         'map': new FormGroup({}),
@@ -47,6 +49,7 @@ export class WidgetDialog implements OnInit, OnDestroy {
         'widgetId': new FormControl(this.config.widgetId, [Validators.required]),
         'connectorId': new FormControl('000000000000000000000001', [Validators.required])
     });
+    public theme: Theme = this.reports.theme.value;
     public errors: any = {
         'map': {},
         'text': {
@@ -196,6 +199,24 @@ export class WidgetDialog implements OnInit, OnDestroy {
         };
     };
 
+    public RemoveCondition(conditionId: string) {
+        for (let i = 0; i < this.conditions.length; i++) {
+            if (this.conditions[i].conditionId == conditionId) {
+                this.conditions.splice(i, 1);
+                break;
+            };
+        };
+    };
+
+    public GetDeviceDescription(deviceId: string) {
+        for (let i = 0; i < this.devices.length; i++) {
+            if (this.devices[i].deviceId == deviceId) {
+                return this.devices[i].description;
+            };
+        };
+        return 'NA';
+    };
+
     public async EditCondition(mode: string, condition?: Condition) {
         if (mode == 'add') {
             condition = {
@@ -228,7 +249,8 @@ export class WidgetDialog implements OnInit, OnDestroy {
                 'connector': {
                     'analog': {
                         'min': null,
-                        'max': null
+                        'max': null,
+                        'units': null
                     },
                     'digital': {
                         'value': null
@@ -239,6 +261,12 @@ export class WidgetDialog implements OnInit, OnDestroy {
                 },
                 'conditionId': ObjectId()
             };
+        };
+
+        if (mode == 'copy') {
+            condition = JSON.parse(JSON.stringify(condition));
+            condition.conditionId = ObjectId();
+            mode = 'add';
         };
 
         const dialog = await this.matdialog.open(ConditionDialog, {
@@ -263,6 +291,19 @@ export class WidgetDialog implements OnInit, OnDestroy {
         });
     };
 
+    public GetDeviceInputDescription(deviceId: string, inputId: string) {
+        for (let a = 0; a < this.devices.length; a++) {
+            if (this.devices[a].deviceId == deviceId) {
+                for (let b = 0; b < this.devices[a].inputs.length; b++) {
+                    if (this.devices[a].inputs[b].inputId == inputId) {
+                        return this.devices[a].inputs[b].description;
+                    };
+                };
+            };
+        };
+        return 'NA';
+    };
+
     ngOnInit(): void {
         this.SetupTypeForm();
 
@@ -274,10 +315,14 @@ export class WidgetDialog implements OnInit, OnDestroy {
             this.SetupTypeForm();
         });
 
+        this.subscriptions.theme = this.reports.theme.subscribe(theme => {
+            this.theme = theme;
+        });
+
         this.subscriptions.inputId = (<any>this.form.controls['query']).controls['inputId'].valueChanges.subscribe(inputId => {
             this.inputs.map(input => {
-                if (input.inputId == inputId && (typeof(this.form.value.label.value) == 'undefined' || this.form.value.label.value == null || this.form.value.label.value == '')) {
-                    (<any>this.form.controls['label']).controls['value'].setValue(input.description);
+                if (input.inputId == inputId && (typeof(this.form.value.label) == 'undefined' || this.form.value.label == null || this.form.value.label == '')) {
+                    this.form.controls['label'].setValue(input.description);
                 };
             });
         });
@@ -295,6 +340,7 @@ export class WidgetDialog implements OnInit, OnDestroy {
     ngOnDestroy(): void {
         this.subscriptions.form.unsubscribe();
         this.subscriptions.type.unsubscribe();
+        this.subscriptions.theme.unsubscribe();
         this.subscriptions.inputId.unsubscribe();
         this.subscriptions.deviceId.unsubscribe();
     };
