@@ -1,7 +1,9 @@
+import { Theme } from 'src/app/interfaces/theme';
 import { Report } from 'src/app/interfaces/report';
 import { Injectable } from '@angular/core';
 import { ApiService } from 'src/app/services/api/api.service';
 import { environment } from 'src/environments/environment';
+import { BehaviorSubject } from 'rxjs';
 import { LocalstorageService } from '../localstorage/localstorage.service';
 
 @Injectable({
@@ -11,6 +13,13 @@ import { LocalstorageService } from '../localstorage/localstorage.service';
 export class ReportsService {
 
     public data: Report[] = [];
+    public theme: BehaviorSubject<Theme> = new BehaviorSubject<Theme>({
+        'name': 'dark',
+        'type': 'default',
+        'color': 'rgba(255, 255, 255, 1)',
+        'board': 'rgba(0, 0, 0, 1)',
+        'column': 'rgba(255, 255, 255, 0.25)'
+    });
 
     constructor(private api: ApiService, private localstorage: LocalstorageService) { };
 

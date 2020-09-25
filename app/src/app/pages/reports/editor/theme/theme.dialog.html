@@ -13,13 +13,13 @@
 <div class="page-body themes">
     <blox *ngFor="let theme of themes" [style.color]="theme.color" [style.background-color]="theme.board" (click)="submit(theme)" matRipple>
         <row height="50">
-            <column width="50" [background]="theme.column">
+            <column [style]="{'width': 50, 'background': theme.column}">
                 <label>
                     cloumn
                 </label>
             </column>
             
-            <column width="50" [background]="theme.column">
+            <column [style]="{'width': 50, 'background': theme.column}">
                 <label>
                     cloumn
                 </label>
@@ -27,7 +27,7 @@
         </row>
 
         <row height="100">
-            <column width="100" [background]="theme.column">
+            <column [style]="{'width': 100, 'background': theme.column}">
                 <label>
                     cloumn
                 </label>

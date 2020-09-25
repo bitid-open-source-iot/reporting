@@ -1,5 +1,6 @@
 import { User } from './user';
 import { Theme } from './theme';
+import { Widget } from './widget';
 
 export interface Report {
     'layout'?: {
@@ -24,7 +25,7 @@ export interface Report {
 }
 
 export interface Row {
-    'style'?: {
+    'config'?: {
         'height'?: number;
     };
     'rowId'?: string;
@@ -33,7 +34,7 @@ export interface Row {
 }
 
 export interface Column {
-    'style'?: {
+    'config'?: {
         'width'?: number;
         'background'?: string;
     };
@@ -41,46 +42,4 @@ export interface Column {
     'widgetId'?: string;
     'columnId'?: string;
     'position'?: number;
-}
-
-export interface Widget {
-    'label'?: {
-        'value'?: string;
-        'visable'?: boolean;
-    };
-    'query'?: {
-        'date'?: {
-            'to'?: Date;
-            'from'?: Date;
-        };
-        'counter'?: string;
-        'inputId'?: string;
-        'deviceId'?: string;
-    };
-    'chart'?: {
-        'type'?: string;
-        'color'?: string;
-    };
-    'value'?: {
-        'color'?: string;
-        'expression'?: string;
-    };
-    'status'?: {};
-    'type'?: string;
-    'data'?: any;
-    'widgetId'?: string;
-    'conditions': Condition[];
-    'connectorId'?: string;
-}
-
-export interface Condition {
-    'active'?: {
-        'min'?: number;
-        'max'?: number;
-    };
-    'style'?: {
-        'color'?: string;
-        'background'?: string;
-    };
-    'conditionId'?: string;
 }

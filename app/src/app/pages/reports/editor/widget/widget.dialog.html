@@ -15,73 +15,50 @@
 <div class="page-body">
     <div class="container">
         <form [formGroup]="form" (ngSubmit)="!form.invalid && submit()">
-            <mat-form-field appearance="outline">
-                <mat-label text-uppercase>
-                    display type
-                </mat-label>
-                
-                <mat-select name="type" placeholder="display type" formControlName="type" required>
-                    <mat-option value="map" disabled>
-                        Map
-                    </mat-option>
-                    <mat-option value="table" disabled>
-                        Table
-                    </mat-option>
-                    <mat-option value="gauge" disabled>
-                        Gauge
-                    </mat-option>
-                    <mat-option value="image">
-                        Image
-                    </mat-option>
-                    <mat-option value="chart">
-                        Chart
-                    </mat-option>
-                    <mat-option value="value">
-                        Value
-                    </mat-option>
-                    <mat-option value="text">
-                        Free Text
-                    </mat-option>
-                </mat-select>
-
-                <mat-error *ngIf="errors.type">
-                    {{ errors.type }}
-                </mat-error>
-            </mat-form-field>
-            
-            <h2>
-                label
-            </h2>
-
-            <section formGroupName="label">
+            <section>
                 <mat-form-field appearance="outline">
                     <mat-label text-uppercase>
-                        value
+                        label
                     </mat-label>
                     
-                    <input matInput type="text" name="value" placeholder="value" formControlName="value" required>
-    
-                    <mat-error *ngIf="errors.label.value">
-                        {{ errors.label.value }}
+                    <input matInput type="text" name="label" placeholder="label" formControlName="label" required>
+
+                    <mat-error *ngIf="errors.label.label">
+                        {{ errors.label.label }}
                     </mat-error>
                 </mat-form-field>
-                
+
                 <mat-form-field appearance="outline">
                     <mat-label text-uppercase>
-                        visibility
+                        display type
                     </mat-label>
                     
-                    <mat-select name="visable" placeholder="visibility" formControlName="visable" required>
-                        <mat-option [value]="true">
-                            Visable
+                    <mat-select name="type" placeholder="display type" formControlName="type" required>
+                        <mat-option value="map" disabled>
+                            Map
                         </mat-option>
-                        <mat-option [value]="false">
-                            Hidden
+                        <mat-option value="table" disabled>
+                            Table
+                        </mat-option>
+                        <mat-option value="gauge" disabled>
+                            Gauge
+                        </mat-option>
+                        <mat-option value="image">
+                            Image
+                        </mat-option>
+                        <mat-option value="chart">
+                            Chart
+                        </mat-option>
+                        <mat-option value="value">
+                            Value
+                        </mat-option>
+                        <mat-option value="text">
+                            Free Text
                         </mat-option>
                     </mat-select>
-    
-                    <mat-error *ngIf="errors.label.visable">
-                        {{ errors.label.visable }}
+
+                    <mat-error *ngIf="errors.type">
+                        {{ errors.type }}
                     </mat-error>
                 </mat-form-field>
             </section>

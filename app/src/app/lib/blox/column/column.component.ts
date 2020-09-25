@@ -1,6 +1,7 @@
+import { Widget } from 'src/app/interfaces/widget';
 import { ObjectId } from 'src/app/id';
 import { BloxService } from '../blox.service';
-import { Input, Component, Renderer2, OnChanges, ElementRef, SimpleChanges, AfterContentInit } from '@angular/core';
+import { Input, Component, Renderer2, OnChanges, ViewChild, ElementRef, SimpleChanges, AfterContentInit } from '@angular/core';
 
 @Component({
     selector: 'column',
@@ -10,10 +11,16 @@ import { Input, Component, Renderer2, OnChanges, ElementRef, SimpleChanges, Afte
 
 export class BloxColumnComponent implements OnChanges, AfterContentInit {
     
-    @Input('id') public id: string = ObjectId();
-    @Input('width') public width: number = 0;
+    @Input('config') public config: any = {
+        'width': 100,
+        'background': 'rgba(0, 0, 0, 1)'
+    };
+    @Input('widget') public widget: Widget;
+    @Input('widgetId') public widgetId: string;
+    @Input('columnId') public columnId: string = ObjectId();
     @Input('position') public position: number = 0;
-    @Input('background') public background: string;
+
+    @ViewChild('resizer', {'static': true}) private _resizer: ElementRef;
     
     constructor(private blox: BloxService, private el: ElementRef, private renderer: Renderer2) {
         this.element = this.el.nativeElement;
@@ -25,13 +32,23 @@ export class BloxColumnComponent implements OnChanges, AfterContentInit {
     public element: HTMLElement;
 
     private async process() {
-        this.renderer.setStyle(this.element, 'background', this.background);
-        this.renderer.setStyle(this.element, 'flex', '0 calc(' + this.width + '% - 10px)');
+        this.renderer.setStyle(this.element, 'background', this.config.background);
+        this.renderer.setStyle(this.element, 'flex', '0 calc(' + this.config.width + '% - 10px)');
+    };
+
+    public resizer(enabled: boolean) {
+        if (this._resizer) {
+            if (enabled) {
+                this.renderer.setStyle(this._resizer.nativeElement, 'display', 'block');
+            } else {
+                this.renderer.setStyle(this._resizer.nativeElement, 'display', 'none');
+            };
+        };
     };
 
     public async hold(event: MouseEvent|TouchEvent) {
         this.blox.selected.next({
-            'id': this.id,
+            'id': this.columnId,
             'type': 'column'
         });
         event.preventDefault();
@@ -58,9 +75,9 @@ export class BloxColumnComponent implements OnChanges, AfterContentInit {
         if (!first) {
             this.blox.changes.next({
                 'column': {
-                    'id': this.id,
-                    'width': this.width,
-                    'background': this.background
+                    'id': this.columnId,
+                    'width': this.config.width,
+                    'background': this.config.background
                 }
             });
         };

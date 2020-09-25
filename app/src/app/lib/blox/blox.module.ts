@@ -10,8 +10,6 @@ import { BloxService } from './blox.service';
 import { BloxComponent } from './blox.component';
 import { BloxRowComponent } from './row/row.component';
 import { BloxColumnComponent } from './column/column.component';
-import { BloxColumnLabelComponent } from './column-label/column-label.component';
-import { BloxColumnContentComponent } from './column-content/column-content.component';
 
 @NgModule({
     imports: [
@@ -21,9 +19,7 @@ import { BloxColumnContentComponent } from './column-content/column-content.comp
     exports: [
         BloxComponent,
         BloxRowComponent,
-        BloxColumnComponent,
-        BloxColumnLabelComponent,
-        BloxColumnContentComponent
+        BloxColumnComponent
     ],
     providers: [
         BloxService
@@ -31,9 +27,7 @@ import { BloxColumnContentComponent } from './column-content/column-content.comp
     declarations: [
         BloxComponent,
         BloxRowComponent,
-        BloxColumnComponent,
-        BloxColumnLabelComponent,
-        BloxColumnContentComponent
+        BloxColumnComponent
     ]
 })
 

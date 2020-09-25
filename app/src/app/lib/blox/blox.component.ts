@@ -54,15 +54,16 @@ export class BloxComponent implements OnInit, OnDestroy, OnChanges {
                     return {
                         'columns': row.columns.map(column => {
                             return {
-                                'id': column.id,
-                                'width': column.width,
-                                'background': column.background
+                                'config': column.config,
+                                'widget': column.widget,
+                                'widgetId': column.widgetId,
+                                'columnId': column.columnId,
+                                'position': column.position
                             };
                         }),
-                        'id': row.id,
-                        'type': row.type,
-                        'height': row.height,
-                        'background': row.background
+                        'rowId': row.rowId,
+                        'config': row.config,
+                        'position': row.position
                     };
                 });
                 this.changes.next(rows);

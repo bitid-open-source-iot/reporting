@@ -1,8 +1,8 @@
-import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
+import { Widget } from 'src/app/interfaces/widget';
 import { FormErrorService } from 'src/app/services/form-error/form-error.service';
-import { OnInit, Component, OnDestroy, Inject } from '@angular/core';
+import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { FormGroup, FormControl, Validators } from '@angular/forms';
-import { Widget } from 'src/app/interfaces/report';
+import { Inject, OnInit, Component, OnDestroy } from '@angular/core';
 
 @Component({
     selector: 'app-link-dialog',

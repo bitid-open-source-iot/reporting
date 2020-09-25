@@ -77,7 +77,7 @@ export class ReportEditorPage implements OnInit, OnDestroy {
         await dialog.afterClosed().subscribe(async count => {
             if (count) {
                 let row = {
-                    'style': {
+                    'config': {
                         'height': 100
                     },
                     'rowId': ObjectId(),
@@ -87,7 +87,7 @@ export class ReportEditorPage implements OnInit, OnDestroy {
 
                 for (let i = 0; i < count; i++) {
                     row.columns.push({
-                        'style': {
+                        'config': {
                             'width': parseFloat((100 / count).toFixed(2)),
                             'color': this.report.theme.color,
                             'background': this.report.theme.column
@@ -134,6 +134,7 @@ export class ReportEditorPage implements OnInit, OnDestroy {
             this.report.theme = report.result.theme;
             this.report.reportId = report.result.reportId;
             this.report.description = report.result.description;
+            this.service.theme.next(this.report.theme);
             if (Array.isArray(report.result.widgets)) {
                 this.report.widgets = report.result.widgets;
             };
@@ -150,6 +151,8 @@ export class ReportEditorPage implements OnInit, OnDestroy {
             if (devices.ok) {
                 this.devices.data = devices.result;
             };
+            console.warn('remove this line!');
+            this.EditWidget('add')
         } else {
             this.toast.error(report.error.message);
             this.history.back();
@@ -186,20 +189,21 @@ export class ReportEditorPage implements OnInit, OnDestroy {
 
         await dialog.afterClosed().subscribe(async (result: Theme) => {
             if (result) {
+                this.service.theme.next(result);
                 this.report.theme = result;
                 this.report.layout.mobile.rows.map(row => {
                     row.columns.map(column => {
-                        column.style.background = this.report.theme.column;
+                        column.config.background = this.report.theme.column;
                     });
                 });
                 this.report.layout.tablet.rows.map(row => {
                     row.columns.map(column => {
-                        column.style.background = this.report.theme.column;
+                        column.config.background = this.report.theme.column;
                     });
                 });
                 this.report.layout.desktop.rows.map(row => {
                     row.columns.map(column => {
-                        column.style.background = this.report.theme.column;
+                        column.config.background = this.report.theme.column;
                     });
                 });
                 this.save('theme', this.report.theme);
@@ -258,14 +262,14 @@ export class ReportEditorPage implements OnInit, OnDestroy {
             let width: number = 0;
             for (let i = 0; i < row.columns.length; i++) {
                 if (row.columns[i].columnId == columnId) {
-                    width = row.columns[i].style.width;
+                    width = row.columns[i].config.width;
                     row.columns.splice(i, 1);
                     break;
                 };
             };
             
             row.columns.map(column => {
-                column.style.width += parseFloat((width / row.columns.length).toFixed(2));
+                column.config.width += parseFloat((width / row.columns.length).toFixed(2));
             });
             for (let i = 0; i < row.columns.length; i++) {
                 row.columns[i].position = i + 1;
@@ -284,7 +288,7 @@ export class ReportEditorPage implements OnInit, OnDestroy {
     public GetWidgetLabel(widgetId: string) {
         for (let i = 0; i < this.report.widgets.length; i++) {
             if (this.report.widgets[i].widgetId == widgetId) {
-                return this.report.widgets[i].label.value;
+                return this.report.widgets[i].label;
             };
         };
     };
@@ -390,13 +394,18 @@ export class ReportEditorPage implements OnInit, OnDestroy {
             this.get();
         });
 
+        this.subscriptions.changes = this.blox.changes.subscribe(rows => {
+            rows.map(row => {
+                row.columns.map(column => {
+                    delete column.widget;
+                });
+            });
+            this.report.layout[this.layout].rows = rows;
+            this.save('layout', this.report.layout);
+        });
+
         this.subscriptions.resizing = this.blox.resizing.subscribe(resizing => {
             this.resizing = resizing;
-        });
-    
-        this.subscriptions.changes = this.blox.changes.subscribe(changes => {
-            // this.save('layout', this.report.layout);
-            // console.log(changes);
         });
     };
 

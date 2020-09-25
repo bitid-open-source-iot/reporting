@@ -112,6 +112,9 @@ form {
         }
     }
 }
+[type=color] {
+    height: 16px !important;
+}
 mat-toolbar {
     height:         56px !important;
     text-transform: uppercase !important;

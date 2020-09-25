@@ -29,6 +29,7 @@ export class AppComponent implements OnInit {
         this.registry.addSvgIcon('logout', this.sanitizer.bypassSecurityTrustResourceUrl('./assets/logout.svg'));
         this.registry.addSvgIcon('desktop', this.sanitizer.bypassSecurityTrustResourceUrl('./assets/desktop.svg'));
         this.registry.addSvgIcon('download', this.sanitizer.bypassSecurityTrustResourceUrl('./assets/download.svg'));
+        this.registry.addSvgIcon('percentage', this.sanitizer.bypassSecurityTrustResourceUrl('./assets/percentage.svg'));
         this.registry.addSvgIcon('unsubscribe', this.sanitizer.bypassSecurityTrustResourceUrl('./assets/unsubscribe.svg'));
         this.registry.addSvgIcon('subscribers', this.sanitizer.bypassSecurityTrustResourceUrl('./assets/subscribers.svg'));
     };
