@@ -80,9 +80,10 @@ export class ReportViewerPage implements OnInit, OnDestroy {
             
             if (this.report.type == 'ds') {
                 this.frame.nativeElement.src = this.report.url;
+                this.loading = false;
+            } else {
+                this.load();
             };
-
-            this.load();
         } else {
             this.toast.error(response.error.message);
             this.history.back();
