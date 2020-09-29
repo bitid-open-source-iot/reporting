@@ -190,7 +190,7 @@ export class ColumnEditorDialog implements OnInit, OnDestroy {
                     if (request.status == 200) {
                         const response = JSON.parse(request.response);
                         const image: FormGroup = <any>this.form.controls['image'];
-                        image.controls['src'].setValue([environment.drive, '/drive/files/getfileId=', response.fileId, "&token=", response.token].join(''));
+                        image.controls['src'].setValue([environment.drive, '/drive/files/get?fileId=', response.fileId, "&token=", response.token].join(''));
                         this.uploading = false;
                     } else {
                         this.toast.error('issue uploading image!');
