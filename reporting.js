@@ -1,13 +1,14 @@
-var Q = require('q');
-var db = require('./db/mongo');
-var cors = require('cors');
-var http = require('http');
-var auth = require('./lib/auth');
-var chalk = require('chalk');
-var express = require('express');
-var responder = require('./lib/responder');
-var bodyParser = require('body-parser');
-var healthcheck = require('@bitid/health-check');
+const Q = require('q');
+const db = require('./db/mongo');
+const cors = require('cors');
+const http = require('http');
+const auth = require('./lib/auth');
+const chalk = require('chalk');
+const parser = require('body-parser');
+const express = require('express');
+const responder = require('./lib/responder');
+const healthcheck = require('@bitid/health-check');
+const ErrorResponse = require('./lib/error-response');
 
 global.__base = __dirname + '/';
 global.__logger = require('./lib/logger');
@@ -17,32 +18,18 @@ global.__databases = {};
 
 try {
     var portal = {
-        errorResponse: {
-            "error": {
-                "code": 401,
-                "message": "Invalid Credentials",
-                "errors": [{
-                    "reason": "Reporting Error",
-                    "message": "Invalid Credentials",
-                    "location": "portal",
-                    "locationType": "header"
-                }]
-            },
-            "hiddenErrors": []
-        },
-
         api: (args) => {
             var deferred = Q.defer();
 
             try {
                 var app = express();
                 app.use(cors());
-                app.use(bodyParser.urlencoded({
+                app.use(parser.urlencoded({
                     'limit': '50mb',
                     'extended': true,
                     'parameterLimit': 50000
                 }));
-                app.use(bodyParser.json({
+                app.use(parser.json({
                     'limit': '50mb'
                 }));
 
@@ -91,20 +78,17 @@ try {
                 app.use('/reporting/schedule', schedule);
                 __logger.info('Loaded: ./api/reporting/schedule');
 
-                var connectors = require('./api/connectors');
-                app.use('/reporting/connectors', connectors);
-                __logger.info('Loaded: ./api/reporting/connectors');
-
                 app.use('/health-check', healthcheck);
                 __logger.info('Loaded: ./api/health-check');
 
-                app.use((err, req, res, next) => {
-                    portal.errorResponse.error.code = 500;
-                    portal.errorResponse.error.message = 'Something broke';
-                    portal.errorResponse.error.errors[0].code = 500;
-                    portal.errorResponse.error.errors[0].message = 'Something broke';
-                    portal.errorResponse.hiddenErrors.push(err.stack);
-                    __responder.error(req, res, portal.errorResponse);
+                app.use((error, req, res, next) => {
+                    var err = new ErrorResponse();
+                    err.error.code = 500;
+                    err.error.message = error.message;
+                    err.error.errors[0].code = 500;
+                    err.error.errors[0].message = error.message;
+                    err.hiddenErrors.push(err.stack);
+                    __responder.error(req, res, err);
                 });
 
                 var server = http.createServer(app);

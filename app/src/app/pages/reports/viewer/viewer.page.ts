@@ -1,7 +1,5 @@
-import canvas from 'html2canvas';
-import * as jspdf from 'jspdf';
-import * as moment from 'moment';
 import { Report } from 'src/app/interfaces/report';
+import { interval } from 'rxjs';
 import { DateGroup } from 'src/app/date-group';
 import { MatDialog } from '@angular/material/dialog';
 import { ToastService } from 'src/app/services/toast/toast.service';
@@ -35,23 +33,26 @@ export class ReportViewerPage implements OnInit, OnDestroy {
     public layout: string;
     public report: Report = {
         'theme': {
+            'font': {
+                'color': '#FFFFFF',
+                'opacity': 100
+            },
+            'board': {
+                'color': '#000000',
+                'opacity': 100
+            },
+            'column': {
+                'color': '#FFFFFF',
+                'opacity': 25
+            },
             'name': 'dark',
-            'color': 'rgba(255, 255, 255, 1)',
-            'board': 'rgba(0, 0, 0, 1)',
-            'column': 'rgba(255, 255, 255, 0.25)'
+            'type': 'default'
         },
         'layout': {
-            'mobile': {
-                'rows': []
-            },
-            'tablet': {
-                'rows': []
-            },
-            'desktop': {
-                'rows': []
-            }
-        },
-        'widgets': []
+            'mobile': [],
+            'tablet': [],
+            'desktop': []
+        }
     };
     public loading: boolean;
     public reportId: string;
@@ -76,38 +77,11 @@ export class ReportViewerPage implements OnInit, OnDestroy {
 
         if (response.ok) {
             this.report = response.result;
-
+            
             if (this.report.type == 'ds') {
                 this.frame.nativeElement.src = this.report.url;
             };
 
-            this.report.layout.mobile.rows.map(row => {
-                row.columns.map(column => {
-                    this.report.widgets.map(widget => {
-                        if (column.widgetId == widget.widgetId) {
-                            column.widget = widget;
-                        };
-                    });
-                });
-            });
-            this.report.layout.tablet.rows.map(row => {
-                row.columns.map(column => {
-                    this.report.widgets.map(widget => {
-                        if (column.widgetId == widget.widgetId) {
-                            column.widget = widget;
-                        };
-                    });
-                });
-            });
-            this.report.layout.desktop.rows.map(row => {
-                row.columns.map(column => {
-                    this.report.widgets.map(widget => {
-                        if (column.widgetId == widget.widgetId) {
-                            column.widget = widget;
-                        };
-                    });
-                });
-            });
             this.load();
         } else {
             this.toast.error(response.error.message);
@@ -166,23 +140,29 @@ export class ReportViewerPage implements OnInit, OnDestroy {
 
         await this.date.process();
         
-        await this.report.widgets.reduce(async (promise, widget, index) => {
-            if (widget.type == 'value' || widget.type == 'chart') {
-                widget.query.date = this.date;
-                const response = await this.service.load(widget);
+        await this.report.layout[this.layout].reduce(async (proma, row, a) => await row.columns.reduce(async (promb, column, b) => {
+            if (column.display == 'value' || column.display == 'chart') {
+                column.query.date = this.date;
+                const response = await this.service.load({
+                    'query': column.query,
+                    'chart': column.chart,
+                    'value': column.value,
+                    'display': column.display
+                });
                 if (response.ok) {
-                    widget.data = response.result;
+                    column.data = response.result;
                 } else {
-                    switch (widget.type) {
+                    column.error = true;
+                    switch (column.display) {
                         case('chart'):
-                            widget.data = {
+                            column.data = {
                                 'value': [],
                                 'analog': {},
                                 'digital': {}
                             };
                             break;
                         case('value'):
-                            widget.data = {
+                            column.data = {
                                 'value': 0,
                                 'analog': {},
                                 'digital': {}
@@ -191,7 +171,32 @@ export class ReportViewerPage implements OnInit, OnDestroy {
                     };
                 };
             };
-        }, Promise.resolve());
+            if (Array.isArray(column.conditions) && column.conditions.length > 0) {
+                return await column.conditions.reduce(async (promc, condition, c) => {
+                    if (condition.type != 'default') {
+                        const params = {
+                            'query': {
+                                'date': this.date,
+                                'inputId': condition.connector.inputId,
+                                'deviceId': condition.connector.deviceId
+                            },
+                            'value': {
+                                'expression': 'last-value'
+                            },
+                            'display': 'value'
+                        };
+                        const response = await this.service.load(params);
+                        if (response.ok) {
+                            condition.data = response.result;
+                        } else {
+                            condition.data = null;
+                        };
+                    };
+                }, null);
+            } else {
+                return true;
+            };
+        }, null), null);
 
         this.loading = false;
     };
@@ -205,16 +210,6 @@ export class ReportViewerPage implements OnInit, OnDestroy {
         } else if (width > 1000) {
             this.layout = 'desktop';
         };
-    };
-
-    public async download() {
-        const element = document.getElementById('dashboard');
-        canvas(element).then(canvas => {
-            const pdf = new jspdf();
-            const image = canvas.toDataURL("image/jpeg");
-            pdf.addImage(image, 'JPEG', 0, 0);
-            pdf.save(this.report.description.toLocaleUpperCase() + ' (' + moment().format('YYYY-MM-DD') + ')');
-        });
     };
 
     public async SelectDates() {
@@ -243,10 +238,50 @@ export class ReportViewerPage implements OnInit, OnDestroy {
             this.reportId = params.reportId;
             this.get();
         });
+    
+        this.subscriptions.interval = interval(1000).subscribe(count => {
+            this.report.layout[this.layout].map(row => {
+                row.columns.map(column => {
+                    if (column.display) {
+                        let found = false;
+                        column.conditions.filter(o => (o.data && o.type == 'connector')).map(condition => {
+                            if (condition.connector.type == 'analog' && condition.connector.analog.min <= condition.data.value && condition.connector.analog.max >= condition.data.value) {
+                                found = true;
+                                column.fill = condition.fill;
+                                column.font = condition.font;
+                                column.stroke = condition.stroke;
+                                column.banner = condition.banner;
+                                column.gridlines = condition.gridlines;
+                                column.chartfill = condition.chartfill;
+                            } else if (condition.connector.type == 'digital' && condition.connector.digital.value <= condition.data.value) {
+                                found = true;
+                                column.fill = condition.fill;
+                                column.font = condition.font;
+                                column.stroke = condition.stroke;
+                                column.banner = condition.banner;
+                                column.gridlines = condition.gridlines;
+                                column.chartfill = condition.chartfill;
+                            };
+                        });
+                        if (!found) {
+                            column.conditions.filter(o => o.type == 'default').map(condition => {
+                                column.fill = condition.fill;
+                                column.font = condition.font;
+                                column.stroke = condition.stroke;
+                                column.banner = condition.banner;
+                                column.gridlines = condition.gridlines;
+                                column.chartfill = condition.chartfill;
+                            });
+                        };
+                    };
+                });
+            });
+        });
     };
 
     ngOnDestroy(): void {
         this.subscriptions.route.unsubscribe();
+        this.subscriptions.interval.unsubscribe();
     };
 
 }

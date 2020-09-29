@@ -10,7 +10,7 @@
     </div>
 
     <div class="spacer" *ngIf="report.type == 'dashboard'">
-        <input matInput type="text" [(ngModel)]="report.description" (blur)="save('description', report.description)" required *ngIf="!loading">
+        <input matInput type="text" [(ngModel)]="report.description" (blur)="save({'description': report.description})" required *ngIf="!loading">
     </div>
 
     <button mat-icon-button matTooltip="Mobile View" [class.selected]="layout == 'mobile'" (click)="layout = 'mobile'" *ngIf="report.type == 'dashboard'">
@@ -27,7 +27,7 @@
 
     <div class="dot" *ngIf="report.type == 'dashboard'"></div>
 
-    <button mat-icon-button matTooltip="Board Theme" (click)="EditTheme()" *ngIf="report.type == 'dashboard'">
+    <button mat-icon-button matTooltip="Board Theme" (click)="theme()" *ngIf="report.type == 'dashboard'">
         <mat-icon svgIcon="theme"></mat-icon>
     </button>
 </mat-toolbar>
@@ -66,52 +66,18 @@
     </form>
 </div>
 
-<div class="page-body editor" [style.background]="report.theme.board" [class.hide]="report && report.type != 'dashboard'">
-    <div class="widgets" [style.background]="report.theme.column">
-        <header [style.color]="report.theme.color">
-            widgets
-        </header>
-
-        <div class="widget" *ngFor="let widget of report.widgets" [style.background]="report.theme.board">
-            <label [style.color]="report.theme.color">
-                {{ widget.label }}
-            </label>
-
-            <div class="options">
-                <button mat-icon-button matTooltip="Edit Widget" (click)="EditWidget('edit', widget)" [style.color]="report.theme.color">
-                    <mat-icon svgIcon="edit"></mat-icon>
-                </button>
-
-                <button mat-icon-button matTooltip="Remove Widget" color="warn" (click)="RemoveWidget(widget.widgetId)">
-                    <mat-icon svgIcon="delete"></mat-icon>
-                </button>
-            </div>
-        </div>
-
-        <div class="widget" matRipple matTooltip="Add Widget" (click)="EditWidget('add')" [style.background]="report.theme.board">
-            <mat-icon [style.color]="report.theme.color">
-                add
-            </mat-icon>
-        </div>
-    </div>
-    
+<div class="page-body editor" [style.background]="report.theme.board.color" [class.hide]="report && report.type != 'dashboard'">
     <div class="dashboard">
-        <blox class="blox" [class]="layout" [editing]="true" [background]="report.theme.board" cdkDropList (cdkDropListDropped)="reorder($event)">
-            <row *ngFor="let row of report.layout[layout].rows | orderBy : 'position'" type="dynamic" [rowId]="row.rowId" [config]="row.config" [position]="row.position" cdkDragBoundary=".blox"  cdkDragLockAxis="y" cdkDrag [cdkDragDisabled]="!editing || resizing">
-                <column *ngFor="let column of row.columns | orderBy : 'position'" [config]="column.config" [columnId]="column.columnId" [position]="column.position">
-                    <widget *ngIf="column.widget" [fill]="column.widget.fill" [stroke]="column.widget.stroke">
-                        <banner [font]="column.widget.banner">
-                            {{ column.widget.label }}
-                        </banner>
+        <blox class="blox" [class]="layout" [editing]="true" [fill]="report.theme.board" cdkDropList (cdkDropListDropped)="reorder($event)">
+            <row *ngFor="let row of report.layout[layout] | orderBy : 'position'" type="dynamic" [id]="row.rowId" [height]="row.height" [position]="row.position" cdkDragBoundary=".blox"  cdkDragLockAxis="y" cdkDrag [cdkDragDisabled]="!editing || resizing">
+                <column *ngFor="let column of row.columns | orderBy : 'position'" [id]="column.columnId" [fill]="column.fill" [width]="column.width" [stroke]="column.stroke" [position]="column.position">
+                    <banner [font]="column.banner">
+                        {{ column.label }}
+                    </banner>
     
-                        <value [font]="column.widget.font">
-                            NA
-                        </value>
-                    </widget>
-
-                    <div class="options">
-                        <button mat-icon-button matTooltip="Link Widget" (click)="link($event, row, column)" [style.color]="report.theme.color">
-                            <mat-icon svgIcon="data"></mat-icon>
+                    <div class="options" [style.background-color]="report.theme.board.color">
+                        <button mat-icon-button matTooltip="Edit Column" [style.color]="report.theme.font.color" (click)="edit(row, column)">
+                            <mat-icon svgIcon="edit"></mat-icon>
                         </button>
         
                         <button mat-icon-button matTooltip="Remove Column" color="warn" (click)="remove($event, row, column.columnId)">
@@ -121,15 +87,15 @@
                 </column>
 
                 <div class="drag-handle" cdkDragHandle>
-                    <mat-icon svgIcon="drag" [style.color]="report.theme.color"></mat-icon>
+                    <mat-icon svgIcon="drag" [style.color]="report.theme.font.color"></mat-icon>
                 </div>
 
                 <div class="drag-placeholder" *cdkDragPlaceholder></div>
             </row>
         
-            <row type="static" [style]="{'height': 100, 'background': 'transparent'}">
-                <column class="add" [style]="{'width': 100, 'background': report.theme.column}" matRipple matTooltip="Add Row" (click)="add()">
-                    <mat-icon [style.color]="report.theme.color">
+            <row type="static" [height]="100">
+                <column class="add" [width]="100" [fill]="report.theme.column" matRipple matTooltip="Add Row" (click)="add()">
+                    <mat-icon [style.color]="report.theme.font.color">
                         add
                     </mat-icon>
                 </column>

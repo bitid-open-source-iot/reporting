@@ -1,6 +1,7 @@
-import { Widget } from 'src/app/interfaces/widget';
+import { color } from '../color';
 import { ObjectId } from 'src/app/id';
 import { BloxService } from '../blox.service';
+import { Fill, Font, Stroke } from 'src/app/interfaces/condition';
 import { Input, Component, Renderer2, OnChanges, ViewChild, ElementRef, SimpleChanges, AfterContentInit } from '@angular/core';
 
 @Component({
@@ -11,14 +12,12 @@ import { Input, Component, Renderer2, OnChanges, ViewChild, ElementRef, SimpleCh
 
 export class BloxColumnComponent implements OnChanges, AfterContentInit {
     
-    @Input('config') public config: any = {
-        'width': 100,
-        'background': 'transparent'
-    };
-    @Input('widget') public widget: Widget;
-    @Input('widgetId') public widgetId: string;
-    @Input('columnId') public columnId: string = ObjectId();
-    @Input('position') public position: number = 0;
+    @Input('id') public id: string = ObjectId();
+    @Input('font') public font: Font = {};
+    @Input('fill') public fill: Fill = {};
+    @Input('width') public width: number = 100;
+    @Input('stroke') public stroke: Stroke = {};
+    @Input('position') public position: number;
 
     @ViewChild('resizer', {'static': true}) private _resizer: ElementRef;
     
@@ -32,8 +31,23 @@ export class BloxColumnComponent implements OnChanges, AfterContentInit {
     public element: HTMLElement;
 
     private async process() {
-        this.renderer.setStyle(this.element, 'background', this.config.background);
-        this.renderer.setStyle(this.element, 'flex', '0 calc(' + this.config.width + '% - 10px)');
+        this.renderer.setStyle(this.element, 'flex', '0 calc(' + this.width + '% - 10px)');
+        /* --- FONT --- */
+        if (typeof(this.font) != 'undefined' && this.font != null && this.font != '') {
+            this.renderer.setStyle(this.element, 'color', color(this.font.color, this.font.opacity / 100));
+            this.renderer.setStyle(this.element, 'font-size', this.font.size);
+            this.renderer.setStyle(this.element, 'font-family', this.font.family);
+        };
+        /* --- FILL --- */
+        if (typeof(this.fill) != 'undefined' && this.fill != null && this.fill != '') {
+            this.renderer.setStyle(this.element, 'background-color', color(this.fill.color, this.fill.opacity / 100));
+        };
+        /* --- STROKE --- */
+        if (typeof(this.stroke) != 'undefined' && this.stroke != null && this.stroke != '') {
+            this.renderer.setStyle(this.element, 'border-width', this.stroke.width + 'px');
+            this.renderer.setStyle(this.element, 'border-style', this.stroke.style);
+            this.renderer.setStyle(this.element, 'border-color', color(this.stroke.color, this.stroke.opacity / 100));
+        };
     };
 
     public resizer(enabled: boolean) {
@@ -48,23 +62,15 @@ export class BloxColumnComponent implements OnChanges, AfterContentInit {
 
     public async hold(event: MouseEvent|TouchEvent) {
         this.blox.selected.next({
-            'id': this.columnId,
+            'id': this.id,
             'type': 'column'
         });
         event.preventDefault();
+        this.blox.start.next(event);
         this.blox.resizing.next(true);
     };
 
     ngOnChanges(changes: SimpleChanges): void {
-        let first: boolean = true;
-        Object.keys(changes).map(key => {
-            if (!changes[key].firstChange) {
-                first = false;
-            };
-        });
-        if (!first) {
-            this.blox.changes.next(true);
-        };
         this.process();
     };
 

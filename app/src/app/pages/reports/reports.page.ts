@@ -1,5 +1,5 @@
-import { Report } from 'src/app/interfaces/report';
 import { Router } from '@angular/router';
+import { Report } from 'src/app/interfaces/report';
 import { MatDialog } from '@angular/material/dialog';
 import { ToastService } from 'src/app/services/toast/toast.service';
 import { AccountService } from 'src/app/services/account/account.service';
@@ -11,8 +11,8 @@ import { SearchComponent } from 'src/app/components/search/search.component';
 import { LocalstorageService } from 'src/app/services/localstorage/localstorage.service';
 import { UnsubscribeComponent } from 'src/app/components/unsubscribe/unsubscribe.component';
 import { BottomSheetComponent } from 'src/app/components/bottom-sheet/bottom-sheet.component';
-import { OnInit, Component, OnDestroy, ViewChild } from '@angular/core';
 import { SubscribersComponent } from 'src/app/components/subscribers/subscribers.component';
+import { OnInit, Component, OnDestroy, ViewChild } from '@angular/core';
 
 @Component({
     selector: 'app-reports-page',
@@ -35,52 +35,6 @@ export class ReportsPage implements OnInit, OnDestroy {
     public loading: boolean;
     private subscriptions: any = {};
 
-    public async logout() {
-        this.account.logout();
-    };
-
-    public async add(type: string) {
-        this.loading = true;
-
-        const response = await this.service.add({
-            'layout': {
-                'mobile': {
-                    'rows': []
-                },
-                'tablet': {
-                    'rows': []
-                },
-                'desktop': {
-                    'rows': []
-                }
-            },
-            'theme': {
-                'name': 'dark',
-                'type': 'default',
-                'color': 'rgba(255, 255, 255, 1)',
-                'board': 'rgba(0, 0, 0, 1)',
-                'column': 'rgba(255, 255, 255, 0.25)'
-            },
-            'type': type,
-            'widgets': [],
-            'description': 'Untitled Report'
-        });
-
-        this.loading = false;
-
-        if (response.ok) {
-            this.router.navigate(['/reports', 'editor'], {
-                'queryParams': {
-                    'mode': 'update',
-                    'reportId': response.result.reportId
-                }
-            });
-            this.toast.success('new report created!');
-        } else {
-            this.toast.error(response.error.message);
-        };
-    };
-
     private async list() {
         this.loading = true;
 
@@ -102,6 +56,54 @@ export class ReportsPage implements OnInit, OnDestroy {
             this.reports = response.result;
         } else {
             this.reports = [];
+        };
+    };
+
+    public async logout() {
+        this.account.logout();
+    };
+
+    public async add(type: string) {
+        this.loading = true;
+
+        const response = await this.service.add({
+            'layout': {
+                'mobile': [],
+                'tablet': [],
+                'desktop': []
+            },
+            'theme': {
+                'font': {
+                    'color': '#FFFFFF',
+                    'opacity': 100
+                },
+                'board': {
+                    'color': '#000000',
+                    'opacity': 100
+                },
+                'column': {
+                    'color': '#FFFFFF',
+                    'opacity': 25
+                },
+                'name': 'dark',
+                'type': 'default'
+            },
+            'type': type,
+            'description': 'Untitled Report'
+        });
+
+        this.loading = false;
+
+        if (response.ok) {
+            this.router.navigate(['/reports', 'editor'], {
+                'queryParams': {
+                    'mode': 'update',
+                    'reportId': response.result.reportId
+                }
+            });
+            this.toast.success('new report created!');
+        } else {
+            this.toast.error(response.error.message);
         };
     };
 
@@ -180,36 +182,45 @@ export class ReportsPage implements OnInit, OnDestroy {
                     case (2):
                         this.loading = true;
 
-                        const response = await this.service.add({
-                            'layout': report.layout || {
-                                'mobile': {
-                                    'rows': []
-                                },
-                                'tablet': {
-                                    'rows': []
-                                },
-                                'desktop': {
-                                    'rows': []
-                                }
-                            },
-                            'type': 'dashboard',
-                            'widgets': report.widgets || [],
-                            'description': report.description || 'Untitled Report'
+                        const item = await this.service.get({
+                            'filter': [
+                                'url',
+                                'role',
+                                'type',
+                                'theme',
+                                'layout',
+                                'description'
+                            ],
+                            'reportId': report.reportId
                         });
 
-                        this.loading = false;
-
-                        if (response.ok) {
-                            this.router.navigate(['/reports', 'editor'], {
-                                'queryParams': {
-                                    'mode': 'update',
-                                    'reportId': response.result.reportId
-                                }
-                            });
-                            this.toast.success('report created from ' + report.description);
+                        if (item.ok) {
+                            if (item.result.role > 3) {
+                                const response = await this.service.add({
+                                    'url': item.result.url,
+                                    'type': item.result.type,
+                                    'theme': item.result.theme,
+                                    'layout': item.result.layout,
+                                    'description': item.description
+                                });
+                                if (response.ok) {
+                                    this.router.navigate(['/reports', 'editor'], {
+                                        'queryParams': {
+                                            'reportId': response.result.reportId
+                                        }
+                                    });
+                                    this.toast.success('Report was copied!');
+                                } else {
+                                    this.toast.error(response.error.message);
+                                };
+                            } else {
+                                this.toast.error('Access to clone report denied!');
+                            };
                         } else {
-                            this.toast.error(response.error.message);
+                            this.toast.error(item.error.message);
                         };
+
+                        this.loading = false;
                         break;
                     case (3):
                         const share = await this.dialog.open(ShareComponent, {

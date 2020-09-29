@@ -3,24 +3,10 @@ var moment = require('moment');
 var tools = require('../lib/tools');
 var telemetry = require('../lib/telemetry');
 var dalModule = require('../dal/dal');
-var ErrorResponse = require('../lib/error-response').ErrorResponse;
+var ErrorResponse = require('../lib/error-response');
 
 var module = function () {
 	var bllReports = {
-		errorResponse: {
-			"error": {
-				"code": 401,
-				"message": "Reports Error",
-				"errors": [{
-					"reason": "General Reports Error",
-					"message": "Reports Error",
-					"location": "bllReports",
-					"locationType": "body"
-				}]
-			},
-			"hiddenErrors": []
-		},
-
 		add: (req, res) => {
 			var args = {
 				'req': req,
@@ -76,21 +62,20 @@ var module = function () {
 			};
 
 			var dal = new dalModule.module();
-			dal.connectors.load(args)
-				.then(dal.connectors.authenticate, null)
+			dal.reports.validate(args)
 				.then(args => {
 					var deferred = Q.defer();
 
 					try {
 						var err = new ErrorResponse();
 						err.error.errors[0].code = 503;
-						err.error.errors[0].reason = "Display type not found!";
-						err.error.errors[0].message = "Display type not found!";
-						switch (args.req.body.type) {
+						err.error.errors[0].reason = 'Display type not found!';
+						err.error.errors[0].message = 'Display type not found!';
+						switch (args.req.body.display) {
 							case ('map'):
 								break;
 							case ('chart'):
-								args.params = telemetry.historical.inputs.data(args.req.body.query);
+								args.params = telemetry.historical.inputs.data(args.req.body.query, args.devices);
 								deferred.resolve(args);
 								break;
 							case ('table'):
@@ -98,22 +83,22 @@ var module = function () {
 							case ('value'):
 								switch (args.req.body.value.expression) {
 									case ('last-value'):
-										args.params = telemetry.historical.inputs.value.last(args.req.body.query);
+										args.params = telemetry.historical.inputs.value.last(args.req.body.query, args.devices);
 										deferred.resolve(args);
 										break;
 									case ('first-value'):
-										args.params = telemetry.historical.inputs.value.first(args.req.body.query);
+										args.params = telemetry.historical.inputs.value.first(args.req.body.query, args.devices);
 										deferred.resolve(args);
 										break;
 									case ('predicted-value'):
-										args.params = telemetry.historical.inputs.value.predict(args.req.body.query);
+										args.params = telemetry.historical.inputs.value.predict(args.req.body.query, args.devices);
 										deferred.resolve(args);
 										break;
 									default:
 										var err = new ErrorResponse();
 										err.error.errors[0].code = 503;
-										err.error.errors[0].reason = "Value expression not found!";
-										err.error.errors[0].message = "Value expression not found!";
+										err.error.errors[0].reason = 'Value expression not found!';
+										err.error.errors[0].message = 'Value expression not found!';
 										deferred.reject(err);
 										break;
 								};
@@ -137,6 +122,20 @@ var module = function () {
 					var deferred = Q.defer();
 
 					try {
+						args.result.map(item => {
+							args.devices.map(device => {
+								if (device.deviceId == item.deviceId) {
+									device.inputs.map(input => {
+										if (input.inputId == item.inputId) {
+											item.type = input.type;
+											item.analog = input.analog;
+											item.digital = input.digital;
+										};
+									});
+								};
+							});
+						});
+
 						args.req.body.query.date.to = new Date(args.req.body.query.date.to);
 						args.req.body.query.date.from = new Date(args.req.body.query.date.from);
 						
@@ -159,7 +158,7 @@ var module = function () {
 							grouping = 'month';
 						};
 
-						switch (args.req.body.type) {
+						switch (args.req.body.display) {
 							case ('map'):
 								break;
 							case ('chart'):
@@ -339,20 +338,6 @@ var module = function () {
 	};
 
 	var bllSchedule = {
-		errorResponse: {
-			"error": {
-				"code": 401,
-				"message": "Schedule Error",
-				"errors": [{
-					"reason": "General Schedule Error",
-					"message": "Schedule Error",
-					"location": "bllSchedule",
-					"locationType": "body"
-				}]
-			},
-			"hiddenErrors": []
-		},
-
 		add: (req, res) => {
 			var args = {
 				'req': req,
@@ -477,56 +462,9 @@ var module = function () {
 		}
 	};
 
-	var bllConnectors = {
-		errorResponse: {
-			"error": {
-				"code": 401,
-				"message": "Connectors Error",
-				"errors": [{
-					"reason": "General Connectors Error",
-					"message": "Connectors Error",
-					"location": "bllConnectors",
-					"locationType": "body"
-				}]
-			},
-			"hiddenErrors": []
-		},
-
-		get: (req, res) => {
-			var args = {
-				'req': req,
-				'res': res
-			};
-
-			var dal = new dalModule.module();
-			dal.connectors.get(args)
-				.then(args => {
-					__responder.success(req, res, args.result);
-				}, err => {
-					__responder.error(req, res, err);
-				});
-		},
-
-		list: (req, res) => {
-			var args = {
-				'req': req,
-				'res': res
-			};
-
-			var dal = new dalModule.module();
-			dal.connectors.list(args)
-				.then(args => {
-					__responder.success(req, res, args.result);
-				}, err => {
-					__responder.error(req, res, err);
-				});
-		}
-	};
-
 	return {
 		'reports': bllReports,
-		'schedule': bllSchedule,
-		'connectors': bllConnectors
+		'schedule': bllSchedule
 	};
 };
 

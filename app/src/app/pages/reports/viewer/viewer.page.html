@@ -8,10 +8,6 @@
     <div class="page-label spacer">
         {{ loading ? 'report viewer loading' : report.description }}
     </div>
-
-    <button mat-icon-button class="menu-toggle" (click)="download()" disabled *ngIf="report && report.type == 'dashboard'">
-        <mat-icon svgIcon="download"></mat-icon>
-    </button>
 </mat-toolbar>
 
 <mat-progress-bar mode="indeterminate" color="accent" *ngIf="loading"></mat-progress-bar>
@@ -20,74 +16,62 @@
     <iframe #frame src="" frameborder="0" allowfullscreen [class.showframe]="report && !loading && report.type == 'ds'"></iframe>
 </div>
 
-<div id="dashboard" class="page-body" *ngIf="layout && report && !loading && report.type == 'dashboard'" [style.color]="report.theme.color" [style.background]="report.theme.board">
-    <div class="filter" [style.color]="report.theme.color" [style.background]="report.theme.column">
-        <mat-select class="dashboard-select" [(ngModel)]="period.tense" (ngModelChange)="load()">
-            <mat-option value="current">
-                CURRENT
-            </mat-option>
-            <mat-option value="previous">
-                PREVIOUS
-            </mat-option>
-            <mat-option value="custom-dates">
-                CUSTOM DATES
-            </mat-option>
-        </mat-select>
-
-        <mat-select class="dashboard-select" [(ngModel)]="period.frame" (ngModelChange)="load()" *ngIf="period.tense != 'custom-dates'">
-            <mat-option value="day">
-                DAY
-            </mat-option>
-            <mat-option value="week">
-                WEEK
-            </mat-option>
-            <mat-option value="month">
-                MONTH
-            </mat-option>
-            <mat-option value="year">
-                YEAR
-            </mat-option>
-        </mat-select>
-
-        <button mat-stroked-button class="dashboard-select" (click)="SelectDates()" *ngIf="period.tense == 'custom-dates'">
-            {{ date.from | date : 'yyyy/MM/dd HH:mm' }} - {{ date.to | date : 'yyyy/MM/dd HH:mm' }}
-        </button>
-    </div>
-
+<div id="dashboard" class="page-body" *ngIf="layout && report && !loading && report.type == 'dashboard'" [style.color]="report.theme.font.color" [style.background]="report.theme.board.color">
     <blox>
-        <row *ngFor="let row of report.layout[layout].rows" [rowId]="row.rowId" [config]="row.config" [position]="row.position">
-            
-            <column *ngFor="let column of row.columns" [config]="column.config" [columnId]="column.columnId" [position]="column.position">
-                <widget *ngIf="column.widget" [fill]="column.widget.fill" [stroke]="column.widget.stroke">
-                    <banner [font]="column.widget.banner">
-                        {{ column.widget.label }}
-                    </banner>
+        <filter [fill]="report.theme.board" [font]="report.theme.font">
+            <mat-select class="dashboard-select" [(ngModel)]="period.tense" (ngModelChange)="load()">
+                <mat-option value="current">
+                    CURRENT
+                </mat-option>
+                <mat-option value="previous">
+                    PREVIOUS
+                </mat-option>
+                <mat-option value="custom-dates">
+                    CUSTOM DATES
+                </mat-option>
+            </mat-select>
     
-                    <value *ngIf="column.widget.type == 'value'" [font]="column.widget.font">
-                        {{ column.widget.data.type == 'analog' ? (column.widget.data.value | number : '0.2-2') : (column.widget.data.value == 0 ? column.widget.data.digital.low : column.widget.data.digital.high) }}{{ (column.widget.data.type == 'analog' && column.widget.data.analog.units) ? column.widget.data.analog.units : '' }}
-                    </value>
-                </widget>
+            <mat-select class="dashboard-select" [(ngModel)]="period.frame" (ngModelChange)="load()" *ngIf="period.tense != 'custom-dates'">
+                <mat-option value="day">
+                    DAY
+                </mat-option>
+                <mat-option value="week">
+                    WEEK
+                </mat-option>
+                <mat-option value="month">
+                    MONTH
+                </mat-option>
+                <mat-option value="year">
+                    YEAR
+                </mat-option>
+            </mat-select>
+    
+            <button mat-stroked-button class="dashboard-select" (click)="SelectDates()" *ngIf="period.tense == 'custom-dates'">
+                {{ date.from | date : 'yyyy/MM/dd HH:mm' }} - {{ date.to | date : 'yyyy/MM/dd HH:mm' }}
+            </button>
+        </filter>
 
-                <!-- <column-label *ngIf="column.widget" [class.hidden]="!column.widget.label.visable">
-                    {{ column.widget.label.value }}
-                </column-label>
+        <row *ngFor="let row of report.layout[layout]" [id]="row.rowId" [height]="row.height" [position]="row.position">
+            <column *ngFor="let column of row.columns" [fill]="column.fill" [font]="column.font" [width]="column.width" [stroke]="column.stroke" [position]="column.position">
+                <banner [font]="column.banner">
+                    {{ column.label }}
+                </banner>
 
-                <column-content *ngIf="column.widget && column.widget.type == 'text' && column.widget.type == 'value'">
-                    <h1 class="value" *ngIf="column.widget && column.widget.data && column.widget.type == 'value'" [style.color]="column.widget.value.color">
-                        {{ column.widget.data.type == 'analog' ? (column.widget.data.value | number : '0.2-2') : (column.widget.data.value == 0 ? column.widget.data.digital.low : column.widget.data.digital.high) }}
-                        <small *ngIf="column.widget.data.type == 'analog' && column.widget.data.analog.units">
-                            
-                        </small>
-                    </h1>
+                <text *ngIf="!column.error && column.display == 'text'" [font]="column.font" [style.top.px]="column.banner.size + 10" [style.left.px]="column.banner.size" [style.right.px]="column.banner.size" [style.bottom.px]="column.banner.size">
+                    {{ column.text.value }}
+                </text>
 
-                    <p class="value free-text" *ngIf="column.widget && column.widget.type == 'text'" [style.color]="report.theme.color">
-                        {{ column.widget.text.value }}
-                    </p>
-                </column-content>
+                <value *ngIf="!column.error && column.data && column.display == 'value'" [font]="column.font">
+                    {{ column.data.type == 'analog' ? (column.data.value | number : '0.2-2') : (column.data.value == 0 ? column.data.digital.low : column.data.digital.high) }}{{ (column.data.type == 'analog' && column.data.analog.units) ? column.data.analog.units : '' }}
+                </value>
 
-                <column-content class="content-image" *ngIf="column.widget && column.widget && column.widget.type == 'image'" [style.width]="row.style.height + 'px'" [style.height]="row.style.height + 'px'" [style.background-image]="'url(' + column.widget.image.src + ')'"></column-content>
-                    
-                <chart *ngIf="column.widget && column.widget.data && column.widget.type == 'chart'" [type]="column.widget.chart.type" [data]="column.widget.data.value" [units]="column.widget.data.analog.units" [color]="column.style.color" [format]="date.format" [background]="column.widget.chart.color" [label]="column.widget.label.value"></chart> -->
+                <image *ngIf="!column.error && column.display == 'image'" [src]="column.image.src"></image>
+
+                <chart *ngIf="!column.error && column.data && column.display == 'chart'" [type]="column.chart.type" [data]="column.data.value" [units]="column.data.analog.units" [font]="column.font" [label]="column.label" [format]="date.format" [chartfill]="column.chartfill" [gridlines]="column.gridlines"></chart>
+                
+                <error *ngIf="column.error" [font]="column.font">
+                    Issue loading data!
+                </error>
             </column>
         </row>
     </blox>

@@ -1,24 +1,10 @@
 var Q = require('q');
 var db = require('../db/mongo');
 var ObjectId = require('mongodb').ObjectId;
-var ErrorResponse = require('../lib/error-response').ErrorResponse;
+var ErrorResponse = require('../lib/error-response');
 
 var module = function () {
 	var dalReports = {
-		errorResponse: {
-			'error': {
-				'code': 401,
-				'message': 'Invalid Credentials',
-				'errors': [{
-					'reason': 'General Reports Error',
-					'message': 'Invalid Credentials',
-					'location': 'dalReports',
-					'locationType': 'header'
-				}]
-			},
-			'hiddenErrors': []
-		},
-
 		add: (args) => {
 			var deferred = Q.defer();
 
@@ -31,9 +17,8 @@ var module = function () {
 				},
 				'url': args.req.body.url,
 				'type': args.req.body.type,
-				'theme': args.req.body.theme || {},
+				'theme': args.req.body.theme,
 				'layout': args.req.body.layout,
-				'widgets': args.req.body.widgets || [],
 				'serverDate': new Date(),
 				'description': args.req.body.description
 			};
@@ -46,11 +31,12 @@ var module = function () {
 				.then(result => {
 					args.result = result[0];
 					deferred.resolve(args);
-				}, err => {
-					dalReports.errorResponse.error.errors[0].code = err.code || dalReports.errorResponse.error.errors[0].code;
-					dalReports.errorResponse.error.errors[0].reason = err.description || 'Add Report Error';
-					dalReports.errorResponse.hiddenErrors.push(err.error);
-					deferred.reject(dalReports.errorResponse);
+				}, error => {
+					var err = new ErrorResponse();
+					err.error.errors[0].code = error.code;
+					err.error.errors[0].reason = error.message;
+					err.error.errors[0].message = error.message;
+					deferred.reject(err);
 				});
 
 			return deferred.promise;
@@ -89,11 +75,12 @@ var module = function () {
 				.then(result => {
 					args.result = result[0];
 					deferred.resolve(args);
-				}, err => {
-					dalReports.errorResponse.error.errors[0].code = err.code || dalReports.errorResponse.error.errors[0].code;
-					dalReports.errorResponse.error.errors[0].reason = err.description || 'Get Report Error';
-					dalReports.errorResponse.hiddenErrors.push(err.error);
-					deferred.reject(dalReports.errorResponse);
+				}, error => {
+					var err = new ErrorResponse();
+					err.error.errors[0].code = error.code;
+					err.error.errors[0].reason = error.message;
+					err.error.errors[0].message = error.message;
+					deferred.reject(err);
 				});
 
 			return deferred.promise;
@@ -172,11 +159,12 @@ var module = function () {
 				.then(result => {
 					args.result = result;
 					deferred.resolve(args);
-				}, err => {
-					dalReports.errorResponse.error.errors[0].code = err.code || dalReports.errorResponse.error.errors[0].code;
-					dalReports.errorResponse.error.errors[0].reason = err.description || 'List Reports Error';
-					dalReports.errorResponse.hiddenErrors.push(err.error);
-					deferred.reject(dalReports.errorResponse);
+				}, error => {
+					var err = new ErrorResponse();
+					err.error.errors[0].code = error.code;
+					err.error.errors[0].reason = error.message;
+					err.error.errors[0].message = error.message;
+					deferred.reject(err);
 				});
 
 			return deferred.promise;
@@ -187,18 +175,19 @@ var module = function () {
 
 			db.call({
 				'params': args.params,
-				'database': args.connector.database,
+				'database': 'telemetry',
 				'operation': 'aggregate',
-				'collection': args.connector.table
+				'collection': 'tblHistorical'
 			})
 				.then(result => {
 					args.result = JSON.parse(JSON.stringify(result));
 					deferred.resolve(args);
-				}, err => {
-					dalReports.errorResponse.error.errors[0].code = err.code || dalReports.errorResponse.error.errors[0].code;
-					dalReports.errorResponse.error.errors[0].reason = err.description || 'List Reports Error';
-					dalReports.errorResponse.hiddenErrors.push(err.error);
-					deferred.reject(dalReports.errorResponse);
+				}, error => {
+					var err = new ErrorResponse();
+					err.error.errors[0].code = error.code;
+					err.error.errors[0].reason = error.message;
+					err.error.errors[0].message = error.message;
+					deferred.reject(err);
 				});
 
 			return deferred.promise;
@@ -232,7 +221,7 @@ var module = function () {
 			// 	.then(db.call, null)
 			// 	.then(result => {
 					deferred.resolve(args);
-				// }, err => {
+				// }, error => {
 				// 	dalReports.errorResponse.error.errors[0].code = err.code || dalReports.errorResponse.error.errors[0].code;
 				// 	dalReports.errorResponse.error.errors[0].reason = err.description || 'Audit Report Error';
 				// 	dalReports.errorResponse.hiddenErrors.push(err.error);
@@ -281,12 +270,14 @@ var module = function () {
 				.then(result => {
 					args.result = result;
 					deferred.resolve(args);
-				}, err => {
-					dalReports.errorResponse.error.errors[0].code = err.code || dalReports.errorResponse.error.errors[0].code;
-					dalReports.errorResponse.error.errors[0].reason = err.description || 'Share Report Error';
-					dalReports.errorResponse.hiddenErrors.push(err.error);
-					deferred.reject(dalReports.errorResponse);
+				}, error => {
+					var err = new ErrorResponse();
+					err.error.errors[0].code = error.code;
+					err.error.errors[0].reason = error.message;
+					err.error.errors[0].message = error.message;
+					deferred.reject(err);
 				});
+
 			return deferred.promise;
 		},
 
@@ -342,11 +333,12 @@ var module = function () {
 				.then(result => {
 					args.result = result;
 					deferred.resolve(args);
-				}, err => {
-					dalReports.errorResponse.error.errors[0].code = err.code || dalReports.errorResponse.error.errors[0].code;
-					dalReports.errorResponse.error.errors[0].reason = err.description || 'Update Report Error';
-					dalReports.errorResponse.hiddenErrors.push(err.error);
-					deferred.reject(dalReports.errorResponse);
+				}, error => {
+					var err = new ErrorResponse();
+					err.error.errors[0].code = error.code;
+					err.error.errors[0].reason = error.message;
+					err.error.errors[0].message = error.message;
+					deferred.reject(err);
 				});
 
 			return deferred.promise;
@@ -376,11 +368,97 @@ var module = function () {
 				.then(result => {
 					args.result = result;
 					deferred.resolve(args);
-				}, err => {
-					dalReports.errorResponse.error.errors[0].code = err.code || dalReports.errorResponse.error.errors[0].code;
-					dalReports.errorResponse.error.errors[0].reason = err.description || 'Delete Report Error';
-					dalReports.errorResponse.hiddenErrors.push(err.error);
-					deferred.reject(dalReports.errorResponse);
+				}, error => {
+					var err = new ErrorResponse();
+					err.error.errors[0].code = error.code;
+					err.error.errors[0].reason = error.message;
+					err.error.errors[0].message = error.message;
+					deferred.reject(err);
+				});
+
+			return deferred.promise;
+		},
+
+		validate: (args) => {
+			var deferred = Q.defer();
+
+			var inputId = null;
+			if (Array.isArray(args.req.body.query.inputId) && args.req.body.query.inputId.length > 0) {
+				inputId = {
+					$in: args.req.body.query.inputId.map(id => ObjectId(id))
+				};
+			} else if (typeof(args.req.body.query.inputId) == 'string' && args.req.body.query.inputId.length == 24) {
+				inputId = ObjectId(args.req.body.query.inputId);
+			};
+
+			var deviceId = null;
+			if (Array.isArray(args.req.body.query.deviceId) && args.req.body.query.deviceId.length > 0) {
+				deviceId = {
+					$in: args.req.body.query.deviceId.map(id => ObjectId(id))
+				};
+			} else if (typeof(args.req.body.query.deviceId) == 'string' && args.req.body.query.deviceId.length == 24) {
+				deviceId = ObjectId(args.req.body.query.deviceId);
+			};
+
+			var params = [
+				{
+					$match: {
+						'_id': deviceId,
+						'bitid.auth.users.email': args.req.body.header.email
+					}
+				},
+				{
+					$unwind: '$inputs'
+				},
+				{
+					$match: {
+						'inputs.inputId': inputId
+					}
+				},
+				{
+					$project: {
+						'input': {
+							'type': '$inputs.type',
+							'analog': '$inputs.analog',
+							'digital': '$inputs.digital',
+							'inputId': '$inputs.inputId'
+						},
+						'_id': 0,
+						'deviceId': '$_id'
+					}
+				},
+				{
+					$group: {
+						'_id': '$deviceId',
+						'inputs': {
+							$push: '$input'
+						}
+					}
+				},
+				{
+					$project: {
+						'_id': 0,
+						'inputs': 1,
+						'deviceId': '$_id'
+					}
+				}
+			];
+
+			db.call({
+				'params': params,
+				'database': 'telemetry',
+				'operation': 'aggregate',
+				'collection': 'tblDevices'
+			})
+				.then(result => {
+					args.devices = JSON.parse(JSON.stringify(result));
+					deferred.resolve(args);
+				}, error => {
+					var err = new ErrorResponse();
+					err.error.errors[0].code = error.code;
+					err.error.errors[0].reason = error.message;
+					err.error.errors[0].message = 'Authentication did not pass for query! Make sure you are shared to device!';
+					deferred.reject(err);
 				});
 
 			return deferred.promise;
@@ -465,11 +543,12 @@ var module = function () {
 				.then(result => {
 					args.result = result;
 					deferred.resolve(args);
-				}, err => {
-					dalReports.errorResponse.error.errors[0].code = err.code || dalReports.errorResponse.error.errors[0].code;
-					dalReports.errorResponse.error.errors[0].reason = err.description || 'Unsubscribe User From Report Error';
-					dalReports.errorResponse.hiddenErrors.push(err.error);
-					deferred.reject(dalReports.errorResponse);
+				}, error => {
+					var err = new ErrorResponse();
+					err.error.errors[0].code = error.code;
+					err.error.errors[0].reason = error.message;
+					err.error.errors[0].message = error.message;
+					deferred.reject(err);
 				});
 
 			return deferred.promise;
@@ -522,11 +601,12 @@ var module = function () {
 				.then(result => {
 					args.result = result;
 					deferred.resolve(args);
-				}, err => {
-					dalReports.errorResponse.error.errors[0].code = err.code || dalReports.errorResponse.error.errors[0].code;
-					dalReports.errorResponse.error.errors[0].reason = err.description || 'Update Report Subscriber Error';
-					dalReports.errorResponse.hiddenErrors.push(err.error);
-					deferred.reject(dalReports.errorResponse);
+				}, error => {
+					var err = new ErrorResponse();
+					err.error.errors[0].code = error.code;
+					err.error.errors[0].reason = error.message;
+					err.error.errors[0].message = error.message;
+					deferred.reject(err);
 				});
 
 			return deferred.promise;
@@ -534,20 +614,6 @@ var module = function () {
 	};
 
 	var dalSchedule = {
-		errorResponse: {
-			'error': {
-				'code': 401,
-				'message': 'Invalid Credentials',
-				'errors': [{
-					'reason': 'General Schedule Error',
-					'message': 'Invalid Credentials',
-					'location': 'dalSchedule',
-					'locationType': 'header'
-				}]
-			},
-			'hiddenErrors': []
-		},
-
 		add: (args) => {
 			var deferred = Q.defer();
 
@@ -580,11 +646,12 @@ var module = function () {
 				.then(result => {
 					args.result = result[0];
 					deferred.resolve(args);
-				}, err => {
-					dalSchedule.errorResponse.error.errors[0].code = err.code || dalSchedule.errorResponse.error.errors[0].code;
-					dalSchedule.errorResponse.error.errors[0].reason = err.description || 'Add Schedule Error';
-					dalSchedule.errorResponse.hiddenErrors.push(err.error);
-					deferred.reject(dalSchedule.errorResponse);
+				}, error => {
+					var err = new ErrorResponse();
+					err.error.errors[0].code = error.code;
+					err.error.errors[0].reason = error.message;
+					err.error.errors[0].message = error.message;
+					deferred.reject(err);
 				});
 
 			return deferred.promise;
@@ -623,11 +690,12 @@ var module = function () {
 				.then(result => {
 					args.result = result[0];
 					deferred.resolve(args);
-				}, err => {
-					dalSchedule.errorResponse.error.errors[0].code = err.code || dalSchedule.errorResponse.error.errors[0].code;
-					dalSchedule.errorResponse.error.errors[0].reason = err.description || 'Get Schedule Error';
-					dalSchedule.errorResponse.hiddenErrors.push(err.error);
-					deferred.reject(dalSchedule.errorResponse);
+				}, error => {
+					var err = new ErrorResponse();
+					err.error.errors[0].code = error.code;
+					err.error.errors[0].reason = error.message;
+					err.error.errors[0].message = error.message;
+					deferred.reject(err);
 				});
 
 			return deferred.promise;
@@ -696,11 +764,12 @@ var module = function () {
 				.then(result => {
 					args.result = result;
 					deferred.resolve(args);
-				}, err => {
-					dalSchedule.errorResponse.error.errors[0].code = err.code || dalSchedule.errorResponse.error.errors[0].code;
-					dalSchedule.errorResponse.error.errors[0].reason = err.description || 'List Schedules Error';
-					dalSchedule.errorResponse.hiddenErrors.push(err.error);
-					deferred.reject(dalSchedule.errorResponse);
+				}, error => {
+					var err = new ErrorResponse();
+					err.error.errors[0].code = error.code;
+					err.error.errors[0].reason = error.message;
+					err.error.errors[0].message = error.message;
+					deferred.reject(err);
 				});
 
 			return deferred.promise;
@@ -732,11 +801,12 @@ var module = function () {
 				.then(db.call, null)
 				.then(result => {
 					deferred.resolve(args);
-				}, err => {
-					dalSchedule.errorResponse.error.errors[0].code = err.code || dalSchedule.errorResponse.error.errors[0].code;
-					dalSchedule.errorResponse.error.errors[0].reason = err.description || 'Audit Schedule Error';
-					dalSchedule.errorResponse.hiddenErrors.push(err.error);
-					deferred.reject(dalSchedule.errorResponse);
+				}, error => {
+					var err = new ErrorResponse();
+					err.error.errors[0].code = error.code;
+					err.error.errors[0].reason = error.message;
+					err.error.errors[0].message = error.message;
+					deferred.reject(err);
 				});
 
 			return deferred.promise;
@@ -781,12 +851,14 @@ var module = function () {
 				.then(result => {
 					args.result = result;
 					deferred.resolve(args);
-				}, err => {
-					dalSchedule.errorResponse.error.errors[0].code = err.code || dalSchedule.errorResponse.error.errors[0].code;
-					dalSchedule.errorResponse.error.errors[0].reason = err.description || 'Share Schedule Error';
-					dalSchedule.errorResponse.hiddenErrors.push(err.error);
-					deferred.reject(dalSchedule.errorResponse);
+				}, error => {
+					var err = new ErrorResponse();
+					err.error.errors[0].code = error.code;
+					err.error.errors[0].reason = error.message;
+					err.error.errors[0].message = error.message;
+					deferred.reject(err);
 				});
+
 			return deferred.promise;
 		},
 
@@ -808,11 +880,12 @@ var module = function () {
 				.then(result => {
 					args.result = result;
 					deferred.resolve(args);
-				}, err => {
-					dalSchedule.errorResponse.error.errors[0].code = err.code || dalSchedule.errorResponse.error.errors[0].code;
-					dalSchedule.errorResponse.error.errors[0].reason = err.description || 'Unsubscribe User From Schedule Error';
-					dalSchedule.errorResponse.hiddenErrors.push(err.error);
-					deferred.reject(dalSchedule.errorResponse);
+				}, error => {
+					var err = new ErrorResponse();
+					err.error.errors[0].code = error.code;
+					err.error.errors[0].reason = error.message;
+					err.error.errors[0].message = error.message;
+					deferred.reject(err);
 				});
 
 			return deferred.promise;
@@ -864,11 +937,12 @@ var module = function () {
 				.then(result => {
 					args.result = result;
 					deferred.resolve(args);
-				}, err => {
-					dalSchedule.errorResponse.error.errors[0].code = err.code || dalSchedule.errorResponse.error.errors[0].code;
-					dalSchedule.errorResponse.error.errors[0].reason = err.description || 'Update Schedule Error';
-					dalSchedule.errorResponse.hiddenErrors.push(err.error);
-					deferred.reject(dalSchedule.errorResponse);
+				}, error => {
+					var err = new ErrorResponse();
+					err.error.errors[0].code = error.code;
+					err.error.errors[0].reason = error.message;
+					err.error.errors[0].message = error.message;
+					deferred.reject(err);
 				});
 
 			return deferred.promise;
@@ -898,11 +972,12 @@ var module = function () {
 				.then(result => {
 					args.result = result;
 					deferred.resolve(args);
-				}, err => {
-					dalSchedule.errorResponse.error.errors[0].code = err.code || dalSchedule.errorResponse.error.errors[0].code;
-					dalSchedule.errorResponse.error.errors[0].reason = err.description || 'Delete Schedule Error';
-					dalSchedule.errorResponse.hiddenErrors.push(err.error);
-					deferred.reject(dalSchedule.errorResponse);
+				}, error => {
+					var err = new ErrorResponse();
+					err.error.errors[0].code = error.code;
+					err.error.errors[0].reason = error.message;
+					err.error.errors[0].message = error.message;
+					deferred.reject(err);
 				});
 
 			return deferred.promise;
@@ -942,11 +1017,12 @@ var module = function () {
 				.then(result => {
 					args.result = result;
 					deferred.resolve(args);
-				}, err => {
-					dalSchedule.errorResponse.error.errors[0].code = err.code || dalSchedule.errorResponse.error.errors[0].code;
-					dalSchedule.errorResponse.error.errors[0].reason = err.description || 'Unsubscribe User From Schedule Error';
-					dalSchedule.errorResponse.hiddenErrors.push(err.error);
-					deferred.reject(dalSchedule.errorResponse);
+				}, error => {
+					var err = new ErrorResponse();
+					err.error.errors[0].code = error.code;
+					err.error.errors[0].reason = error.message;
+					err.error.errors[0].message = error.message;
+					deferred.reject(err);
 				});
 
 			return deferred.promise;
@@ -999,180 +1075,11 @@ var module = function () {
 				.then(result => {
 					args.result = result;
 					deferred.resolve(args);
-				}, err => {
-					dalSchedule.errorResponse.error.errors[0].code = err.code || dalSchedule.errorResponse.error.errors[0].code;
-					dalSchedule.errorResponse.error.errors[0].reason = err.description || 'Update Schedule Subscriber Error';
-					dalSchedule.errorResponse.hiddenErrors.push(err.error);
-					deferred.reject(dalSchedule.errorResponse);
-				});
-
-			return deferred.promise;
-		}
-	};
-
-	var dalConnectors = {
-		errorResponse: {
-			'error': {
-				'code': 401,
-				'message': 'Invalid Credentials',
-				'errors': [{
-					'reason': 'General Connectors Error',
-					'message': 'Invalid Credentials',
-					'location': 'dalConnectors',
-					'locationType': 'header'
-				}]
-			},
-			'hiddenErrors': []
-		},
-
-		get: (args) => {
-			var deferred = Q.defer();
-
-			var params = {
-				'_id': ObjectId(args.req.body.connectorId)
-			};
-
-			var filter = {};
-			if (Array.isArray(args.req.body.filter) && args.req.body.filter.length > 0) {
-				filter._id = 0;
-				args.req.body.filter.map(f => {
-					if (f == 'connectorId') {
-						filter['_id'] = 1;
-					} else {
-						filter[f] = 1;
-					};
-				});
-			};
-
-			db.call({
-				'filter': filter,
-				'params': params,
-				'operation': 'find',
-				'collection': 'tblConnectors'
-			})
-				.then(result => {
-					args.result = result[0];
-					deferred.resolve(args);
-				}, err => {
-					dalSchedule.errorResponse.error.errors[0].code = err.code || dalSchedule.errorResponse.error.errors[0].code;
-					dalSchedule.errorResponse.error.errors[0].reason = err.description || 'Get Schedule Error';
-					dalSchedule.errorResponse.hiddenErrors.push(err.error);
-					deferred.reject(dalSchedule.errorResponse);
-				});
-
-			return deferred.promise;
-		},
-
-		list: (args) => {
-			var deferred = Q.defer();
-
-			var params = {};
-
-			if (typeof (args.req.body.connectorId) != 'undefined') {
-				if (Array.isArray(args.req.body.connectorId) && args.req.body.connectorId.length > 0) {
-					params._id = {
-						$in: args.req.body.connectorId.map(id => ObjectId(id))
-					};
-				} else {
-					params._id = ObjectId(args.req.body.connectorId);
-				};
-			};
-
-			if (typeof (args.req.body.description) != 'undefined') {
-				params.description = {
-					$regex: args.req.body.description
-				};
-			};
-
-			var filter = {};
-			if (Array.isArray(args.req.body.filter) && args.req.body.filter.length > 0) {
-				filter._id = 0;
-				args.req.body.filter.map(f => {
-					if (f == 'connectorId') {
-						filter['_id'] = 1;
-					} else {
-						filter[f] = 1;
-					};
-				});
-			};
-
-			db.call({
-				'filter': filter,
-				'params': params,
-				'operation': 'find',
-				'collection': 'tblConnectors'
-			})
-				.then(result => {
-					args.result = result;
-					deferred.resolve(args);
-				}, err => {
-					dalSchedule.errorResponse.error.errors[0].code = err.code || dalSchedule.errorResponse.error.errors[0].code;
-					dalSchedule.errorResponse.error.errors[0].reason = err.description || 'List Schedules Error';
-					dalSchedule.errorResponse.hiddenErrors.push(err.error);
-					deferred.reject(dalSchedule.errorResponse);
-				});
-
-			return deferred.promise;
-		},
-
-		load: (args) => {
-			var deferred = Q.defer();
-
-			var params = {
-				'_id': ObjectId(args.req.body.connectorId)
-			};
-
-			db.call({
-				'params': params,
-				'operation': 'find',
-				'collection': 'tblConnectors'
-			})
-				.then(result => {
-					args.connector = JSON.parse(JSON.stringify(result[0]));
-					deferred.resolve(args);
-				}, err => {
-					dalReports.errorResponse.error.errors[0].code = err.code || dalReports.errorResponse.error.errors[0].code;
-					dalReports.errorResponse.error.errors[0].reason = err.description || 'List Reports Error';
-					dalReports.errorResponse.hiddenErrors.push(err.error);
-					deferred.reject(dalReports.errorResponse);
-				});
-
-			return deferred.promise;
-		},
-
-		authenticate: (args) => {
-			var deferred = Q.defer();
-
-			var params = {
-				'bitid.auth.users.email': args.req.body.header.email
-			};
-
-			var field = args.connector.authenticate.field;
-
-			if (typeof(args.req.body.query[field]) != 'undefined' && args.req.body.query[field] != null && args.req.body.query[field] != '') {
-				if (Array.isArray(args.req.body.query[field]) && args.req.body.query[field].length > 0) {
-					params._id = {
-						$in: args.req.body.query[field].map(id => ObjectId(id))
-					};
-				} else if (typeof(args.req.body.query[field]) == 'string' && args.req.body.query[field].length == 24) {
-					params._id = ObjectId(args.req.body.query[field]);
-				};
-			};
-
-			db.call({
-				'params': params,
-				'database': args.connector.database,
-				'operation': 'find',
-				'collection': args.connector.authenticate.table
-			})
-				.then(result => {
-					args.req.body[field] = JSON.parse(JSON.stringify(result)).map(o => o._id);
-					deferred.resolve(args);
 				}, error => {
 					var err = new ErrorResponse();
-					err.error.errors[0].code = 503;
-					err.error.errors[0].reason = error.description;
-					err.error.errors[0].message = 'Authentication table rejected query!';
+					err.error.errors[0].code = error.code;
+					err.error.errors[0].reason = error.message;
+					err.error.errors[0].message = error.message;
 					deferred.reject(err);
 				});
 
@@ -1182,8 +1089,7 @@ var module = function () {
 
 	return {
 		'reports': dalReports,
-		'schedule': dalSchedule,
-		'connectors': dalConnectors
+		'schedule': dalSchedule
 	};
 };
 

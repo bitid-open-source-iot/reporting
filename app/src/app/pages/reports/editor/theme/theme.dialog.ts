@@ -14,18 +14,36 @@ export class ThemeDialog implements OnInit, OnDestroy {
 
     public themes: Theme[] = [
         {
+            'font': {
+                'color': '#FFFFFF',
+                'opacity': 100
+            },
+            'board': {
+                'color': '#000000',
+                'opacity': 100
+            },
+            'column': {
+                'color': '#FFFFFF',
+                'opacity': 25
+            },
             'name': 'dark',
-            'type': 'default',
-            'color': 'rgba(255, 255, 255, 1)',
-            'board': 'rgba(0, 0, 0, 1)',
-            'column': 'rgba(255, 255, 255, 0.25)'
+            'type': 'default'
         },
         {
+            'font': {
+                'color': '#000000',
+                'opacity': 100
+            },
+            'board': {
+                'color': '#FFFFFF',
+                'opacity': 100
+            },
+            'column': {
+                'color': '#000000',
+                'opacity': 5
+            },
             'name': 'light',
-            'type': 'default',
-            'color': 'rgba(0, 0, 0, 1)',
-            'board': 'rgba(255, 255, 255, 1)',
-            'column': 'rgba(0, 0, 0, 0.05)'
+            'type': 'default'
         }
     ];
 

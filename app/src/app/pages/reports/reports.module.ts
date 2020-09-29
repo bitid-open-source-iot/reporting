@@ -2,12 +2,11 @@
 import { ReportsPage } from './reports.page';
 import { ThemeDialog } from './editor/theme/theme.dialog';
 import { AddRowDialog } from './editor/add-row/add-row.dialog';
-import { WidgetDialog } from './editor/widget/widget.dialog';
-import { ConditionDialog } from './editor/condition/condition.dialog';
-import { LinkWidgetDialog } from './editor/link/link.dialog';
+import { ConditionDialog } from './editor/column/condition/condition.dialog';
 import { ReportViewerPage } from './viewer/viewer.page';
 import { ReportEditorPage } from './editor/editor.page';
 import { CustomDatesDialog } from './viewer/custom-dates/custom-dates.dialog';
+import { ColumnEditorDialog } from './editor/column/column.dialog';
 
 /* --- MODULES --- */
 import { NgModule } from '@angular/core';
@@ -16,7 +15,6 @@ import { ShareModule } from 'src/app/components/share/share.module';
 import { DeleteModule } from 'src/app/components/delete/delete.module';
 import { CommonModule } from '@angular/common';
 import { SearchModule } from 'src/app/components/search/search.module';
-import { WidgetModule } from 'src/app/lib/widget/widget.module';
 import { MatListModule } from '@angular/material/list';
 import { MatIconModule } from '@angular/material/icon';
 import { MatMenuModule } from '@angular/material/menu';
@@ -49,7 +47,6 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
         CommonModule,
         DeleteModule,
         SearchModule,
-        WidgetModule,
         MatIconModule,
         MatMenuModule,
         MatListModule,
@@ -78,12 +75,11 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
         ThemeDialog,
         ReportsPage,
         AddRowDialog,
-        WidgetDialog,
         ConditionDialog,
-        LinkWidgetDialog,
         ReportViewerPage,
         ReportEditorPage,
-        CustomDatesDialog
+        CustomDatesDialog,
+        ColumnEditorDialog
     ]
 })
 

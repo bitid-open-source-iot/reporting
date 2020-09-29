@@ -9,7 +9,14 @@ import { BloxService } from './blox.service';
 /* --- COMPONENTS --- */
 import { BloxComponent } from './blox.component';
 import { BloxRowComponent } from './row/row.component';
+import { BloxFilterComponent } from './filter/filter.component';
 import { BloxColumnComponent } from './column/column.component';
+import { BloxColumnTextComponent } from './column/text/text.component';
+import { BloxColumnErrorComponent } from './column/error/error.component';
+import { BloxColumnChartComponent } from './column/chart/chart.component';
+import { BloxColumnValueComponent } from './column/value/value.component';
+import { BloxColumnImageComponent } from './column/image/image.component';
+import { BloxColumnBannerComponent } from './column/banner/banner.component';
 
 @NgModule({
     imports: [
@@ -19,7 +26,14 @@ import { BloxColumnComponent } from './column/column.component';
     exports: [
         BloxComponent,
         BloxRowComponent,
-        BloxColumnComponent
+        BloxColumnComponent,
+        BloxFilterComponent,
+        BloxColumnTextComponent,
+        BloxColumnErrorComponent,
+        BloxColumnChartComponent,
+        BloxColumnValueComponent,
+        BloxColumnImageComponent,
+        BloxColumnBannerComponent
     ],
     providers: [
         BloxService
@@ -27,7 +41,14 @@ import { BloxColumnComponent } from './column/column.component';
     declarations: [
         BloxComponent,
         BloxRowComponent,
-        BloxColumnComponent
+        BloxColumnComponent,
+        BloxFilterComponent,
+        BloxColumnTextComponent,
+        BloxColumnErrorComponent,
+        BloxColumnChartComponent,
+        BloxColumnValueComponent,
+        BloxColumnImageComponent,
+        BloxColumnBannerComponent
     ]
 })
 

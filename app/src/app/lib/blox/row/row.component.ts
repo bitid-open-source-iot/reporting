@@ -11,12 +11,9 @@ import { Input, OnInit, Component, OnDestroy, Renderer2, OnChanges, QueryList, E
 
 export class BloxRowComponent implements OnInit, OnDestroy, OnChanges, AfterContentInit {
     
+    @Input('id') public id: string = ObjectId();
     @Input('type') public type: string = 'static';
-    @Input('rowId') public rowId: string = ObjectId();
-    @Input('config') public config: any = {
-        'height': 100,
-        'background': 'transparent'
-    };
+    @Input('height') public height: number = 100;
     @Input('position') public position: number;
     
     @ContentChildren(BloxColumnComponent) public columns: QueryList<BloxColumnComponent>;
@@ -36,8 +33,7 @@ export class BloxRowComponent implements OnInit, OnDestroy, OnChanges, AfterCont
     private subscriptions: any = {};
 
     private async process() {
-        this.renderer.setStyle(this.element, 'height', this.config.height + 'px');
-        this.renderer.setStyle(this.element, 'background', this.config.background);
+        this.renderer.setStyle(this.element, 'height', this.height + 'px');
 
         if (this.blox.editing.value && this.type == 'dynamic') {
             this.resize = true;
@@ -61,10 +57,11 @@ export class BloxRowComponent implements OnInit, OnDestroy, OnChanges, AfterCont
 
     public async hold(event: MouseEvent|TouchEvent) {
         this.blox.selected.next({
-            'id': this.rowId,
+            'id': this.id,
             'type': 'row'
         });
         event.preventDefault();
+        this.blox.start.next(event);
         this.blox.resizing.next(true);
     };
 
@@ -75,41 +72,41 @@ export class BloxRowComponent implements OnInit, OnDestroy, OnChanges, AfterCont
 
         this.subscriptions.move = this.blox.move.subscribe(event => {
             if (this.blox.selected.value && this.blox.resizing.value) {
-                if (this.blox.selected.value.type == 'row' && this.blox.selected.value.id == this.rowId) {
+                if (this.blox.selected.value.type == 'row' && this.blox.selected.value.id == this.id) {
                     if (event instanceof MouseEvent) {
-                        const height = this.config.height + (event.pageY - this.y);
+                        const height = this.height + (event.pageY - this.y);
                         if (height > this.min) {
-                            this.config.height = height;
+                            this.height = height;
                             this.y = event.pageY;
                         };
                     } else if (event instanceof TouchEvent) {
-                        const height = this.config.height + (event.touches[0].pageY - this.y);
+                        const height = this.height + (event.touches[0].pageY - this.y);
                         if (height > this.min) {
-                            this.config.height = height;
+                            this.height = height;
                             this.y = event.touches[0].pageY;
                         };
                     };
-                    this.renderer.setStyle(this.element, 'height', this.config.height + 'px');
+                    this.renderer.setStyle(this.element, 'height', this.height + 'px');
                 } else if (this.blox.selected.value.type == 'column') {
                     this.columns.forEach(column => {
-                        if (this.blox.selected.value.id == column.columnId) {
+                        if (this.blox.selected.value.id == column.id) {
                             let diff: number = 0;
                             if (event instanceof MouseEvent) {
                                 diff = parseFloat((((event.pageX - this.x) / this.element.clientWidth) * 100).toFixed(2));
-                                column.config.width += diff;    
+                                column.width += diff;    
                                 this.x = event.pageX;
                             } else if (event instanceof TouchEvent) {
                                 diff = parseFloat((((event.touches[0].pageX - this.x) / this.element.clientWidth) * 100).toFixed(2));
-                                column.config.width += diff;  
+                                column.width += diff;  
                                 this.x = event.touches[0].pageX;
                             };
                             
-                            this.renderer.setStyle(column.element, 'flex', '0 calc(' + column.config.width + '% - 10px)');
+                            this.renderer.setStyle(column.element, 'flex', '0 calc(' + column.width + '% - 10px)');
                             
                             this.columns.forEach(col => {
                                 if (col.position == column.position + 1) {
-                                    col.config.width -= diff;
-                                    this.renderer.setStyle(col.element, 'flex', '0 calc(' + col.config.width + '% - 10px)');
+                                    col.width -= diff;
+                                    this.renderer.setStyle(col.element, 'flex', '0 calc(' + col.width + '% - 10px)');
                                 };
                             });
                         };
@@ -136,15 +133,6 @@ export class BloxRowComponent implements OnInit, OnDestroy, OnChanges, AfterCont
     };
 
     ngOnChanges(changes: SimpleChanges): void {
-        let first: boolean = true;
-        Object.keys(changes).map(key => {
-            if (!changes[key].firstChange) {
-                first = false;
-            };
-        });
-        if (!first) {
-            this.blox.changes.next(true);
-        };
         this.process();
     };
 

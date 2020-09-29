@@ -77,20 +77,20 @@ form {
     background-color: rgba(255, 255, 255, 0.5);
 }
 column .options {
-    top: 0px;
-    left: 0px;
-    right: 0px;
-    bottom: 0px;
+    top: calc(50% - 25px);
+    left: calc(50% - 50px);
+    width: 100px;
+    height: 50px;
     display: flex;
     z-index: 1000;
     opacity: 0;
     position: absolute;
     transition: all 0.5s ease-in-out;
     align-items: center;
-    border-radius: 10px;
+    border-radius: 50px;
     flex-direction: row;
     justify-content: center;
-    background-color: rgba($color: #000000, $alpha: 0.05);
+    background-color: #FFFFFF;
 }
 column:hover,
 column:active {
@@ -101,63 +101,9 @@ column:active {
 .editor {
     display: flex;
     flex-direction: row;
-    .widgets {
-        flex: 0 250px;
-        width: 250px;
-        height: 100%;
-        display: flex;
-        flex-direction: column;
-        background-color: #fff;
-        header {
-            color: #424242;
-            height: 30px;
-            display: flex;
-            font-size: 12px;
-            align-items: center;
-            line-height: 12px;
-            font-weight: 500;
-            margin-bottom: 5px;
-            border-bottom: 1px solid #E0E0E0;
-            text-transform: uppercase;
-            justify-content: center;
-        }
-        .widget {
-            margin: 5px 10px;
-            height: 80px;
-            display: flex;
-            overflow: hidden;
-            position: relative;
-            align-items: center;
-            border-radius: 4px;
-            justify-content: center;
-            background-color: #FAFAFA;
-        }
-        .widget .options {
-            top: 0px;
-            left: 0px;
-            color: #FFFFFF;
-            right: 0px;
-            bottom: 0px;
-            display: flex;
-            opacity: 0;
-            position: absolute;
-            transition: all 0.5s ease-in-out;
-            align-items: center;
-            border-radius: 10px;
-            flex-direction: row;
-            justify-content: center;
-            background-color: rgba($color: #000000, $alpha: 0.25);
-        }
-        .widget:hover,
-        .widget:active {
-            .options {
-                opacity: 1;
-            }
-        }
-    }
     .dashboard {
-        flex: 0 calc(100% - 250px);
-        width: calc(100% - 250px);
+        flex: 0 calc(100% - 50px);
+        width: calc(100% - 50px);
     }
 }
 .dashboard {

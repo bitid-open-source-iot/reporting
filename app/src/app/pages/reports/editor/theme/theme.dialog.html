@@ -11,23 +11,23 @@
 </mat-toolbar>
 
 <div class="page-body themes">
-    <blox *ngFor="let theme of themes" [style.color]="theme.color" [style.background-color]="theme.board" (click)="submit(theme)" matRipple>
-        <row type="type" rowId="1" [config]="{height: 50, 'background': 'transparent'}" position="1">
-            <column [config]="{'width': 50, 'background': theme.column}">
+    <blox *ngFor="let theme of themes" [fill]="theme.board" [font]="theme.font" (click)="submit(theme)" matRipple>
+        <row type="type" id="1" height="50" position="1">
+            <column width="50" [fill]="theme.column">
                 <label>
                     cloumn
                 </label>
             </column>
             
-            <column [config]="{'width': 50, 'background': theme.column}">
+            <column width="50" [fill]="theme.column">
                 <label>
                     cloumn
                 </label>
             </column>
         </row>
 
-        <row type="type" rowId="2" [config]="{height:100, 'background': 'transparent'}" position="2">
-            <column [config]="{'width': 100, 'background': theme.column}">
+        <row type="type" id="2" height="100" position="2">
+            <column width="100" [fill]="theme.column">
                 <label>
                     cloumn
                 </label>

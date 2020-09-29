@@ -21,12 +21,12 @@ exports.call = (args) => {
 				if (typeof (result) == 'undefined') {
 					deferred.reject({
 						'code': 71,
-						'description': 'result undefined'
+						'message': 'result undefined'
 					});
 				} else if (err) {
 					deferred.reject({
 						'code': 72,
-						'description': 'find error'
+						'message': 'find error'
 					});
 				} else {
 					if (result.length > 0) {
@@ -37,7 +37,7 @@ exports.call = (args) => {
 						} else {
 							deferred.reject({
 								'code': 69,
-								'description': 'no records found'
+								'message': 'no records found'
 							});
 						};
 					};
@@ -50,7 +50,7 @@ exports.call = (args) => {
 					if (err.code = '11000') {
 						deferred.reject({
 							'code': 70,
-							'description': 'already exists'
+							'message': 'already exists'
 						});
 					} else {
 						deferred.reject(err);
@@ -62,13 +62,13 @@ exports.call = (args) => {
 						} else {
 							deferred.reject({
 								'code': 70,
-								'description': 'error inserting'
+								'message': 'error inserting'
 							});
 						};
 					} else {
 						deferred.reject({
 							'code': 70,
-							'description': 'error inserting'
+							'message': 'error inserting'
 						});
 					};
 				};
@@ -85,13 +85,13 @@ exports.call = (args) => {
 						} else {
 							deferred.reject({
 								'code': 70,
-								'description': 'error removing'
+								'message': 'error removing'
 							});
 						};
 					} else {
 						deferred.reject({
 							'code': 70,
-							'description': 'error removing'
+							'message': 'error removing'
 						});
 					};
 				};
@@ -108,13 +108,13 @@ exports.call = (args) => {
 						} else {
 							deferred.reject({
 								'code': 70,
-								'description': 'error updating'
+								'message': 'error updating'
 							});
 						};
 					} else {
 						deferred.reject({
 							'code': 70,
-							'description': 'error updating'
+							'message': 'error updating'
 						});
 					};
 				};
@@ -132,7 +132,7 @@ exports.call = (args) => {
 					} else {
 						deferred.reject({
 							'code': 69,
-							'description': 'no records found'
+							'message': 'no records found'
 						});
 					};
 				};
@@ -149,13 +149,13 @@ exports.call = (args) => {
 						} else {
 							deferred.reject({
 								'code': 70,
-								'description': 'error updating'
+								'message': 'error updating'
 							});
 						};
 					} else {
 						deferred.reject({
 							'code': 70,
-							'description': 'error updating'
+							'message': 'error updating'
 						});
 					};
 				};
@@ -172,13 +172,13 @@ exports.call = (args) => {
 						} else {
 							deferred.reject({
 								'code': 70,
-								'description': 'error updating'
+								'message': 'error updating'
 							});
 						};
 					} else {
 						deferred.reject({
 							'code': 70,
-							'description': 'error updating'
+							'message': 'error updating'
 						});
 					};
 				};
@@ -188,7 +188,7 @@ exports.call = (args) => {
 		default:
 			deferred.reject({
 				'code': 503,
-				'description': 'db query error'
+				'message': 'db query error'
 			});
 			break;
 	};
@@ -206,7 +206,7 @@ exports.connect = (database) => {
 		if (error) {
 			deferred.reject({
 				'code': 600,
-				'description': 'Error Connecting To Database'
+				'message': 'Error Connecting To Database'
 			});
 		} else {
 			deferred.resolve(connection.db(database));

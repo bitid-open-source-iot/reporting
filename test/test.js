@@ -8,60 +8,6 @@ var chaiSubset = require('chai-subset');
 chai.use(chaiSubset);
 
 var reportId = null;
-var connectorId = null;
-
-describe('Connectors', function () {
-    it('/reporting/connectors/list', function (done) {
-        this.timeout(5000);
-
-        tools.api.connectors.list()
-            .then((result) => {
-                try {
-                    connectorId = result[0].connectorId;
-                    result[0].should.have.property('table');
-                    result[0].should.have.property('fields');
-                    result[0].should.have.property('database');
-                    result[0].should.have.property('serverDate');
-                    result[0].should.have.property('connectorId');
-                    result[0].should.have.property('description');
-                    done();
-                } catch (e) {
-                    done(e);
-                };
-            }, (err) => {
-                try {
-                    done(err);
-                } catch (e) {
-                    done(e);
-                };
-            });
-    });
-
-    it('/reporting/connectors/get', function (done) {
-        this.timeout(5000);
-
-        tools.api.connectors.get()
-            .then((result) => {
-                try {
-                    result.should.have.property('table');
-                    result.should.have.property('fields');
-                    result.should.have.property('database');
-                    result.should.have.property('serverDate');
-                    result.should.have.property('connectorId');
-                    result.should.have.property('description');
-                    done();
-                } catch (e) {
-                    done(e);
-                };
-            }, (err) => {
-                try {
-                    done(err);
-                } catch (e) {
-                    done(e);
-                };
-            });
-    });
-});
 
 describe('Reports', function () {
     it('/reporting/reports/add', function (done) {
@@ -96,7 +42,6 @@ describe('Reports', function () {
                     result.should.have.property('role');
                     result.should.have.property('users');
                     result.should.have.property('layout');
-                    result.should.have.property('widgets');
                     result.should.have.property('reportId');
                     result.should.have.property('serverDate');
                     result.should.have.property('description');
@@ -125,7 +70,6 @@ describe('Reports', function () {
                     result[0].should.have.property('role');
                     result[0].should.have.property('users');
                     result[0].should.have.property('layout');
-                    result[0].should.have.property('widgets');
                     result[0].should.have.property('reportId');
                     result[0].should.have.property('serverDate');
                     result[0].should.have.property('description');
@@ -295,7 +239,6 @@ var tools = {
                     },
                     'url': 'xxx',
                     'type': 'dashboard',
-                    'widgets': [],
                     'description': 'Mocha Test Report',
                     'organizationOnly': 1
                 })
@@ -313,7 +256,6 @@ var tools = {
                         'role',
                         'users',
                         'layout',
-                        'widgets',
                         'reportId',
                         'serverDate',
                         'description',
@@ -335,7 +277,6 @@ var tools = {
                         'role',
                         'users',
                         'layout',
-                        'widgets',
                         'reportId',
                         'serverDate',
                         'description',
@@ -397,43 +338,6 @@ var tools = {
                     'role': 2,
                     'email': 'shared@email.com',
                     'reportId': reportId
-                })
-                    .then(deferred.resolve, deferred.resolve);
-
-                return deferred.promise;
-            }
-        },
-        connectors: {
-            get: () => {
-                var deferred = Q.defer();
-
-                tools.post('/reporting/connectors/get', {
-                    'filter': [
-                        'table',
-                        'fields',
-                        'database',
-                        'serverDate',
-                        'connectorId',
-                        'description'
-                    ],
-                    'connectorId': connectorId
-                })
-                    .then(deferred.resolve, deferred.resolve);
-
-                return deferred.promise;
-            },
-            list: () => {
-                var deferred = Q.defer();
-
-                tools.post('/reporting/connectors/list', {
-                    'filter': [
-                        'table',
-                        'fields',
-                        'database',
-                        'serverDate',
-                        'connectorId',
-                        'description'
-                    ]
                 })
                     .then(deferred.resolve, deferred.resolve);
 
