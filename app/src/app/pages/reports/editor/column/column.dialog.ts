@@ -177,7 +177,7 @@ export class ColumnEditorDialog implements OnInit, OnDestroy {
         input.click();
         input.onchange = async (event: any) => {
             this.uploading = true;
-            const url = [environment.drive, '/drive/files/uploademail=', this.localstorage.get('email'), '&appId=', environment.appId].join('');
+            const url = [environment.drive, '/drive/files/upload?email=', this.localstorage.get('email'), '&appId=', environment.appId].join('');
             const form = new FormData();
             const request = new XMLHttpRequest();
 
