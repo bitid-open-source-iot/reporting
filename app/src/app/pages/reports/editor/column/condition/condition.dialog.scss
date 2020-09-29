@@ -8,10 +8,10 @@ form {
 }
 .preview-container {
     width: calc(100% - 20px);
-    height: 150px;
     display: flex;
     padding: 10px;
     position: relative;
+    min-height: 100px;
     align-items: center;
     margin-bottom: 20px;
     border-radius: 5px;

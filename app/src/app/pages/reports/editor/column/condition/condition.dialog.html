@@ -16,15 +16,23 @@
     <div class="container">
         <form [formGroup]="form" (ngSubmit)="!form.invalid && submit()">
             <blox class="preview-container" [fill]="theme.board">
-                <row height="80">
+                <row [height]="height">
                     <column width="100" [fill]="form.value.fill" [font]="form.value.font" [stroke]="form.value.stroke">
                         <banner [font]="form.value.banner">
                             WIDGET PREVIEW
                         </banner>
-    
-                        <value [font]="form.value.font">
-                            100%
+            
+                        <text *ngIf="display == 'text'" [font]="form.value.font" [style.top.px]="form.value.banner.size + 10" [style.left.px]="form.value.banner.size" [style.right.px]="form.value.banner.size" [style.bottom.px]="form.value.banner.size">
+                            TEXT HERE
+                        </text>
+        
+                        <value *ngIf="display == 'value'" [font]="form.value.font">
+                            VALUE HERE
                         </value>
+        
+                        <image *ngIf="display == 'image'" [src]="image.src"></image>
+        
+                        <chart *ngIf="display == 'chart'" [type]="chart.type" [data]="chart.data" units="%" [font]="form.value.font" [label]="form.value.label" format="YYYY/MM/DD" [chartfill]="form.value.chartfill" [gridlines]="form.value.gridlines"></chart>
                     </column>
                 </row>
             </blox>

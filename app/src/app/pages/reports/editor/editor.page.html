@@ -76,11 +76,11 @@
                     </banner>
     
                     <div class="options" [style.background-color]="report.theme.board.color">
-                        <button mat-icon-button matTooltip="Edit Column" [style.color]="report.theme.font.color" (click)="edit(row, column)">
+                        <button mat-icon-button matTooltip="Edit Column" [style.color]="report.theme.font.color" (click)="edit(row, column)" [disabled]="loading">
                             <mat-icon svgIcon="edit"></mat-icon>
                         </button>
         
-                        <button mat-icon-button matTooltip="Remove Column" color="warn" (click)="remove($event, row, column.columnId)">
+                        <button mat-icon-button matTooltip="Remove Column" color="warn" (click)="remove($event, row, column.columnId)" [disabled]="loading">
                             <mat-icon svgIcon="delete"></mat-icon>
                         </button>
                     </div>

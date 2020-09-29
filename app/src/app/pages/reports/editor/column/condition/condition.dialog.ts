@@ -72,6 +72,8 @@ export class ConditionDialog implements OnInit, OnDestroy {
         'type': new FormControl(this.condition.type, [Validators.required]),
         'conditionId': new FormControl(this.condition.conditionId, [Validators.required])
     });
+    public chart: any = this.condition.chart;
+    public image: any = this.condition.image;
     public theme: Theme = this.reports.theme.value;
     public fonts: string[] = ['Arial']
     public errors: any = {
@@ -126,6 +128,7 @@ export class ConditionDialog implements OnInit, OnDestroy {
         'type': '',
         'conditionId': ''
     };
+    public height: number = this.condition.height;
     public inputs: any[] = [];
     public styles: string[] = ['solid', 'ridge', 'dotted', 'dashed', 'double', 'groove'];
     public display: string = this.condition.display;
@@ -179,6 +182,18 @@ export class ConditionDialog implements OnInit, OnDestroy {
         };
     };
 
+    private preview() {
+        const min = 0;
+        const max = 10;
+        this.chart.data = [];
+        for (let i = 1; i < 6; i++) {
+            this.chart.data.push({
+                'date': '2020/01/0' + i,
+                'value': Math.floor(Math.random() * (Math.floor(max) - Math.ceil(min) + 1)) + Math.ceil(min)
+            });
+        }
+    };
+
     private connectorchange() {
         const analog: FormGroup = <any>(<any>this.form.controls['connector']).controls['analog'];
         analog.controls['min'].setValidators(null);
@@ -215,6 +230,7 @@ export class ConditionDialog implements OnInit, OnDestroy {
 
     ngOnInit(): void {
         this.process();
+        this.preview();
         this.connectorchange();
 
         this.subscriptions.form = this.form.valueChanges.subscribe(data => {
@@ -285,5 +301,13 @@ export class ConditionDialog implements OnInit, OnDestroy {
 }
 
 interface DialogParams extends Condition {
+    'chart'?: {
+        'type'?: string;
+        'data'?: any[];
+    };
+    'image'?: {
+        'src'?: string;
+    };
+    'height'?: number;
     'display'?: string;
 }

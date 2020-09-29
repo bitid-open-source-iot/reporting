@@ -32,6 +32,23 @@ export class BloxColumnChartComponent implements OnChanges, AfterViewInit {
 
     ngOnChanges(): void {
         if (this.chart) {
+            if (this.type == 'bar') {
+                this.chart.config.data.datasets[0].borderColor = this.chart.config.data.datasets[0].borderColor.map(c => color(this.chartfill.color, this.chartfill.opacity / 100));
+                this.chart.config.data.datasets[0].backgroundColor = color(this.chartfill.color, this.chartfill.opacity / 100);
+            } else if (this.type == 'area') {
+                this.chart.config.data.datasets[0].borderColor = color(this.chartfill.color, this.chartfill.opacity / 100);
+                this.chart.config.data.datasets[0].backgroundColor = 'transparent';
+            } else if (this.type == 'line') {
+                this.chart.config.data.datasets[0].borderColor = color(this.chartfill.color, this.chartfill.opacity / 100);
+                this.chart.config.data.datasets[0].backgroundColor = color(this.chartfill.color, this.chartfill.opacity / 100);
+            };
+    
+            this.chart.config.options.scales.xAxes[0].ticks.fontColor = color(this.font.color, this.font.opacity / 100);
+            this.chart.config.options.scales.yAxes[0].ticks.fontColor = color(this.font.color, this.font.opacity / 100);
+            this.chart.config.options.scales.xAxes[0].gridLines.color = color(this.gridlines.color, this.gridlines.opacity / 100);
+            this.chart.config.options.scales.yAxes[0].gridLines.color = color(this.gridlines.color, this.gridlines.opacity / 100);
+            this.chart.config.options.scales.xAxes[0].gridLines.lineWidth = this.gridlines.width
+            this.chart.config.options.scales.yAxes[0].gridLines.lineWidth = this.gridlines.width
             this.chart.data.labels = this.data.map(o => o.date);
             this.chart.data.datasets[0].data = this.data.map(o => parseInt(o.value));
             this.chart.update();

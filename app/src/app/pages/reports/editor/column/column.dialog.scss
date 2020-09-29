@@ -37,9 +37,9 @@ form {
     }
     .condition {
         flex: 1 auto;
-        height: 100px;
         display: flex;
         position: relative;
+        min-height: 100px;
         margin-bottom: 2px;
         border-radius: 4px;
         flex-direction: row;

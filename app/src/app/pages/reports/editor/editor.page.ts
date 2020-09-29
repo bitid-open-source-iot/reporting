@@ -323,8 +323,10 @@ export class ReportEditorPage implements OnInit, OnDestroy {
     };
     
     public async edit(row: Row, column: Column) {
+        let params: any = column;
+        params.height = row.height;
         const dialog = await this.dialog.open(ColumnEditorDialog, {
-            'data': column,
+            'data': params,
             'panelClass': 'fullscreen-dialog',
             'disableClose': true
         });

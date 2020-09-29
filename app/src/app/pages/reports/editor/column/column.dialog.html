@@ -168,15 +168,23 @@
 
                 <div class="condition" *ngFor="let condition of form.value.conditions">
                     <blox class="widget-container" [fill]="theme.board">
-                        <row height="80">
+                        <row [height]="height">
                             <column width="100" [fill]="condition.fill" [font]="condition.font" [stroke]="condition.stroke">
                                 <banner [font]="condition.banner">
                                     {{ form.value.label }}
                                 </banner>
             
-                                <value [font]="condition.font">
-                                    100%
+                                <text *ngIf="form.value.display == 'text'" [font]="condition.font" [style.top.px]="condition.banner.size + 10" [style.left.px]="condition.banner.size" [style.right.px]="condition.banner.size" [style.bottom.px]="condition.banner.size">
+                                    TEXT HERE
+                                </text>
+                
+                                <value *ngIf="form.value.display == 'value'" [font]="condition.font">
+                                    VALUE HERE
                                 </value>
+                
+                                <image *ngIf="form.value.display == 'image'" [src]="form.value.image.src"></image>
+                
+                                <chart *ngIf="form.value.display == 'chart'" [type]="form.value.chart.type" [data]="chart" units="%" [font]="condition.font" [label]="form.value.label" format="YYYY/MM/DD" [chartfill]="condition.chartfill" [gridlines]="condition.gridlines"></chart>
                             </column>
                         </row>
                     </blox>

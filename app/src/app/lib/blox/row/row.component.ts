@@ -32,7 +32,7 @@ export class BloxRowComponent implements OnInit, OnDestroy, OnChanges, AfterCont
     private min: number = 50;
     private subscriptions: any = {};
 
-    private async process() {
+    public async process() {
         this.renderer.setStyle(this.element, 'height', this.height + 'px');
 
         if (this.blox.editing.value && this.type == 'dynamic') {

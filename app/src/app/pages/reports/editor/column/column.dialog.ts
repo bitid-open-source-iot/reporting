@@ -21,7 +21,7 @@ import { MatDialog, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dial
 
 export class ColumnEditorDialog implements OnInit, OnDestroy {
 
-    constructor(private toast: ToastService, private dialog: MatDialogRef<ColumnEditorDialog>, @Inject(MAT_DIALOG_DATA) private column: Column, public devices: DevicesService, private reports: ReportsService, private matdialog: MatDialog, private formerror: FormErrorService, private localstorage: LocalstorageService) { };
+    constructor(private toast: ToastService, private dialog: MatDialogRef<ColumnEditorDialog>, @Inject(MAT_DIALOG_DATA) private column: ColumnEditorParams, public devices: DevicesService, private reports: ReportsService, private matdialog: MatDialog, private formerror: FormErrorService, private localstorage: LocalstorageService) { };
 
     public form: FormGroup = new FormGroup({
         'map': new FormGroup({}),
@@ -48,6 +48,7 @@ export class ColumnEditorDialog implements OnInit, OnDestroy {
         'columnId': new FormControl(this.column.columnId, [Validators.required]),
         'conditions': new FormControl(this.column.conditions, [Validators.required])
     });
+    public chart: any[] = [];
     public theme: Theme = this.reports.theme.value;
     public errors: any = {
         'map': {},
@@ -74,6 +75,7 @@ export class ColumnEditorDialog implements OnInit, OnDestroy {
         'columnId': ''
     };
     public inputs: any[] = [];
+    public height: number = this.column.height;
     public loading: boolean;
     public displays: string[] = [
         'chart',
@@ -152,6 +154,18 @@ export class ColumnEditorDialog implements OnInit, OnDestroy {
                 query.controls['deviceId'].updateValueAndValidity();
                 break;
         };
+    };
+
+    private preview() {
+        const min = 0;
+        const max = 10;
+        this.chart = [];
+        for (let i = 1; i < 6; i++) {
+            this.chart.push({
+                'date': '2020/01/0' + i,
+                'value': Math.floor(Math.random() * (Math.floor(max) - Math.ceil(min) + 1)) + Math.ceil(min)
+            });
+        }
     };
 
     public async upload() {
@@ -274,6 +288,14 @@ export class ColumnEditorDialog implements OnInit, OnDestroy {
             mode = 'add';
         };
 
+        condition.chart = {
+            'data': [],
+            'type': this.form.value.chart.type
+        };
+        condition.image = {
+            'src': this.form.value.image.src
+        };
+        condition.height = this.height;
         condition.display = this.form.value.display;
 
         const dialog = await this.matdialog.open(ConditionDialog, {
@@ -315,6 +337,7 @@ export class ColumnEditorDialog implements OnInit, OnDestroy {
 
     ngOnInit(): void {
         this.process();
+        this.preview();
 
         this.subscriptions.form = this.form.valueChanges.subscribe(data => {
             this.errors = this.formerror.validateForm(this.form, this.errors, true);
@@ -354,4 +377,15 @@ export class ColumnEditorDialog implements OnInit, OnDestroy {
         this.subscriptions.deviceId.unsubscribe();
     };
 
+}
+
+interface ColumnEditorParams extends Column {
+    'chart'?: {
+        'data'?: any[];
+        'type'?: string;
+    };
+    'image'?: {
+        'src'?: string;
+    };
+    'height'?: number;
 }

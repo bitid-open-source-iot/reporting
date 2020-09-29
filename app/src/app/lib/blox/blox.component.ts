@@ -2,7 +2,7 @@ import { color } from './color';
 import { Fill, Font } from 'src/app/interfaces/condition';
 import { BloxService } from './blox.service';
 import { BloxRowComponent } from './row/row.component';
-import { Input, OnInit, Output, Component, QueryList, OnDestroy, Renderer2, OnChanges, ElementRef, EventEmitter, ViewEncapsulation, ContentChildren } from '@angular/core';
+import { Input, OnInit, Output, Component, QueryList, OnDestroy, Renderer2, OnChanges, ElementRef, EventEmitter, AfterContentInit, ViewEncapsulation, ContentChildren } from '@angular/core';
 
 @Component({
     selector: 'blox',
@@ -11,7 +11,7 @@ import { Input, OnInit, Output, Component, QueryList, OnDestroy, Renderer2, OnCh
     encapsulation: ViewEncapsulation.None
 })
 
-export class BloxComponent implements OnInit, OnDestroy, OnChanges {
+export class BloxComponent implements OnInit, OnDestroy, OnChanges, AfterContentInit {
     
     public element: HTMLElement;
 
@@ -90,6 +90,14 @@ export class BloxComponent implements OnInit, OnDestroy, OnChanges {
     ngOnChanges(): void {
         this.process();
         this.blox.editing.next(this.editing);
+    };
+
+    ngAfterContentInit(): void {
+        this.subscriptions.changes = this.rows.changes.subscribe(event => {
+            this.rows.forEach(row => {
+                row.process();
+            });
+        });
     };
 
 }
