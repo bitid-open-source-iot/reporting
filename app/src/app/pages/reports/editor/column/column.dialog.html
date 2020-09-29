@@ -167,7 +167,7 @@
                 </h2>
 
                 <div class="condition" *ngFor="let condition of form.value.conditions">
-                    <blox class="widget-container" [style.background-color]="theme.board">
+                    <blox class="widget-container" [fill]="theme.board">
                         <row height="80">
                             <column width="100" [fill]="condition.fill" [font]="condition.font" [stroke]="condition.stroke">
                                 <banner [font]="condition.banner">

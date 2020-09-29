@@ -151,6 +151,7 @@ export class ReportViewerPage implements OnInit, OnDestroy {
                 });
                 if (response.ok) {
                     column.data = response.result;
+                    column.error = false;
                 } else {
                     column.error = true;
                     switch (column.display) {

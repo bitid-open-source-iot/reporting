@@ -15,7 +15,7 @@
 <div class="page-body">
     <div class="container">
         <form [formGroup]="form" (ngSubmit)="!form.invalid && submit()">
-            <blox class="preview-container" [style.background-color]="theme.board">
+            <blox class="preview-container" [fill]="theme.board">
                 <row height="80">
                     <column width="100" [fill]="form.value.fill" [font]="form.value.font" [stroke]="form.value.stroke">
                         <banner [font]="form.value.banner">

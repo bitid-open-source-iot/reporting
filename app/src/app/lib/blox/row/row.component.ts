@@ -1,7 +1,7 @@
 import { ObjectId } from 'src/app/id';
 import { BloxService } from '../blox.service';
 import { BloxColumnComponent } from '../column/column.component';
-import { Input, OnInit, Component, OnDestroy, Renderer2, OnChanges, QueryList, ElementRef, ContentChildren, AfterContentInit, SimpleChanges } from '@angular/core';
+import { Input, OnInit, Component, OnDestroy, Renderer2, OnChanges, QueryList, ElementRef, ContentChildren, AfterContentInit } from '@angular/core';
 
 @Component({
     selector: 'row',
@@ -130,14 +130,17 @@ export class BloxRowComponent implements OnInit, OnDestroy, OnChanges, AfterCont
         this.subscriptions.end.unsubscribe();
         this.subscriptions.move.unsubscribe();
         this.subscriptions.start.unsubscribe();
+        this.subscriptions.changes.unsubscribe();
     };
 
-    ngOnChanges(changes: SimpleChanges): void {
+    ngOnChanges(): void {
         this.process();
     };
 
     ngAfterContentInit(): void {
         this.process();
+        
+        this.subscriptions.changes = this.columns.changes.subscribe(event => this.process());
     };
 
 }
