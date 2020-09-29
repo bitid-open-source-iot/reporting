@@ -18,7 +18,7 @@ export class BloxColumnImageComponent implements OnInit, OnChanges, OnDestroy {
     public element: HTMLElement;
 
     private process() {
-        this.renderer.setStyle(this.element, 'background-image', this.src);
+        this.renderer.setStyle(this.element, 'background-image', ['url(', this.src, ')'].join(''));
     };
 
     ngOnInit(): void {
