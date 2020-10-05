@@ -173,9 +173,6 @@ var module = function () {
 		data: (args) => {
 			var deferred = Q.defer();
 
-				console.log('MONGO PROCESSING DATA QUERY: ', JSON.stringify(args.params));
-				var start = new Date();
-
 			db.call({
 				'params': args.params,
 				'database': 'telemetry',
@@ -184,9 +181,6 @@ var module = function () {
 			})
 				.then(result => {
 					args.result = JSON.parse(JSON.stringify(result));
-
-					console.log('MONGO PROCESSING DATA SPEED: ', new Date() - start);
-
 					deferred.resolve(args);
 				}, error => {
 					var err = new ErrorResponse();

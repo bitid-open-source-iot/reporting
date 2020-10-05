@@ -254,7 +254,7 @@ var module = function () {
 												args.result = item;
 												args.result.date = moment(args.result.date).format(format);
 											} catch (error) {
-												console.log(error.message);
+												__logger.error(error.message);
 											};
 										} else {
 											var item = args.result[args.result.length - 1];
@@ -268,7 +268,6 @@ var module = function () {
 								};
 								break;
 						};
-						console.log('BLL PROCESSING DATA SPEED: ', new Date() - start);
 						deferred.resolve(args);
 					} catch (error) {
 						var err = new ErrorResponse();
