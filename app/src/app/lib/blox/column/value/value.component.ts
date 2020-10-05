@@ -25,30 +25,6 @@ export class BloxColumnValueComponent implements OnInit, OnChanges, OnDestroy {
             this.renderer.setStyle(this.element, 'font-size', [this.font.size, 'px'].join(''));
             this.renderer.setStyle(this.element, 'line-height', [this.font.size, 'px'].join(''));
             this.renderer.setStyle(this.element, 'font-family', this.font.family);
-
-            switch(this.font.vertical) {
-                case('top'):
-                    this.renderer.setStyle(this.element, 'align-items', 'flex-start');
-                    break;
-                case('center'):
-                    this.renderer.setStyle(this.element, 'align-items', 'center');
-                    break;
-                case('bottom'):
-                    this.renderer.setStyle(this.element, 'align-items', 'flex-end');
-                    break;
-            };
-
-            switch(this.font.horizontal) {
-                case('left'):
-                    this.renderer.setStyle(this.element, 'justify-content', 'flex-start');
-                    break;
-                case('right'):
-                    this.renderer.setStyle(this.element, 'justify-content', 'flex-end');
-                    break;
-                case('center'):
-                    this.renderer.setStyle(this.element, 'justify-content', 'center');
-                    break;
-            };
         };
     };
 

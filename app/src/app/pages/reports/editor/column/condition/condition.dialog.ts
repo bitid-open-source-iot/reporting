@@ -128,8 +128,12 @@ export class ConditionDialog implements OnInit, OnDestroy {
         'type': '',
         'conditionId': ''
     };
-    public height: number = this.condition.height;
+    public filter: any = {
+        'input': '',
+        'device': ''
+    };
     public inputs: any[] = [];
+    public height: number = this.condition.height;
     public styles: string[] = ['solid', 'ridge', 'dotted', 'dashed', 'double', 'groove'];
     public display: string = this.condition.display;
     public loading: boolean;
@@ -147,23 +151,36 @@ export class ConditionDialog implements OnInit, OnDestroy {
 
     private process() {
         const connector: FormGroup = <any>(<any>this.form.controls['connector']);
+        connector.controls['type'].setValidators(null);
+        connector.controls['type'].updateValueAndValidity();
+        connector.controls['inputId'].setValidators(null);
+        connector.controls['inputId'].updateValueAndValidity();
+        connector.controls['deviceId'].setValidators(null);
+        connector.controls['deviceId'].updateValueAndValidity();
+
+        const analog: FormGroup = <any>(<any>connector).controls['analog'];
+        analog.controls['min'].setValidators(null);
+        analog.controls['min'].updateValueAndValidity();
+        analog.controls['max'].setValidators(null);
+        analog.controls['max'].updateValueAndValidity();
+        analog.controls['units'].setValidators(null);
+        analog.controls['units'].updateValueAndValidity();
+
+        const digital: FormGroup = <any>(<any>connector).controls['digital'];
+        digital.controls['low'].setValidators(null);
+        digital.controls['low'].updateValueAndValidity();
+        digital.controls['high'].setValidators(null);
+        digital.controls['high'].updateValueAndValidity();
+        digital.controls['value'].setValidators(null);
+        digital.controls['value'].updateValueAndValidity();
         
-        if (this.form.value.type == 'default') {
-            connector.controls['type'].setValidators(null);
-            connector.controls['type'].updateValueAndValidity();
-            connector.controls['inputId'].setValidators(null);
-            connector.controls['inputId'].updateValueAndValidity();
-            connector.controls['deviceId'].setValidators(null);
-            connector.controls['deviceId'].updateValueAndValidity();
-        } else if (this.form.value.type == 'connector') {
+        if (this.form.value.type == 'connector') {
             connector.controls['type'].setValidators([Validators.required]);
             connector.controls['type'].updateValueAndValidity();
             connector.controls['inputId'].setValidators([Validators.required]);
             connector.controls['inputId'].updateValueAndValidity();
             connector.controls['deviceId'].setValidators([Validators.required]);
             connector.controls['deviceId'].updateValueAndValidity();
-            const analog: FormGroup = <any>(<any>connector).controls['analog'];
-            const digital: FormGroup = <any>(<any>connector).controls['digital'];
             if (this.form.value.connector.type == 'analog') {
                 analog.controls['min'].setValidators([Validators.required]);
                 analog.controls['min'].updateValueAndValidity();
@@ -226,6 +243,16 @@ export class ConditionDialog implements OnInit, OnDestroy {
             digital.controls['value'].setValidators([Validators.required]);
             digital.controls['value'].updateValueAndValidity();
         };
+    };
+
+    public SetInputId(inputId) {
+        const connector: FormGroup = <any>this.form.controls['connector'];
+        connector.controls['inputId'].setValue(inputId);
+    };
+
+    public SetDeviceId(deviceId) {
+        const connector: FormGroup = <any>this.form.controls['connector'];
+        connector.controls['deviceId'].setValue(deviceId);
     };
 
     ngOnInit(): void {

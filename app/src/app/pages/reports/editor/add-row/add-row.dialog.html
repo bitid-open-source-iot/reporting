@@ -16,7 +16,7 @@
             How Many Columns?
         </mat-label>
         
-        <input matInput type="number" min="1" max="8" name="columns" placeholder="How Many Columns?" formControlName="columns" required>
+        <input matInput type="number" [min]="min" [max]="max" name="columns" placeholder="How Many Columns?" formControlName="columns" required>
 
         <mat-error *ngIf="errors.columns">
             {{ errors.columns }}

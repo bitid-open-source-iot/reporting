@@ -1,5 +1,5 @@
 <mat-toolbar color="primary">
-    <button mat-icon-button class="menu-toggle" (click)="history.back()">
+    <button mat-icon-button class="menu-toggle" routerLink="/reports">
         <mat-icon>
             arrow_back
         </mat-icon>
@@ -8,15 +8,19 @@
     <div class="page-label spacer">
         {{ loading ? 'report viewer loading' : report.description }}
     </div>
+
+    <button mat-icon-button matTooltip="Edit Report" [routerLink]="['/reports', 'editor']" [queryParams]="{'mode': 'update','reportId': reportId}" *ngIf="report.role >= 3">
+        <mat-icon svgIcon="edit"></mat-icon>
+    </button>
 </mat-toolbar>
 
 <mat-progress-bar mode="indeterminate" color="accent" *ngIf="loading"></mat-progress-bar>
 
-<div class="page-body frame" [class.showframe]="report && !loading && report.type == 'ds'">
+<div class="page-body frame" [class.showframe]="report && report.type == 'ds'">
     <iframe #frame src="" frameborder="0" allowfullscreen [class.showframe]="report && !loading && report.type == 'ds'"></iframe>
 </div>
 
-<div id="dashboard" class="page-body" *ngIf="layout && report && !loading && report.type == 'dashboard'" [style.color]="report.theme.font.color" [style.background]="report.theme.board.color">
+<div id="dashboard" class="page-body" *ngIf="layout && report && report.type == 'dashboard'" [style.color]="report.theme.font.color" [style.background]="report.theme.board.color">
     <blox>
         <filter [fill]="report.theme.board" [font]="report.theme.font">
             <mat-select class="dashboard-select" [(ngModel)]="period.tense" (ngModelChange)="load()">
@@ -57,21 +61,23 @@
                     {{ column.label }}
                 </banner>
 
-                <text *ngIf="!column.error && column.display == 'text'" [font]="column.font" [style.top.px]="column.banner.size + 10" [style.left.px]="column.banner.size" [style.right.px]="column.banner.size" [style.bottom.px]="column.banner.size">
+                <text *ngIf="!column.error && !column.loading && column.display == 'text'" [font]="column.font" [style.top.px]="column.banner.size + 10" [style.left.px]="column.banner.size" [style.right.px]="column.banner.size" [style.bottom.px]="column.banner.size">
                     {{ column.text.value }}
                 </text>
 
-                <value *ngIf="!column.error && column.data && column.display == 'value'" [font]="column.font">
+                <value *ngIf="!column.error && !column.loading && column.data && column.display == 'value'" [font]="column.font">
                     {{ column.data.type == 'analog' ? (column.data.value | number : '0.2-2') : (column.data.value == 0 ? column.data.digital.low : column.data.digital.high) }}{{ (column.data.type == 'analog' && column.data.analog.units) ? column.data.analog.units : '' }}
                 </value>
 
-                <image *ngIf="!column.error && column.display == 'image'" [src]="column.image.src"></image>
+                <image *ngIf="!column.error && !column.loading && column.display == 'image'" [src]="column.image.src"></image>
 
-                <chart *ngIf="!column.error && column.data && column.display == 'chart'" [type]="column.chart.type" [data]="column.data.value" [units]="column.data.analog.units" [font]="column.font" [label]="column.label" [format]="date.format" [chartfill]="column.chartfill" [gridlines]="column.gridlines"></chart>
+                <chart *ngIf="!column.error && !column.loading && column.data && column.display == 'chart'" [type]="column.chart.type" [data]="column.data.value" [units]="column.data.analog.units" [font]="column.font" [label]="column.label" [format]="date.format" [chartfill]="column.chartfill" [gridlines]="column.gridlines"></chart>
                 
-                <error *ngIf="column.error" [font]="column.font">
+                <error *ngIf="column.error && !column.loading" [font]="column.font">
                     Issue loading data!
                 </error>
+
+                <mat-spinner *ngIf="column.loading" diameter="30"></mat-spinner>
             </column>
         </row>
     </blox>

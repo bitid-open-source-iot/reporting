@@ -70,6 +70,7 @@ export class ReportEditorPage implements OnInit, OnDestroy {
 
     public async add() {
         const dialog = await this.dialog.open(AddRowDialog, {
+            'data': this.layout,
             'panelClass': 'share-dialog',
             'disableClose': true
         });
@@ -146,6 +147,10 @@ export class ReportEditorPage implements OnInit, OnDestroy {
                 });
             };
         });
+    };
+
+    public ToggleMode() {
+        this.editing = !this.editing;
     };
 
     private async get() {

@@ -55,11 +55,13 @@
                         device
                     </mat-label>
                     
-                    <mat-select name="deviceId" placeholder="device" formControlName="deviceId" [required]="form.value.display == 'value' || form.value.display == 'gauge' || form.value.display == 'chart' || form.value.display == 'table'">
-                        <mat-option *ngFor="let device of devices.data | orderBy : 'description'" [value]="device.deviceId">
+                    <input type="text" matInput [(ngModel)]="filter.device" [ngModelOptions]="{standalone: true}" [matAutocomplete]="deviceautocomplete" [required]="form.value.display == 'value' || form.value.display == 'gauge' || form.value.display == 'chart' || form.value.display == 'table'">
+
+                    <mat-autocomplete #deviceautocomplete="matAutocomplete">
+                        <mat-option *ngFor="let device of devices.data | orderBy : 'description' | filterBy: 'description' : filter.device" [value]="device.description" (click)="SetDeviceId(device.deviceId)">
                             {{ device.description }}
                         </mat-option>
-                    </mat-select>
+                    </mat-autocomplete>
     
                     <mat-error *ngIf="errors.query.deviceId">
                         {{ errors.query.deviceId }}
@@ -71,11 +73,13 @@
                         input
                     </mat-label>
                     
-                    <mat-select name="inputId" placeholder="input" formControlName="inputId" [required]="form.value.display == 'value' || form.value.display == 'gauge' || form.value.display == 'chart' || form.value.display == 'table'">
-                        <mat-option *ngFor="let input of inputs | orderBy : 'description'" [value]="input.inputId">
+                    <input type="text" matInput [(ngModel)]="filter.input" [ngModelOptions]="{standalone: true}" [matAutocomplete]="inputautocomplete" [required]="form.value.display == 'value' || form.value.display == 'gauge' || form.value.display == 'chart' || form.value.display == 'table'">
+
+                    <mat-autocomplete #inputautocomplete="matAutocomplete">
+                        <mat-option *ngFor="let input of inputs | orderBy : 'description' | filterBy: 'description' : filter.input" [value]="input.description" (click)="SetInputId(input.inputId)">
                             {{ input.description }}
                         </mat-option>
-                    </mat-select>
+                    </mat-autocomplete>
     
                     <mat-error *ngIf="errors.query.inputId">
                         {{ errors.query.inputId }}
@@ -188,15 +192,6 @@
                             </column>
                         </row>
                     </blox>
-                        <!-- <widget [fill]="condition.fill" [stroke]="condition.stroke">
-                            <banner [font]="condition.banner">
-                                {{ form.value.label }}
-                            </banner>
-        
-                            <value [font]="condition.font">
-                                100%
-                            </value>
-                        </widget> -->
 
                     <div class="details" *ngIf="condition.type == 'connector'">
                         <h3>

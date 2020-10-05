@@ -143,6 +143,7 @@ export class ReportViewerPage implements OnInit, OnDestroy {
         
         await this.report.layout[this.layout].reduce(async (proma, row, a) => await row.columns.reduce(async (promb, column, b) => {
             if (column.display == 'value' || column.display == 'chart') {
+                column.loading = true;
                 column.query.date = this.date;
                 const response = await this.service.load({
                     'query': column.query,
@@ -153,8 +154,10 @@ export class ReportViewerPage implements OnInit, OnDestroy {
                 if (response.ok) {
                     column.data = response.result;
                     column.error = false;
+                    column.loading = false;
                 } else {
                     column.error = true;
+                    column.loading = false;
                     switch (column.display) {
                         case('chart'):
                             column.data = {

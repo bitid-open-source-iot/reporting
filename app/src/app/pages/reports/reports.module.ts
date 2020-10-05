@@ -37,6 +37,7 @@ import { MatProgressBarModule } from '@angular/material/progress-bar';
 import { MatBottomSheetModule } from '@angular/material/bottom-sheet';
 import { MatAutocompleteModule } from '@angular/material/autocomplete';
 import { MatButtonToggleModule } from '@angular/material/button-toggle';
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 
 @NgModule({
@@ -69,7 +70,8 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
         MatBottomSheetModule,
         MatProgressBarModule,
         MatAutocompleteModule,
-        MatButtonToggleModule
+        MatButtonToggleModule,
+        MatProgressSpinnerModule
     ],
     declarations: [
         ThemeDialog,

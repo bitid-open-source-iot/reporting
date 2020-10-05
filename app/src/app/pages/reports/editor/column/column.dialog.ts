@@ -50,6 +50,10 @@ export class ColumnEditorDialog implements OnInit, OnDestroy {
     });
     public chart: any[] = [];
     public theme: Theme = this.reports.theme.value;
+    public filter: any = {
+        'input': '',
+        'device': ''
+    };
     public errors: any = {
         'map': {},
         'text': {
@@ -84,7 +88,8 @@ export class ColumnEditorDialog implements OnInit, OnDestroy {
         // 'map',
         // 'table',
         'text',
-        'value'
+        'value',
+        'spacer'
     ];
     public uploading: boolean;
     private subscriptions: any = {};
@@ -203,6 +208,16 @@ export class ColumnEditorDialog implements OnInit, OnDestroy {
             request.setRequestHeader('Authorization', this.localstorage.get('token'));
             request.send(form);
         };
+    };
+
+    public SetInputId(inputId) {
+        const query: FormGroup = <any>this.form.controls['query'];
+        query.controls['inputId'].setValue(inputId);
+    };
+
+    public SetDeviceId(deviceId) {
+        const query: FormGroup = <any>this.form.controls['query'];
+        query.controls['deviceId'].setValue(deviceId);
     };
 
     public remove(condition: Condition) {

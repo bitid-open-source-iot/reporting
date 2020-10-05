@@ -464,11 +464,13 @@
                         device
                     </mat-label>
                     
-                    <mat-select name="deviceId" placeholder="device" formControlName="deviceId" [required]="form.value.type == 'connector'">
-                        <mat-option *ngFor="let device of devices.data | orderBy : 'description'" [value]="device.deviceId">
+                    <input type="text" matInput [(ngModel)]="filter.device" [ngModelOptions]="{standalone: true}" [matAutocomplete]="deviceautocomplete" [required]="form.value.type == 'connector'">
+
+                    <mat-autocomplete #deviceautocomplete="matAutocomplete">
+                        <mat-option *ngFor="let device of devices.data | orderBy : 'description' | filterBy: 'description' : filter.device" [value]="device.description" (click)="SetDeviceId(device.deviceId)">
                             {{ device.description }}
                         </mat-option>
-                    </mat-select>
+                    </mat-autocomplete>
 
                     <mat-error *ngIf="errors.connector.deviceId">
                         {{ errors.connector.deviceId }}
@@ -480,11 +482,13 @@
                         input
                     </mat-label>
                     
-                    <mat-select name="inputId" placeholder="input" formControlName="inputId" [required]="form.value.type == 'connector'">
-                        <mat-option *ngFor="let input of inputs | orderBy : 'description'" [value]="input.inputId">
+                    <input type="text" matInput [(ngModel)]="filter.input" [ngModelOptions]="{standalone: true}" [matAutocomplete]="inputautocomplete" [required]="form.value.type == 'connector'">
+
+                    <mat-autocomplete #inputautocomplete="matAutocomplete">
+                        <mat-option *ngFor="let input of inputs | orderBy : 'description' | filterBy: 'description' : filter.input" [value]="input.description" (click)="SetInputId(input.inputId)">
                             {{ input.description }}
                         </mat-option>
-                    </mat-select>
+                    </mat-autocomplete>
 
                     <mat-error *ngIf="errors.connector.inputId">
                         {{ errors.connector.inputId }}

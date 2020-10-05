@@ -35,6 +35,11 @@ column {
         height: 100%;
         position: relative;
     }
+    mat-spinner {
+        top: calc(50% - 15px);
+        left: calc(50% - 15px);
+        position: absolute;
+    }
 }
 .value {
     top: 20px;

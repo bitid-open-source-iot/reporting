@@ -1,5 +1,5 @@
 <mat-toolbar color="primary">
-    <button mat-icon-button class="menu-toggle" (click)="history.back()">
+    <button mat-icon-button class="menu-toggle" routerLink="/reports">
         <mat-icon>
             arrow_back
         </mat-icon>
@@ -29,6 +29,12 @@
 
     <button mat-icon-button matTooltip="Board Theme" (click)="theme()" *ngIf="report.type == 'dashboard'">
         <mat-icon svgIcon="theme"></mat-icon>
+    </button>
+
+    <div class="dot" *ngIf="report.type == 'dashboard'"></div>
+
+    <button mat-icon-button matTooltip="View Report" [routerLink]="['/reports', 'viewer']" [queryParams]="{'reportId': reportId}" *ngIf="report.type == 'dashboard'">
+        <mat-icon svgIcon="view"></mat-icon>
     </button>
 </mat-toolbar>
 

@@ -122,6 +122,8 @@ var module = function () {
 					var deferred = Q.defer();
 
 					try {
+						var start = new Date();
+
 						args.result.map(item => {
 							args.devices.map(device => {
 								if (device.deviceId == item.deviceId) {
@@ -242,7 +244,7 @@ var module = function () {
 								};
 								break;
 						};
-
+						console.log('BLL PROCESSING DATA SPEED: ', new Date() - start);
 						deferred.resolve(args);
 					} catch (error) {
 						var err = new ErrorResponse();

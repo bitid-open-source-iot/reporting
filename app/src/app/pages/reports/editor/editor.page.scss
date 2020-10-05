@@ -11,8 +11,13 @@ mat-toolbar {
         max-width: 500px;
         line-height: 14px !important;
         font-weight: 500 !important;
+        margin-right: 15px;
         text-transform: uppercase;
         background-color: transparent !important;
+    }
+    input:focus,
+    input:active {
+        width: calc(100% - 15px);
     }
 }
 .dot {
