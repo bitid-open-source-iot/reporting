@@ -173,7 +173,8 @@ var module = function () {
 		data: (args) => {
 			var deferred = Q.defer();
 
-			var start = new Date();
+				console.log('MONGO PROCESSING DATA QUERY: ', JSON.stringify(args.params));
+				var start = new Date();
 
 			db.call({
 				'params': args.params,
