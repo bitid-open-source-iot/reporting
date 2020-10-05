@@ -164,8 +164,8 @@ var module = function () {
 							case ('map'):
 								break;
 							case ('chart'):
-								if (typeof(query.group) != 'undefined' && query.group != null && query.group != '') {
-									switch(query.group) {
+								if (typeof(args.req.body.query.group) != 'undefined' && args.req.body.query.group != null && args.req.body.query.group != '') {
+									switch(args.req.body.query.group) {
 										case('minute'):
 											format = 'YYYY/MM/DD HH:mm';
 											grouping = 'minute';
