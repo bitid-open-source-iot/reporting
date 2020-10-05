@@ -164,6 +164,30 @@ var module = function () {
 							case ('map'):
 								break;
 							case ('chart'):
+								if (typeof(query.group) != 'undefined' && query.group != null && query.group != '') {
+									switch(query.group) {
+										case('minute'):
+											format = 'YYYY/MM/DD HH:mm';
+											grouping = 'minute';
+											break;
+										case('hour'):
+											format = 'YYYY/MM/DD HH:00';
+											grouping = 'hour';
+											break;
+										case('day'):
+											format = 'YYYY/MM/DD';
+											grouping = 'day';
+											break;
+										case('month'):
+											format = 'YYYY/MM';
+											grouping = 'month';
+											break;
+										case('year'):
+											format = 'YYYY';
+											grouping = 'year';
+											break;
+									};
+								};
 								if (args.req.body.query.counter) {
 									var item = args.result[args.result.length - 1];
 									var result = [];
