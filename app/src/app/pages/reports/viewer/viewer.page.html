@@ -78,6 +78,34 @@
                 </error>
 
                 <mat-spinner *ngIf="column.loading" diameter="30"></mat-spinner>
+
+                <div class="more-options" *ngIf="!column.error && !column.loading && column.display == 'chart'">
+                    <button mat-icon-button [matMenuTriggerFor]="menu">
+                        <mat-icon>more_vert</mat-icon>
+                    </button>
+                    
+                    <mat-menu #menu="matMenu">
+                        <h3 mat-subheader>
+                            Data Grouping
+                        </h3>
+                    
+                        <button mat-menu-item (click)="reload(column, 'minute')">
+                            Minute
+                        </button>
+                        <button mat-menu-item (click)="reload(column, 'hour')">
+                            Hour
+                        </button>
+                        <button mat-menu-item (click)="reload(column, 'day')">
+                            Day
+                        </button>
+                        <button mat-menu-item (click)="reload(column, 'month')">
+                            Month
+                        </button>
+                        <button mat-menu-item (click)="reload(column, 'year')">
+                            Year
+                        </button>
+                    </mat-menu>
+                </div>
             </column>
         </row>
     </blox>

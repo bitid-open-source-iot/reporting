@@ -236,6 +236,91 @@ export class ReportViewerPage implements OnInit, OnDestroy {
         });
     };
 
+    public async reload(column, group) {
+        if (this.period.tense != 'custom-dates') {
+            this.date = new DateGroup(new Date(), new Date());
+            const range = [this.period.tense, this.period.frame].join('-');
+            switch (range) {
+                case('current-day'):
+                    break;
+                case('previous-day'):
+                    this.date.to.setDate(this.date.to.getDate() - 1);
+                    this.date.from.setDate(this.date.from.getDate() - 1);
+                    break;
+                case('current-week'):
+                    this.date.to.setDate(this.date.to.getDate() - this.date.to.getDay() + 7);
+                    this.date.from.setDate(this.date.from.getDate() - this.date.from.getDay() + 1);
+                    break;
+                case('previous-week'):
+                    this.date.to.setDate(this.date.to.getDate() - this.date.to.getDay());
+                    this.date.from.setDate(this.date.from.getDate() - this.date.from.getDay() - 6);
+                    break;
+                case('current-month'):
+                    this.date.to.setDate(new Date(this.date.to.getFullYear(), this.date.to.getMonth() + 1, 0).getDate());
+                    this.date.from.setDate(1);
+                    break;
+                case('previous-month'):
+                    this.date.to.setMonth(this.date.to.getMonth() - 1);
+                    this.date.from.setMonth(this.date.from.getMonth() - 1);
+                    this.date.to.setDate(new Date(this.date.to.getFullYear(), this.date.to.getMonth() + 1, 0).getDate());
+                    this.date.from.setDate(1);
+                    break;
+                case('current-year'):
+                    this.date.to.setMonth(11);
+                    this.date.from.setMonth(0);
+                    this.date.to.setDate(new Date(this.date.to.getFullYear(), this.date.to.getMonth() + 1, 0).getDate());
+                    this.date.from.setDate(1);
+                    break;
+                case('previous-year'):
+                    this.date.to.setFullYear(this.date.to.getFullYear() - 1);
+                    this.date.from.setFullYear(this.date.from.getFullYear() - 1);
+                    this.date.to.setMonth(11);
+                    this.date.from.setMonth(0);
+                    this.date.to.setDate(new Date(this.date.to.getFullYear(), this.date.to.getMonth() + 1, 0).getDate());
+                    this.date.from.setDate(1);
+                    break;
+            };
+        };
+
+        await this.date.process();
+        
+        if (column.display == 'value' || column.display == 'chart') {
+            column.loading = true;
+            column.query.date = this.date;
+            column.query.group = group;
+            const response = await this.service.load({
+                'query': column.query,
+                'chart': column.chart,
+                'value': column.value,
+                'display': column.display
+            });
+            if (response.ok) {
+                column.data = response.result;
+                column.error = false;
+                column.loading = false;
+            } else {
+                column.error = true;
+                column.loading = false;
+                switch (column.display) {
+                    case('chart'):
+                        column.data = {
+                            'value': [],
+                            'analog': {},
+                            'digital': {}
+                        };
+                        break;
+                    case('value'):
+                        column.data = {
+                            'value': 0,
+                            'analog': {},
+                            'digital': {}
+                        };
+                        break;
+                };
+            };
+        };
+    };
+
     ngOnInit(): void {
         this.SetLayout();
 
