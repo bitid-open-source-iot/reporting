@@ -330,42 +330,44 @@ export class ReportViewerPage implements OnInit, OnDestroy {
         });
     
         this.subscriptions.interval = interval(1000).subscribe(count => {
-            this.report.layout[this.layout].map(row => {
-                row.columns.map(column => {
-                    if (column.display) {
-                        let found = false;
-                        column.conditions.filter(o => (o.data && o.type == 'connector')).map(condition => {
-                            if (condition.connector.type == 'analog' && condition.connector.analog.min <= condition.data.value && condition.connector.analog.max >= condition.data.value) {
-                                found = true;
-                                column.fill = condition.fill;
-                                column.font = condition.font;
-                                column.stroke = condition.stroke;
-                                column.banner = condition.banner;
-                                column.gridlines = condition.gridlines;
-                                column.chartfill = condition.chartfill;
-                            } else if (condition.connector.type == 'digital' && condition.connector.digital.value <= condition.data.value) {
-                                found = true;
-                                column.fill = condition.fill;
-                                column.font = condition.font;
-                                column.stroke = condition.stroke;
-                                column.banner = condition.banner;
-                                column.gridlines = condition.gridlines;
-                                column.chartfill = condition.chartfill;
-                            };
-                        });
-                        if (!found) {
-                            column.conditions.filter(o => o.type == 'default').map(condition => {
-                                column.fill = condition.fill;
-                                column.font = condition.font;
-                                column.stroke = condition.stroke;
-                                column.banner = condition.banner;
-                                column.gridlines = condition.gridlines;
-                                column.chartfill = condition.chartfill;
+            if (this.report && this.report.layout && this.layout && this.report.type == 'dashboard') {
+                this.report.layout[this.layout].map(row => {
+                    row.columns.map(column => {
+                        if (column.display) {
+                            let found = false;
+                            column.conditions.filter(o => (o.data && o.type == 'connector')).map(condition => {
+                                if (condition.connector.type == 'analog' && condition.connector.analog.min <= condition.data.value && condition.connector.analog.max >= condition.data.value) {
+                                    found = true;
+                                    column.fill = condition.fill;
+                                    column.font = condition.font;
+                                    column.stroke = condition.stroke;
+                                    column.banner = condition.banner;
+                                    column.gridlines = condition.gridlines;
+                                    column.chartfill = condition.chartfill;
+                                } else if (condition.connector.type == 'digital' && condition.connector.digital.value <= condition.data.value) {
+                                    found = true;
+                                    column.fill = condition.fill;
+                                    column.font = condition.font;
+                                    column.stroke = condition.stroke;
+                                    column.banner = condition.banner;
+                                    column.gridlines = condition.gridlines;
+                                    column.chartfill = condition.chartfill;
+                                };
                             });
+                            if (!found) {
+                                column.conditions.filter(o => o.type == 'default').map(condition => {
+                                    column.fill = condition.fill;
+                                    column.font = condition.font;
+                                    column.stroke = condition.stroke;
+                                    column.banner = condition.banner;
+                                    column.gridlines = condition.gridlines;
+                                    column.chartfill = condition.chartfill;
+                                });
+                            };
                         };
-                    };
+                    });
                 });
-            });
+            };
         });
     };
 
