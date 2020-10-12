@@ -236,11 +236,11 @@ var module = function () {
 											try {
 												var item = args.result[args.result.length - 1];
 												var result = [];
-												args.result.map(o => {
-													if (o.type == 'analog' && typeof(o.analog.offset) != 'undefined' && o.analog.offset !== null && o.analog.offset != '') {
-														o.value = o.value + parseFloat(o.analog.offset);
-													};
-												});
+												// args.result.map(o => {
+												// 	if (o.type == 'analog' && typeof(o.analog.offset) != 'undefined' && o.analog.offset !== null && o.analog.offset != '') {
+												// 		o.value = o.value + parseFloat(o.analog.offset);
+												// 	};
+												// });
 												for (let i = 0; i < args.result.length; i++) {
 													if (i + 1 < args.result.length) {
 														result.push(args.result[i + 1].value - args.result[i].value);
@@ -272,11 +272,11 @@ var module = function () {
 											};
 										} else {
 											var item = args.result[args.result.length - 1];
-											args.result.map(o => {
-												if (o.type == 'analog' && typeof(o.analog.offset) != 'undefined' && o.analog.offset !== null && o.analog.offset != '') {
-													o.value = o.value + parseFloat(o.analog.offset);
-												};
-											});
+											// args.result.map(o => {
+											// 	if (o.type == 'analog' && typeof(o.analog.offset) != 'undefined' && o.analog.offset !== null && o.analog.offset != '') {
+											// 		o.value = o.value + parseFloat(o.analog.offset);
+											// 	};
+											// });
 											var total = args.result.reduce((a, b) => a + b, 0);
 											var average = total / args.result.length;
 											item.value = parseFloat(average.toFixed(2));
