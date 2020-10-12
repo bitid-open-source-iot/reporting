@@ -193,7 +193,10 @@ var module = function () {
 									var result = [];
 									for (let i = 0; i < args.result.length; i++) {
 										if (i + 1 < args.result.length) {
-											const value = (args.result[i + 1].value - args.result[i].value);
+											let value = (args.result[i + 1].value - args.result[i].value);
+											if (item.type == 'analog' && typeof(item.analog.offset) != 'undefined' && item.analog.offset !== null && item.analog.offset != '') {
+												value = value + parseFloat(item.analog.offset);
+											};
 											result.push({
 												'date': moment(args.result[i].date).format(format),
 												'value': value
@@ -205,6 +208,9 @@ var module = function () {
 								} else {
 									var item = args.result[args.result.length - 1];
 									item.value = args.result.map(o => {
+										if (item.type == 'analog' && typeof(item.analog.offset) != 'undefined' && item.analog.offset !== null && item.analog.offset != '') {
+											o.value = o.value + parseFloat(item.analog.offset);
+										};
 										return {
 											'date': moment(o.date).format(format),
 											'value': o.value
@@ -220,6 +226,9 @@ var module = function () {
 									case ('last-value'):
 									case ('first-value'):
 										args.result = args.result[0];
+										if (item.type == 'analog' && typeof(item.analog.offset) != 'undefined' && item.analog.offset !== null && item.analog.offset != '') {
+											args.result.value = args.result.value + parseFloat(item.analog.offset);
+										};
 										args.result.date = moment(args.result.date).format(format);
 										break;
 									case ('predicted-value'):
@@ -227,6 +236,11 @@ var module = function () {
 											try {
 												var item = args.result[args.result.length - 1];
 												var result = [];
+												args.result.map(o => {
+													if (o.type == 'analog' && typeof(o.analog.offset) != 'undefined' && o.analog.offset !== null && o.analog.offset != '') {
+														o.value = o.value + parseFloat(o.analog.offset);
+													};
+												});
 												for (let i = 0; i < args.result.length; i++) {
 													if (i + 1 < args.result.length) {
 														result.push(args.result[i + 1].value - args.result[i].value);
@@ -258,6 +272,11 @@ var module = function () {
 											};
 										} else {
 											var item = args.result[args.result.length - 1];
+											args.result.map(o => {
+												if (o.type == 'analog' && typeof(o.analog.offset) != 'undefined' && o.analog.offset !== null && o.analog.offset != '') {
+													o.value = o.value + parseFloat(o.analog.offset);
+												};
+											});
 											var total = args.result.reduce((a, b) => a + b, 0);
 											var average = total / args.result.length;
 											item.value = parseFloat(average.toFixed(2));
