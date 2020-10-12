@@ -194,9 +194,9 @@ var module = function () {
 									for (let i = 0; i < args.result.length; i++) {
 										if (i + 1 < args.result.length) {
 											let value = (args.result[i + 1].value - args.result[i].value);
-											if (item.type == 'analog' && typeof(item.analog.offset) != 'undefined' && item.analog.offset !== null && item.analog.offset != '') {
-												value = value + parseFloat(item.analog.offset);
-											};
+											// if (item.type == 'analog' && typeof(item.analog.offset) != 'undefined' && item.analog.offset !== null && item.analog.offset != '') {
+											// 	value = value + parseFloat(item.analog.offset);
+											// };
 											result.push({
 												'date': moment(args.result[i].date).format(format),
 												'value': value
@@ -208,9 +208,9 @@ var module = function () {
 								} else {
 									var item = args.result[args.result.length - 1];
 									item.value = args.result.map(o => {
-										if (item.type == 'analog' && typeof(item.analog.offset) != 'undefined' && item.analog.offset !== null && item.analog.offset != '') {
-											o.value = o.value + parseFloat(item.analog.offset);
-										};
+										// if (item.type == 'analog' && typeof(item.analog.offset) != 'undefined' && item.analog.offset !== null && item.analog.offset != '') {
+										// 	o.value = o.value + parseFloat(item.analog.offset);
+										// };
 										return {
 											'date': moment(o.date).format(format),
 											'value': o.value
