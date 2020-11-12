@@ -1,0 +1,35 @@
+mat-sidenav,
+mat-sidenav-content {
+    flex: 1 auto;
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+}
+mat-sidenav {
+    width: 300px;
+    border: none !important;
+    form {
+        padding: 10px;
+    }
+}
+.image-upload {
+    width: 150px;
+    margin: 2px auto;
+    height: 150px;
+    border: 1px solid #E0E0E0;
+    border-radius: 4px;
+    margin-bottom: 20px;
+    background-size: contain;
+    background-repeat: no-repeat;
+    background-position: center center;
+}
+.image-upload:hover {
+    margin: 1px auto;
+    border: 2px solid #212121;
+    margin-bottom: 19px;
+}
+@media screen and (max-width: 600px) {
+    mat-sidenav {
+        width: 100%;
+    }
+}

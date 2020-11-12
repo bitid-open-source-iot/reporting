@@ -11,6 +11,9 @@ import { CommonModule } from '@angular/common';
     ],
     declarations: [
         OrderPipe
+    ],
+    entryComponents: [
+        OrderPipe
     ]
 })
 

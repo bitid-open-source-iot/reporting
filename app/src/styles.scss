@@ -299,6 +299,12 @@ mat-list {
         border-bottom: 1px solid #E0E0E0;
     }
 }
+report-editor-page {
+    flex: 1 auto;
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+}
 .container {
     width: 50%;
     margin: auto;

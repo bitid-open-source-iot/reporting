@@ -16,7 +16,7 @@
 
 <div class="page-body">
     <div class="reports">
-        <div class="report" *ngFor="let report of reports | filterBy : 'description' : filter" matRipple (click)="options(report)">
+        <div class="report" *ngFor="let report of reports | filterBy : {'description': filter}" matRipple (click)="options(report)">
             <div class="inner">
                 <h1>
                     {{ report.description }}

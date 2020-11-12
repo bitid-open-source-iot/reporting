@@ -1,20 +1,20 @@
+/* --- MODULES --- */
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { FilterPipe } from './filter.pipe';
+
+/* --- COMPONENTS --- */
+import { MatFooter } from './mat-footer';
 
 @NgModule({
     imports: [
         CommonModule
     ],
     exports: [
-        FilterPipe
+        MatFooter
     ],
     declarations: [
-        FilterPipe
-    ],
-    entryComponents: [
-        FilterPipe
+        MatFooter
     ]
 })
 
-export class FilterPipeModule {}
+export class MatFooterModule { }

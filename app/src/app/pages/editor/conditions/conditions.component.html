@@ -1,0 +1,49 @@
+<table mat-table [dataSource]="conditions">
+    <ng-container matColumnDef="preview">
+        <th mat-header-cell *matHeaderCellDef>
+            Preview
+        </th>
+        <td mat-cell *matCellDef="let element">
+            <div class="preview" matRipple (click)="preview(element)">
+                <mat-icon *ngIf="element.active">check</mat-icon>
+            </div>
+        </td>
+    </ng-container>
+
+    <ng-container matColumnDef="trigger">
+        <th mat-header-cell *matHeaderCellDef>
+            triggers
+        </th>
+        <td mat-cell *matCellDef="let element">
+            <h1 *ngIf="element.type == 'default'">
+                Default Condition
+            </h1>
+            <h1 *ngIf="element.type != 'default'">
+                shane home (battery)
+            </h1>
+            <p *ngIf="element.type != 'default'">
+                0.00V - 10.00V
+            </p>
+        </td>
+    </ng-container>
+
+    <ng-container matColumnDef="options">
+        <th mat-header-cell *matHeaderCellDef>
+            <button mat-icon-button>
+                <mat-icon>
+                    add
+                </mat-icon>
+            </button>
+        </th>
+        <td mat-cell *matCellDef="let element">
+            <button mat-icon-button>
+                <mat-icon>
+                    more_vert
+                </mat-icon>
+            </button>
+        </td>
+    </ng-container>
+
+    <tr mat-header-row *matHeaderRowDef="columns; sticky: true;"></tr>
+    <tr mat-row *matRowDef="let row; columns: columns;"></tr>
+</table>
