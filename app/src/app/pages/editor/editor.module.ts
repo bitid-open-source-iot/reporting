@@ -3,11 +3,15 @@ import { ReportEditorPage } from './editor.page';
 
 /* --- MODULES --- */
 import { NgModule } from '@angular/core';
+import { BloxModule } from 'src/app/lib/blox/blox.module';
 import { CommonModule } from '@angular/common';
 import { MatIconModule } from '@angular/material/icon';
 import { MatMenuModule } from '@angular/material/menu';
+import { MatTabsModule } from '@angular/material/tabs';
 import { MatInputModule } from '@angular/material/input';
 import { MatTableModule } from '@angular/material/table';
+import { DragDropModule } from '@angular/cdk/drag-drop';
+import { FormFieldModule } from 'src/app/lib/form-field/form-field.module';
 import { MatButtonModule } from '@angular/material/button';
 import { MatSelectModule } from '@angular/material/select';
 import { OrderPipeModule } from 'src/app/pipes/order/order.module';
@@ -20,6 +24,7 @@ import { MatContentModule } from 'src/app/lib/mat-content/mat-content.module';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { Routes, RouterModule } from '@angular/router';
 import { NgxMatSelectSearchModule } from 'ngx-mat-select-search';
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 
 /* --- COMPONENTS --- */
@@ -35,12 +40,16 @@ const routes: Routes = [
 
 @NgModule({
     imports: [
+        BloxModule,
         FormsModule,
         CommonModule,
         MatIconModule,
         MatMenuModule,
+        MatTabsModule,
         MatTableModule,
         MatInputModule,
+        DragDropModule,
+        FormFieldModule,
         MatButtonModule,
         MatFooterModule,
         MatRippleModule,
@@ -53,6 +62,7 @@ const routes: Routes = [
         MatFormFieldModule,
         ReactiveFormsModule,
         NgxMatSelectSearchModule,
+        MatProgressSpinnerModule,
         RouterModule.forChild(routes)
     ],
     declarations: [

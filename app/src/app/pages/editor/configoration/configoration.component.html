@@ -1,1 +1,302 @@
-<p>configoration works!</p>
+<form [formGroup]="form">
+    <h2>
+        fill
+    </h2>
+
+    <section formGroupName="fill">
+        <form-field>
+            <label>
+                Color
+                <span>
+                    *
+                </span>
+            </label>
+
+            <input matInput type="color" formControlName="color" required>
+        </form-field>
+
+        <form-field>
+            <label>
+                Opacity
+                <span>
+                    *
+                </span>
+            </label>
+
+            <input matInput min="0" max="100" type="number" formControlName="opacity" required>
+
+            <mat-icon svgIcon="percentage"></mat-icon>
+        </form-field>
+    </section>
+
+    <h2>
+        font
+    </h2>
+
+    <section formGroupName="font">
+        <form-field>
+            <label>
+                Color
+                <span>
+                    *
+                </span>
+            </label>
+
+            <input matInput type="color" formControlName="color" required>
+        </form-field>
+
+        <form-field>
+            <label>
+                Opacity
+                <span>
+                    *
+                </span>
+            </label>
+
+            <input matInput min="0" max="100" type="number" formControlName="opacity" required>
+
+            <mat-icon svgIcon="percentage"></mat-icon>
+        </form-field>
+    </section>
+
+    <section formGroupName="font">
+        <form-field>
+            <label>
+                Family
+                <span>
+                    *
+                </span>
+            </label>
+
+            <mat-select formControlName="family" required>
+                <mat-option value="Arial">
+                    Arial
+                </mat-option>
+            </mat-select>
+        </form-field>
+
+        <form-field>
+            <label>
+                Size
+                <span>
+                    *
+                </span>
+            </label>
+
+            <input matInput type="number" formControlName="size" required>
+        </form-field>
+    </section>
+
+    <section formGroupName="font">
+        <form-field>
+            <label>
+                Vertical
+                <span>
+                    *
+                </span>
+            </label>
+
+            <mat-select formControlName="vertical" required>
+                <mat-option value="top">
+                    Top
+                </mat-option>
+                <mat-option value="center">
+                    Center
+                </mat-option>
+                <mat-option value="bottom">
+                    Bottom
+                </mat-option>
+            </mat-select>
+        </form-field>
+
+        <form-field>
+            <label>
+                Horizontal
+                <span>
+                    *
+                </span>
+            </label>
+
+            <mat-select formControlName="horizontal" required>
+                <mat-option value="left">
+                    Left
+                </mat-option>
+                <mat-option value="center">
+                    Center
+                </mat-option>
+                <mat-option value="right">
+                    Right
+                </mat-option>
+            </mat-select>
+        </form-field>
+    </section>
+
+    <h2>
+        stroke
+    </h2>
+
+    <section formGroupName="stroke">
+        <form-field>
+            <label>
+                Color
+                <span>
+                    *
+                </span>
+            </label>
+
+            <input matInput type="color" formControlName="color" required>
+        </form-field>
+
+        <form-field>
+            <label>
+                Opacity
+                <span>
+                    *
+                </span>
+            </label>
+
+            <input matInput min="0" max="100" type="number" formControlName="opacity" required>
+
+            <mat-icon svgIcon="percentage"></mat-icon>
+        </form-field>
+    </section>
+
+    <section formGroupName="stroke">
+        <form-field>
+            <label>
+                Width
+                <span>
+                    *
+                </span>
+            </label>
+
+            <input matInput type="number" formControlName="width" required>
+        </form-field>
+
+        <form-field>
+            <label>
+                Style
+                <span>
+                    *
+                </span>
+            </label>
+
+            <mat-select formControlName="style" required>
+                <mat-option value="solid">
+                    Solid
+                </mat-option>
+                <mat-option value="ridge">
+                    Ridge
+                </mat-option>
+                <mat-option value="dotted">
+                    Dotted
+                </mat-option>
+                <mat-option value="dashed">
+                    Dashed
+                </mat-option>
+                <mat-option value="double">
+                    Double
+                </mat-option>
+                <mat-option value="groove">
+                    Groove
+                </mat-option>
+            </mat-select>
+        </form-field>
+    </section>
+
+    <h2>
+        banner
+    </h2>
+
+    <section formGroupName="banner">
+        <form-field>
+            <label>
+                Color
+                <span>
+                    *
+                </span>
+            </label>
+
+            <input matInput type="color" formControlName="color" required>
+        </form-field>
+
+        <form-field>
+            <label>
+                Opacity
+                <span>
+                    *
+                </span>
+            </label>
+
+            <input matInput min="0" max="100" type="number" formControlName="opacity" required>
+
+            <mat-icon svgIcon="percentage"></mat-icon>
+        </form-field>
+    </section>
+
+    <section formGroupName="banner">
+        <form-field>
+            <label>
+                Family
+                <span>
+                    *
+                </span>
+            </label>
+
+            <mat-select formControlName="family" required>
+                <mat-option value="Arial">
+                    Arial
+                </mat-option>
+            </mat-select>
+        </form-field>
+
+        <form-field>
+            <label>
+                Size
+                <span>
+                    *
+                </span>
+            </label>
+
+            <input matInput type="number" formControlName="size" required>
+        </form-field>
+    </section>
+
+    <section formGroupName="banner">
+        <form-field>
+            <label>
+                Vertical
+                <span>
+                    *
+                </span>
+            </label>
+
+            <mat-select formControlName="vertical" required>
+                <mat-option value="top">
+                    Top
+                </mat-option>
+                <mat-option value="bottom">
+                    Bottom
+                </mat-option>
+            </mat-select>
+        </form-field>
+
+        <form-field>
+            <label>
+                Horizontal
+                <span>
+                    *
+                </span>
+            </label>
+
+            <mat-select formControlName="horizontal" required>
+                <mat-option value="left">
+                    Left
+                </mat-option>
+                <mat-option value="right">
+                    Right
+                </mat-option>
+            </mat-select>
+        </form-field>
+    </section>
+</form>

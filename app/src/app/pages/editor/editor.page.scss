@@ -1,3 +1,6 @@
+blox {
+    min-height: calc(100vh - 56px - 10px);
+}
 mat-sidenav,
 mat-sidenav-content {
     flex: 1 auto;
@@ -8,9 +11,23 @@ mat-sidenav-content {
 mat-sidenav {
     width: 300px;
     border: none !important;
-    form {
-        padding: 10px;
-    }
+}
+.add {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+.dashboard {
+    overflow-y: auto;
+    padding-left: 50px;
+}
+.dashboard::-webkit-scrollbar {
+    display: none;
+}
+.drag-handle {
+    left: -35px;
+    position: absolute;
+    align-self: center;
 }
 .image-upload {
     width: 150px;
@@ -28,8 +45,32 @@ mat-sidenav {
     border: 2px solid #212121;
     margin-bottom: 19px;
 }
+.cdk-drag-preview {
+    margin: 5px;
+    display: flex;
+    min-height: 100px;
+    box-shadow: 0 5px 5px -3px rgba(0, 0, 0, 0.2), 0 8px 10px 1px rgba(0, 0, 0, 0.14), 0 3px 14px 2px rgba(0, 0, 0, 0.12);
+    border-radius: 10px;
+    flex-direction: row;
+}
+.drag-placeholder {
+    margin: 5px;
+    height: 100px;
+    display: flex;
+    transition: transform 250ms cubic-bezier(0, 0, 0.2, 1);
+    align-items: center;
+    border-radius: 10px;
+    justify-content: center;
+    background-color: rgba(255, 255, 255, 0.5);
+}
+.cdk-drag-animating {
+    transition: transform 250ms cubic-bezier(0, 0, 0.2, 1);
+}
 @media screen and (max-width: 600px) {
     mat-sidenav {
         width: 100%;
     }
+}
+mat-tab-group {
+    height: calc(100% - 56px) !important;
 }

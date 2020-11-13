@@ -9,6 +9,7 @@ export class BloxService {
 
     constructor() { };
 
+    public hit: Subject<MouseEvent|TouchEvent> = new Subject<MouseEvent|TouchEvent>();
     public end: Subject<MouseEvent|TouchEvent> = new Subject<MouseEvent|TouchEvent>();
     public move: Subject<MouseEvent|TouchEvent> = new Subject<MouseEvent|TouchEvent>();
     public start: Subject<MouseEvent|TouchEvent> = new Subject<MouseEvent|TouchEvent>();
