@@ -1,4 +1,4 @@
-conditions {
+column-conditions {
     left: 0px;
     right: 0px;
     height: 300px;
@@ -43,6 +43,6 @@ conditions {
         padding-right: 0px !important;
     }
 }
-conditions.visible {
+column-conditions.visible {
     display: flex;
 }

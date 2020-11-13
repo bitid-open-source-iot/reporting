@@ -81,7 +81,7 @@
             </blox>
         </mat-content>
 
-        <conditions></conditions>
+        <column-conditions></column-conditions>
     </mat-sidenav-content>
 
     <mat-sidenav mode="side" position="end">
@@ -100,155 +100,11 @@
         <mat-content>
             <mat-tab-group id="side-tabs">
                 <mat-tab label="Setup">
-                    <form [formGroup]="form">
-                        <mat-form-field appearance="outline">
-                            <mat-label>
-                                Label
-                            </mat-label>
-                            
-                            <input matInput type="text" name="label" placeholder="label" formControlName="label" required>
-        
-                            <mat-error *ngIf="errors.label">
-                                {{ errors.label }}
-                            </mat-error>
-                        </mat-form-field>
-        
-                        <mat-form-field appearance="outline">
-                            <mat-label>
-                                Display Type
-                            </mat-label>
-                            
-                            <mat-select name="display" placeholder="display type" formControlName="display" required>
-                                <mat-option *ngFor="let o of displays | orderBy : 'description'" [value]="o.value">
-                                    {{ o.description }}
-                                </mat-option>
-                            </mat-select>
-        
-                            <mat-error *ngIf="errors.display">
-                                {{ errors.display }}
-                            </mat-error>
-                        </mat-form-field>
-        
-                        <h2 *ngIf="form.value.display == 'value' || form.value.display == 'gauge' || form.value.display == 'chart' || form.value.display == 'table'">
-                            Data Connector
-                        </h2>
-        
-                        <mat-form-field appearance="outline" formGroupName="query" *ngIf="form.value.display == 'value' || form.value.display == 'gauge' || form.value.display == 'chart' || form.value.display == 'table'">
-                            <mat-label>
-                                Device
-                            </mat-label>
-        
-                            <mat-select name="deviceId" placeholder="device" formControlName="deviceId" required>
-                                <mat-option [formGroup]="filter">
-                                    <ngx-mat-select-search placeholderLabel="filter devices" noEntriesFoundLabel="no devices found" formControlName="device"></ngx-mat-select-search>
-                                </mat-option>
-                                <mat-option *ngFor="let device of devices.data | filterBy : {'description': filter.value.device}" [value]="device.deviceId">
-                                    {{ device.description }}
-                                </mat-option>
-                            </mat-select>
-        
-                            <mat-error *ngIf="errors.query.deviceId">
-                                {{ errors.query.deviceId }}
-                            </mat-error>
-                        </mat-form-field>
-        
-                        <mat-form-field appearance="outline" formGroupName="query" *ngIf="form.value.display == 'value' || form.value.display == 'gauge' || form.value.display == 'chart' || form.value.display == 'table'">
-                            <mat-label>
-                                Input
-                            </mat-label>
-        
-                            <mat-select name="inputId" placeholder="input" formControlName="inputId" required>
-                                <mat-option [formGroup]="filter">
-                                    <ngx-mat-select-search placeholderLabel="filter inputs" noEntriesFoundLabel="no inputs found" formControlName="input"></ngx-mat-select-search>
-                                </mat-option>
-                                <mat-option *ngFor="let input of inputs | filterBy : {'description': filter.value.input}" [value]="input.inputId">
-                                    {{ input.description }}
-                                </mat-option>
-                            </mat-select>
-        
-                            <mat-error *ngIf="errors.query.inputId">
-                                {{ errors.query.inputId }}
-                            </mat-error>
-                        </mat-form-field>
-        
-                        <h2 *ngIf="form.value.display == 'chart'">
-                            chart settings
-                        </h2>
-        
-                        <mat-form-field appearance="outline" formGroupName="chart" *ngIf="form.value.display == 'chart'">
-                            <mat-label>
-                                Type
-                            </mat-label>
-                            
-                            <mat-select name="type" placeholder="type" formControlName="type" [required]="form.value.display == 'chart'">
-                                <mat-option value="bar">
-                                    Bar
-                                </mat-option>
-                                <mat-option value="area">
-                                    Area
-                                </mat-option>
-                                <mat-option value="line">
-                                    Line
-                                </mat-option>
-                            </mat-select>
-            
-                            <mat-error *ngIf="errors.chart.type">
-                                {{ errors.chart.type }}
-                            </mat-error>
-                        </mat-form-field>
-        
-                        <h2 *ngIf="form.value.display == 'value'">
-                            value settings
-                        </h2>
-        
-                        <mat-form-field appearance="outline" formGroupName="value" *ngIf="form.value.display == 'value'">
-                            <mat-label>
-                                Expression
-                            </mat-label>
-                            
-                            <mat-select name="expression" placeholder="expression" formControlName="expression" [required]="form.value.display == 'value'">
-                                <mat-option value="last-value">
-                                    Last Value
-                                </mat-option>
-                                <mat-option value="first-value">
-                                    First Value
-                                </mat-option>
-                                <mat-option value="predicted-value">
-                                    Predicted Value
-                                </mat-option>
-                            </mat-select>
-        
-                            <mat-error *ngIf="errors.value.expression">
-                                {{ errors.value.expression }}
-                            </mat-error>
-                        </mat-form-field>
-        
-                        <h2 *ngIf="form.value.display == 'text'">
-                            text settings
-                        </h2>
-        
-                        <mat-form-field appearance="outline" formGroupName="text" *ngIf="form.value.display == 'text'">
-                            <mat-label>
-                                Value
-                            </mat-label>
-                            
-                            <textarea matInput [matTextareaAutosize]="true" rows="5" name="value" placeholder="value" formControlName="value" [required]="form.value.display == 'text'"></textarea>
-        
-                            <mat-error *ngIf="errors.text.value">
-                                {{ errors.text.value }}
-                            </mat-error>
-                        </mat-form-field>
-        
-                        <h2 *ngIf="form.value.display == 'image'">
-                            image settings
-                        </h2>
-        
-                        <div *ngIf="form.value.display == 'image'" class="image-upload" [style.background-image]="'url(' + form.value.image.src + ')'" (click)="upload()" matRipple></div>
-                    </form>
+                    <column-setup></column-setup>
                 </mat-tab>
 
                 <mat-tab label="Style">
-                    <configoration></configoration>
+                    <column-style></column-style>
                 </mat-tab>
             </mat-tab-group>
         </mat-content>

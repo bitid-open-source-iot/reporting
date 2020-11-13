@@ -3,13 +3,13 @@ import { FormGroup, FormControl, Validators } from '@angular/forms';
 import { OnInit, Component, OnDestroy, ElementRef, EventEmitter, ViewEncapsulation } from '@angular/core';
 
 @Component({
-    selector: 'configoration',
-    styleUrls: ['./configoration.component.scss'],
-    templateUrl: './configoration.component.html',
+    selector: 'column-style',
+    styleUrls: ['./style.component.scss'],
+    templateUrl: './style.component.html',
     encapsulation: ViewEncapsulation.None
 })
 
-export class ConfigorationComponent implements OnInit, OnDestroy {
+export class ColumnStyleComponent implements OnInit, OnDestroy {
 
     constructor(private el: ElementRef, private formerror: FormErrorService) {
         this.element = this.el.nativeElement;
@@ -29,28 +29,18 @@ export class ConfigorationComponent implements OnInit, OnDestroy {
             'horizontal': new FormControl('center', [Validators.required])
         }),
         'stroke': new FormGroup({
-            'width': new FormControl(0, [Validators.required, Validators.min(0), Validators.max(20)]),
+            'width': new FormControl(0, [Validators.required, Validators.min(0), Validators.max(5)]),
             'style': new FormControl('solid', [Validators.required]),
             'color': new FormControl('#000000', [Validators.required]),
             'opacity': new FormControl(100, [Validators.required, Validators.min(0), Validators.max(100)])
         }),
         'banner': new FormGroup({
-            'size': new FormControl(12, [Validators.required, Validators.min(0), Validators.max(24)]),
+            'size': new FormControl(12, [Validators.required, Validators.min(8), Validators.max(24)]),
             'color': new FormControl('#FFFFFF', [Validators.required]),
             'family': new FormControl('Arial', [Validators.required]),
             'opacity': new FormControl(100, [Validators.required, Validators.min(0), Validators.max(100)]),
             'vertical': new FormControl('top', [Validators.required]),
             'horizontal': new FormControl('left', [Validators.required])
-        }),
-        'chartfill': new FormGroup({
-            'color': new FormControl('#FFFFFF', [Validators.required]),
-            'opacity': new FormControl(100, [Validators.required, Validators.min(0), Validators.max(100)])
-        }),
-        'gridlines': new FormGroup({
-            'width': new FormControl(1, [Validators.required, Validators.min(0), Validators.max(5)]),
-            'style': new FormControl('solid', [Validators.required]),
-            'color': new FormControl('#E0E0E0', [Validators.required]),
-            'opacity': new FormControl(100, [Validators.required, Validators.min(0), Validators.max(100)])
         })
     });
     public errors: any = {
@@ -79,26 +69,25 @@ export class ConfigorationComponent implements OnInit, OnDestroy {
             'opacity': '',
             'vertical': '',
             'horizontal': ''
-        },
-        'chartfill': {
-            'color': '',
-            'opacity': ''
-        },
-        'gridlines': {
-            'width': '',
-            'style': '',
-            'color': '',
-            'opacity': ''
         }
     };
     public change: EventEmitter<any> = new EventEmitter<any>();
     public element: HTMLElement;
+    public setting: boolean;
     private subscriptions: any = {};
+
+    public async set(data) {
+        this.setting = true;
+        Object.keys(this.form.controls).map(key => {
+            this.form.controls[key].setValue(data[key]);
+        });
+        this.setting = false;
+    };
 
     ngOnInit(): void {
         this.subscriptions.form = this.form.valueChanges.subscribe(data => {
             this.errors = this.formerror.validateForm(this.form, this.errors, true);
-            if (!this.form.invalid) {
+            if (!this.setting) {
                 this.change.next(data);
             };
         });

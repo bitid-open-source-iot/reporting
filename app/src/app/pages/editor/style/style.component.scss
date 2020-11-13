@@ -1,0 +1,19 @@
+form {
+    padding: 10px;
+}
+.image-upload {
+    width: 150px;
+    margin: 2px auto;
+    height: 150px;
+    border: 1px solid #E0E0E0;
+    border-radius: 4px;
+    margin-bottom: 20px;
+    background-size: contain;
+    background-repeat: no-repeat;
+    background-position: center center;
+}
+.image-upload:hover {
+    margin: 1px auto;
+    border: 2px solid #212121;
+    margin-bottom: 19px;
+}

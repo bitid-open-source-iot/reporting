@@ -28,8 +28,9 @@ import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 
 /* --- COMPONENTS --- */
-import { ConditionsComponent } from './conditions/conditions.component';
-import { ConfigorationComponent } from './configoration/configoration.component';
+import { ColumnSetupComponent } from './setup/setup.component';
+import { ColumnStyleComponent } from './style/style.component';
+import { ColumnConditionsComponent } from './conditions/conditions.component';
 
 const routes: Routes = [
     {
@@ -67,8 +68,9 @@ const routes: Routes = [
     ],
     declarations: [
         ReportEditorPage,
-        ConditionsComponent,
-        ConfigorationComponent
+        ColumnSetupComponent,
+        ColumnStyleComponent,
+        ColumnConditionsComponent
     ]
 })
 
