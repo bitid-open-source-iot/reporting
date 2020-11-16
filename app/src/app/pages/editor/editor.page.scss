@@ -60,6 +60,15 @@ column:active .options {
 .dashboard::-webkit-scrollbar {
     display: none;
 }
+.row-properties {
+    color: #FFF;
+    right: 5px;
+    bottom: 0px;
+    height: 10px;
+    position: absolute;
+    font-size: 10px;
+    line-height: 10px;
+}
 .drag-handle {
     left: -35px;
     position: absolute;

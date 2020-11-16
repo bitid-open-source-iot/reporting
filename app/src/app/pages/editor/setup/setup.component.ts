@@ -55,10 +55,6 @@ export class ColumnSetupComponent implements OnInit, OnDestroy {
         {
             'value': 'value',
             'description': 'Value'
-        },
-        {
-            'value': 'spacer',
-            'description': 'Spacer'
         }
     ];
     public filter: FormGroup = new FormGroup({

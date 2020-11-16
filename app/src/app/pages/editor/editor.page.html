@@ -83,7 +83,7 @@
                                     <mat-icon svgIcon="copy"></mat-icon>
                                 </button>
 
-                                <button mat-icon-button matTooltip="Delete Column">
+                                <button mat-icon-button matTooltip="Delete Column" (click)="remove($event, row, column.id)">
                                     <mat-icon svgIcon="delete"></mat-icon>
                                 </button>
                             </div>
@@ -97,6 +97,10 @@
                     </column>
     
                     <div class="drag-placeholder" *cdkDragPlaceholder></div>
+
+                    <div class="row-properties" [style.color]="report.theme.font.color">
+                        {{ row.height | number : '0.0-0' }}PX
+                    </div>
                 </row>
             
                 <row type="static" [height]="100">
@@ -118,7 +122,7 @@
                 column editor
             </div>
 
-            <button mat-icon-button (click)="sidenav.toggle()">
+            <button mat-icon-button (click)="unselect()">
                 <mat-icon>
                     arrow_forward
                 </mat-icon>

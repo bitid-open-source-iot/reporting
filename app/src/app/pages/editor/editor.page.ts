@@ -6,15 +6,17 @@ import { ObjectId } from 'src/app/id';
 import { MatDialog } from '@angular/material/dialog';
 import { MatSidenav } from '@angular/material/sidenav';
 import { ThemeDialog } from './theme/theme.dialog';
+import { MatTabGroup } from '@angular/material/tabs';
 import { AddRowDialog } from './add-row/add-row.dialog';
+import { BloxComponent } from 'src/app/lib/blox/blox.component';
 import { HistoryService } from 'src/app/services/history/history.service';
 import { DevicesService } from 'src/app/services/devices/devices.service';
 import { ColumnSetupComponent } from './setup/setup.component';
 import { ColumnStyleComponent } from './style/style.component';
 import { ColumnConditionsComponent } from './conditions/conditions.component';
 import { CdkDragDrop, moveItemInArray } from '@angular/cdk/drag-drop';
-import { Map, Text, Chart, Value, Blank, Gauge } from 'src/app/lib/utilities/index';
 import { OnInit, Component, OnDestroy, ViewChild } from '@angular/core';
+import { Map, Text, Chart, Value, Blank, Gauge, Vector } from 'src/app/lib/utilities/index';
 
 @Component({
     selector: 'report-editor-page',
@@ -25,6 +27,8 @@ import { OnInit, Component, OnDestroy, ViewChild } from '@angular/core';
 export class ReportEditorPage implements OnInit, OnDestroy {
 
     @ViewChild(MatSidenav, { 'static': true }) public sidenav: MatSidenav;
+    @ViewChild(MatTabGroup, { 'static': true }) public tabs: MatTabGroup;
+    @ViewChild(BloxComponent, { 'static': true }) public blox: BloxComponent;
     @ViewChild(ColumnSetupComponent, { 'static': true }) private setup: ColumnSetupComponent;
     @ViewChild(ColumnStyleComponent, { 'static': true }) private style: ColumnStyleComponent;
     @ViewChild(ColumnConditionsComponent, { 'static': true }) private conditions: ColumnConditionsComponent;
@@ -192,6 +196,60 @@ export class ReportEditorPage implements OnInit, OnDestroy {
         this.style.set(column);
     };
 
+    public unselect() {
+        this.rowId = null;
+        this.columnId = null;
+        this.tabs.selectedIndex = 0;
+
+        // this.setup.reset();
+        // this.style.reset();
+        // this.conditions.reset();
+
+        this.sidenav.close();
+        // this.conditions.close();
+    };
+
+    public remove(event, row: Row, columnId) {
+        event.preventDefault();
+        event.stopPropagation();
+        if (row.columns.length > 1) {
+            row.columns = row.columns.sort((a, b) => {
+                if (a.position < b.position) {
+                    return -1;
+                } else if (a.position > b.position) {
+                    return 1;
+                } else {
+                    return 0;
+                };
+            });
+            let width: number = 0;
+            for (let i = 0; i < row.columns.length; i++) {
+                if (row.columns[i].id == columnId) {
+                    width = row.columns[i].width;
+                    row.columns.splice(i, 1);
+                    break;
+                };
+            };
+            
+            row.columns.map(column => {
+                column.width += parseFloat((width / row.columns.length).toFixed(2));
+            });
+            for (let i = 0; i < row.columns.length; i++) {
+                row.columns[i].position = i + 1;
+            }
+        } else {
+            for (let i = 0; i < this.report.layout[this.layout].length; i++) {
+                if (this.report.layout[this.layout][i].rowId == row.rowId) {
+                    this.report.layout[this.layout].splice(i, 1);
+                    break;
+                };
+            };
+        };
+        // this.save({
+        //     'layout': this.report.layout
+        // });
+    };
+
     public reorder(event: CdkDragDrop<string[]>) {
         moveItemInArray(this.report.layout[this.layout], event.previousIndex, event.currentIndex);
         for (let a = 0; a < this.report.layout[this.layout].length; a++) {
@@ -210,9 +268,35 @@ export class ReportEditorPage implements OnInit, OnDestroy {
             for (let a = 0; a < this.report.layout[this.layout].length; a++) {
                 if (this.report.layout[this.layout][a].rowId == this.rowId) {
                     for (let b = 0; b < this.report.layout[this.layout][a].columns.length; b++) {
-                        if (this.report.layout[this.layout][a].columns[b].columnId == this.columnId) {
+                        if (this.report.layout[this.layout][a].columns[b].id == this.columnId) {
                             Object.keys(setup).map(key => {
-                                this.report.layout[this.layout][a].columns[b][key] = setup[key];
+                                if (this.report.layout[this.layout][a].columns[b].type != setup.type) {
+                                    switch(setup.type) {
+                                        case('map'):
+                                            this.report.layout[this.layout][a].columns[b] = new Map(this.report.layout[this.layout][a].columns[b]);
+                                            break;
+                                        case('text'):
+                                            this.report.layout[this.layout][a].columns[b] = new Text(this.report.layout[this.layout][a].columns[b]);
+                                            break;
+                                        case('blank'):
+                                            this.report.layout[this.layout][a].columns[b] = new Blank(this.report.layout[this.layout][a].columns[b]);
+                                            break;
+                                        case('value'):
+                                            this.report.layout[this.layout][a].columns[b] = new Value(this.report.layout[this.layout][a].columns[b]);
+                                            break;
+                                        case('chart'):
+                                            this.report.layout[this.layout][a].columns[b] = new Chart(this.report.layout[this.layout][a].columns[b]);
+                                            break;
+                                        case('gauge'):
+                                            this.report.layout[this.layout][a].columns[b] = new Gauge(this.report.layout[this.layout][a].columns[b]);
+                                            break;
+                                        case('vector'):
+                                            this.report.layout[this.layout][a].columns[b] = new Vector(this.report.layout[this.layout][a].columns[b]);
+                                            break;
+                                    };
+                                } else {
+                                    this.report.layout[this.layout][a].columns[b][key] = setup[key];
+                                };
                             });
                         };
                     };
@@ -234,6 +318,26 @@ export class ReportEditorPage implements OnInit, OnDestroy {
             };
         });
 
+        this.subscriptions.changes = this.blox.changes.subscribe(rows => {
+            rows.map(row => {
+                for (let a = 0; a < this.report.layout[this.layout].length; a++) {
+                    if (this.report.layout[this.layout][a].rowId == row.id) {
+                        this.report.layout[this.layout][a].height = row.height;
+                        row.columns.map(column => {
+                            for (let b = 0; b < this.report.layout[this.layout][a].columns.length; b++) {
+                                if (this.report.layout[this.layout][a].columns[b].columnId == column.id) {
+                                    this.report.layout[this.layout][a].columns[b].width = column.width;
+                                };
+                            };
+                        });
+                    };
+                };
+            });
+            // this.save({
+            //     'layout': this.report.layout
+            // });
+        });
+        
         this.load();
     };
 

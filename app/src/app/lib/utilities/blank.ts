@@ -3,9 +3,9 @@ import { Style, STYLE } from './style';
 
 export class Blank extends Style {
 
-    readonly id: string = ObjectId();
     readonly type: string = 'blank';
     
+    public id?: string = ObjectId();
     public label?: string = '';
     public width?: number = 0;
     public position?: number = 0;
@@ -13,6 +13,9 @@ export class Blank extends Style {
     constructor(blank?: BLANK) {
         super(blank);
         if (typeof(blank) != 'undefined' && blank !== null) {
+            if (typeof(blank.id) != 'undefined' && blank.id !== null) {
+                this.id = blank.id;
+            };
             if (typeof(blank.label) != 'undefined' && blank.label !== null) {
                 this.label = blank.label;
             };
