@@ -1,0 +1,59 @@
+.themes {
+    width: calc(100% - 10px);
+    height: calc(100% - 66px);
+    padding: 5px;
+    display: flex;
+    flex-wrap: wrap;
+    blox {
+        flex: 0 calc(20% - 10px);
+        width: calc(20% - 10px);
+        margin: 5px;
+        height: 150px;
+        border-radius: 5px;
+        column {
+            border-radius: 2px;
+            label {
+                top: 2px;
+                left: 2px;
+                position: absolute;
+                font-size: 8px;
+                line-height: 8px;
+                text-transform: uppercase;
+            }
+        }
+        label {
+            right: 15px;
+            bottom: 15px;
+            height: 12px;
+            position: absolute;
+            font-size: 12px;
+            line-height: 12px;
+            font-weight: 500;
+            text-transform: uppercase;
+        }
+    }
+}
+@media screen and (max-width: 1500px) {
+    blox {
+        flex: 0 calc(20% - 10px);
+        width: calc(20% - 10px);
+    }
+}
+@media screen and (max-width: 1200px) {
+    blox {
+        flex: 0 calc(33.33% - 10px);
+        width: calc(33.33% - 10px);
+    }
+}
+@media screen and (max-width: 900px) {
+    blox {
+        flex: 0 calc(50% - 10px);
+        width: calc(50% - 10px);
+    }
+}
+@media screen and (max-width: 600px) {
+    blox {
+        flex: 0 calc(100% - 10px);
+        width: calc(100% - 10px);
+    }
+}

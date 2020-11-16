@@ -17,10 +17,12 @@ import { MatSelectModule } from '@angular/material/select';
 import { OrderPipeModule } from 'src/app/pipes/order/order.module';
 import { MatFooterModule } from 'src/app/lib/mat-footer/mat-footer.module';
 import { MatRippleModule } from '@angular/material/core';
+import { MatDialogModule } from '@angular/material/dialog';
 import { MatSidenavModule } from '@angular/material/sidenav';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { FilterPipeModule } from 'src/app/pipes/filter/filter.module';
 import { MatContentModule } from 'src/app/lib/mat-content/mat-content.module';
+import { MatTooltipModule } from '@angular/material/tooltip';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { Routes, RouterModule } from '@angular/router';
 import { NgxMatSelectSearchModule } from 'ngx-mat-select-search';
@@ -28,6 +30,8 @@ import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 
 /* --- COMPONENTS --- */
+import { ThemeDialog } from './theme/theme.dialog';
+import { AddRowDialog } from './add-row/add-row.dialog';
 import { ColumnSetupComponent } from './setup/setup.component';
 import { ColumnStyleComponent } from './style/style.component';
 import { ColumnConditionsComponent } from './conditions/conditions.component';
@@ -52,10 +56,12 @@ const routes: Routes = [
         DragDropModule,
         FormFieldModule,
         MatButtonModule,
+        MatDialogModule,
         MatFooterModule,
         MatRippleModule,
         MatSelectModule,
         OrderPipeModule,
+        MatTooltipModule,
         MatContentModule,
         MatToolbarModule,
         MatSidenavModule,
@@ -67,6 +73,8 @@ const routes: Routes = [
         RouterModule.forChild(routes)
     ],
     declarations: [
+        ThemeDialog,
+        AddRowDialog,
         ReportEditorPage,
         ColumnSetupComponent,
         ColumnStyleComponent,

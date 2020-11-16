@@ -19,6 +19,10 @@ export class ColumnConditionsComponent implements OnInit, OnDestroy {
     public columns: string[] = ['preview', 'trigger', 'options'];
     public element: HTMLElement;
     public conditions: MatTableDataSource<any> = new MatTableDataSource<any>();
+    
+    public open() {
+        this.renderer.addClass(this.element, 'visible');
+    };
 
     public set(data) {
         this.conditions.data = data;
@@ -39,6 +43,10 @@ export class ColumnConditionsComponent implements OnInit, OnDestroy {
     };
 
     public reset() {};
+    
+    public close() {
+        this.renderer.removeClass(this.element, 'visible');
+    };
     
     public toggle() {
         if (this.element.classList.contains('visible')) {

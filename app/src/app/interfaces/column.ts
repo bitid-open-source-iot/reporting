@@ -27,6 +27,7 @@ export interface Column extends Condition {
         'color'?: string;
         'expression'?: string;
     };
+    'id'?: string;
     'data'?: any;
     'label'?: string;
     'width'?: number;

@@ -10,7 +10,7 @@ blox {
         column {
             width: 100%;
             margin: 5px;
-            position: relative;
+            position: relative !important;
             align-items: center;
             border-radius: 10px;
         }

@@ -1,9 +1,9 @@
 <mat-sidenav-container>
     <mat-sidenav-content>
         <mat-toolbar color="primary">
-            <button mat-icon-button class="menu-toggle">
+            <button mat-icon-button class="menu-toggle" (click)="history.back()">
                 <mat-icon>
-                    menu
+                    arrow_back
                 </mat-icon>
             </button>
 
@@ -11,7 +11,7 @@
                 dashboard editor
             </div>
 
-            <button mat-icon-button [matMenuTriggerFor]="layoutmenu">
+            <button mat-icon-button matTooltip="Change Layout" [matMenuTriggerFor]="layoutmenu">
                 <mat-icon [svgIcon]="layout"></mat-icon>
             </button>
 
@@ -30,7 +30,7 @@
                 </button>
             </mat-menu>
 
-            <button mat-icon-button>
+            <button mat-icon-button (click)="theme()" matTooltip="Change Theme">
                 <mat-icon>
                     palette
                 </mat-icon>
@@ -44,7 +44,7 @@
                         <mat-icon svgIcon="drag" [style.color]="report.theme.font.color"></mat-icon>
                     </div>
 
-                    <column *ngFor="let column of row.columns | orderBy : 'position'" [id]="column.columnId" [fill]="column.fill" [width]="column.width" [stroke]="column.stroke" [position]="column.position" (click)="select(row, column)">
+                    <column *ngFor="let column of row.columns | orderBy : 'position'" [id]="column.id" [fill]="column.fill" [width]="column.width" [stroke]="column.stroke" [position]="column.position">
                         <banner [font]="column.banner">
                             {{ column.label }}
                         </banner>
@@ -66,13 +66,41 @@
                         </error>
         
                         <mat-spinner *ngIf="column.loading" diameter="30"></mat-spinner>
+
+                        <div class="options">
+                            <button mat-icon-button matTooltip="Move Left" (click)="left(row, column)" [disabled]="column.position == 1">
+                                <mat-icon>
+                                    arrow_back
+                                </mat-icon>
+                            </button>
+
+                            <div>
+                                <button mat-icon-button matTooltip="Edit Column" (click)="select(row, column)">
+                                    <mat-icon svgIcon="edit"></mat-icon>
+                                </button>
+
+                                <button mat-icon-button matTooltip="Copy Column">
+                                    <mat-icon svgIcon="copy"></mat-icon>
+                                </button>
+
+                                <button mat-icon-button matTooltip="Delete Column">
+                                    <mat-icon svgIcon="delete"></mat-icon>
+                                </button>
+                            </div>
+
+                            <button mat-icon-button matTooltip="Move Right" (click)="right(row, column)" [disabled]="column.position == row.columns.length">
+                                <mat-icon>
+                                    arrow_forward
+                                </mat-icon>
+                            </button>
+                        </div>
                     </column>
     
                     <div class="drag-placeholder" *cdkDragPlaceholder></div>
                 </row>
             
                 <row type="static" [height]="100">
-                    <column class="add" [width]="100" [fill]="report.theme.column" matRipple matTooltip="Add Row">
+                    <column class="add" [width]="100" [fill]="report.theme.column" matRipple matTooltip="Add Row" (click)="add()">
                         <mat-icon [style.color]="report.theme.font.color">
                             add
                         </mat-icon>

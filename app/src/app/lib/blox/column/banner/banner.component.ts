@@ -26,10 +26,10 @@ export class BloxColumnBannerComponent implements OnInit, OnChanges, OnDestroy {
             this.renderer.setStyle(this.element, 'line-height', [this.font.size, 'px'].join(''));
             this.renderer.setStyle(this.element, 'font-family', this.font.family);
 
-            this.renderer.setStyle(this.element, 'top', 'auto');
-            this.renderer.setStyle(this.element, 'left', 'auto');
-            this.renderer.setStyle(this.element, 'right', 'auto');
-            this.renderer.setStyle(this.element, 'bottom', 'auto');
+            this.renderer.setStyle(this.element, 'top', 'unset');
+            this.renderer.setStyle(this.element, 'left', 'unset');
+            this.renderer.setStyle(this.element, 'right', 'unset');
+            this.renderer.setStyle(this.element, 'bottom', 'unset');
 
             switch(this.font.vertical) {
                 case('top'):

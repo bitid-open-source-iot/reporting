@@ -20,79 +20,34 @@ export class ColumnSetupComponent implements OnInit, OnDestroy {
     };
 
     public form: FormGroup = new FormGroup({
-        'map': new FormGroup({}),
-        'text': new FormGroup({
-            'value': new FormControl(null)
-        }),
-        'table': new FormGroup({}),
-        'gauge': new FormGroup({}),
-        'image': new FormGroup({
-            'src': new FormControl(null)
-        }),
-        'query': new FormGroup({
-            'inputId': new FormControl(null),
-            'deviceId': new FormControl(null)
-        }),
-        'chart': new FormGroup({
-            'type': new FormControl(null)
-        }),
-        'value': new FormGroup({
-            'expression': new FormControl(null)
-        }),
-        'label': new FormControl(null, [Validators.required]),
-        'display': new FormControl(null, [Validators.required])
+        'type': new FormControl(null, [Validators.required]),
+        'label': new FormControl(null, [Validators.required])
     });
-    public filter: FormGroup = new FormGroup({
-        'input': new FormControl(null),
-        'device': new FormControl(null)
-    });
-    public errors: any = {
-        'map': {},
-        'text': {
-            'value': ''
-        },
-        'image': {
-            'src': ''
-        },
-        'table': {},
-        'gauge': {},
-        'query': {
-            'inputId': '',
-            'deviceId': ''
-        },
-        'chart': {
-            'type': ''
-        },
-        'value': {
-            'expression': ''
-        },
-        'label': '',
-        'display': ''
-    };
-    public inputs: any[] = [];
-    public change: EventEmitter<any> = new EventEmitter<any>();
-    public element: HTMLElement;
-    public displays: any[] = [
+    public types: any[] = [
         {
             'value': 'chart',
             'description': 'Chart'
         },
-        // {
-        //     'value': 'gauge',
-        //     'description': 'Gauge'
-        // },
         {
-            'value': 'image',
-            'description': 'Image'
+            'value': 'blank',
+            'description': 'Blank'
         },
-        // {
-        //     'value': 'map',
-        //     'description': 'Map'
-        // },
-        // {
-        //     'value': 'table',
-        //     'description': 'Table'
-        // },
+        {
+            'value': 'gauge',
+            'description': 'Gauge'
+        },
+        {
+            'value': 'vector',
+            'description': 'Vector'
+        },
+        {
+            'value': 'map',
+            'description': 'Map'
+        },
+        {
+            'value': 'table',
+            'description': 'Table'
+        },
         {
             'value': 'text',
             'description': 'Text'
@@ -106,6 +61,17 @@ export class ColumnSetupComponent implements OnInit, OnDestroy {
             'description': 'Spacer'
         }
     ];
+    public filter: FormGroup = new FormGroup({
+        'input': new FormControl(null),
+        'device': new FormControl(null)
+    });
+    public errors: any = {
+        'type': '',
+        'label': ''
+    };
+    public inputs: any[] = [];
+    public change: EventEmitter<any> = new EventEmitter<any>();
+    public element: HTMLElement;
     public setting: boolean;
     public loading: boolean;
     public uploading: boolean;
@@ -169,20 +135,10 @@ export class ColumnSetupComponent implements OnInit, OnDestroy {
                 this.change.next(data);
             };
         });
-
-        this.subscriptions.deviceId = (<FormGroup>this.form.controls['query']).controls['deviceId'].valueChanges.subscribe(deviceId => {
-            for (let i = 0; i < this.devices.data.length; i++) {
-                if (this.devices.data[i].deviceId == deviceId) {
-                    this.inputs = this.devices.data[i].inputs;
-                    break;
-                };
-            };
-        });
     };
 
     ngOnDestroy(): void {
         this.subscriptions.form.unsubscribe();
-        this.subscriptions.deviceId.unsubscribe();
     };
 
 }

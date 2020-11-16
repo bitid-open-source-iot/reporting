@@ -11,11 +11,47 @@ mat-sidenav-content {
 mat-sidenav {
     width: 300px;
     border: none !important;
+    box-shadow: 0px 0px 5px 0px rgba(0, 0, 0, 0.25);
+    -moz-box-shadow: 0px 0px 5px 0px rgba(0, 0, 0, 0.25);
+    -webkit-box-shadow: 0px 0px 5px 0px rgba(0, 0, 0, 0.25);
 }
 .add {
     display: flex;
     align-items: center;
     justify-content: center;
+}
+.mobile {
+    margin: auto;
+    max-width: 400px;
+}
+.tablet {
+    margin: auto;
+    max-width: 1000px;
+}
+.desktop {
+    margin: auto;
+    max-width: 2000px;
+}
+.options {
+    top: 0px;
+    left: 0px;
+    right: 0px;
+    color: #FFF;
+    bottom: 0px;
+    display: flex;
+    opacity: 0;
+    z-index: 100;
+    position: absolute;
+    transition: all 0.5s ease-in-out;
+    align-items: center;
+    border-radius: 10px;
+    flex-direction: row;
+    justify-content: space-between;
+    background-color: rgba(0, 0, 0, 0.5);
+}
+column:hover .options,
+column:active .options {
+    opacity: 1;
 }
 .dashboard {
     overflow-y: auto;
@@ -34,7 +70,7 @@ mat-sidenav {
     display: flex;
     min-height: 100px;
     box-shadow: 0 5px 5px -3px rgba(0, 0, 0, 0.2), 0 8px 10px 1px rgba(0, 0, 0, 0.14), 0 3px 14px 2px rgba(0, 0, 0, 0.12);
-    border-radius: 10px;
+    border-radius: 10px !important;
     flex-direction: row;
 }
 .drag-placeholder {
@@ -43,7 +79,7 @@ mat-sidenav {
     display: flex;
     transition: transform 250ms cubic-bezier(0, 0, 0.2, 1);
     align-items: center;
-    border-radius: 10px;
+    border-radius: 10px !important;
     justify-content: center;
     background-color: rgba(255, 255, 255, 0.5);
 }
