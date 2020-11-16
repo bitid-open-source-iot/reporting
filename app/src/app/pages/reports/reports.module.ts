@@ -16,10 +16,11 @@ import { DeleteModule } from 'src/app/components/delete/delete.module';
 import { CommonModule } from '@angular/common';
 import { SearchModule } from 'src/app/components/search/search.module';
 import { MatListModule } from '@angular/material/list';
-import { MatIconModule } from '@angular/material/icon';
 import { MatMenuModule } from '@angular/material/menu';
+import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
 import { DragDropModule } from '@angular/cdk/drag-drop';
+import { MatTableModule } from '@angular/material/table';
 import { MatSelectModule } from '@angular/material/select';
 import { MatDialogModule } from '@angular/material/dialog';
 import { MatButtonModule } from '@angular/material/button';
@@ -48,9 +49,10 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
         CommonModule,
         DeleteModule,
         SearchModule,
-        MatIconModule,
         MatMenuModule,
+        MatIconModule,
         MatListModule,
+        MatTableModule,
         DragDropModule,
         MatInputModule,
         MatSelectModule,

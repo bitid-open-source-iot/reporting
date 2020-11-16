@@ -76,6 +76,38 @@ export class ColumnStyleComponent implements OnInit, OnDestroy {
     public setting: boolean;
     private subscriptions: any = {};
 
+    public async reset() {
+        this.form.setValue({
+            'fill': {
+                'color': '#000000',
+                'opacity': 100
+            },
+            'font': {
+                'size': 24,
+                'color': '#FFFFFF',
+                'family': 'Arial',
+                'opacity': 100,
+                'vertical': 'center',
+                'horizontal': 'center'
+            },
+            'stroke': {
+                'width': 0,
+                'style': 'solid',
+                'color': '#000000',
+                'opacity': 100
+            },
+            'banner': {
+                'size': 12,
+                'color': '#FFFFFF',
+                'family': 'Arial',
+                'opacity': 100,
+                'vertical': 'top',
+                'horizontal': 'left'
+            }
+        });
+        this.form.markAsUntouched();
+    };
+
     public async set(data) {
         this.setting = true;
         Object.keys(this.form.controls).map(key => {

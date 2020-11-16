@@ -73,6 +73,14 @@ export class ColumnSetupComponent implements OnInit, OnDestroy {
     public uploading: boolean;
     private subscriptions: any = {};
 
+    public async reset() {
+        this.form.setValue({
+            'type': null,
+            'label': null
+        });
+        this.form.markAsUntouched();
+    };
+
     public async set(data) {
         this.setting = true;
         Object.keys(this.form.controls).map(key => {

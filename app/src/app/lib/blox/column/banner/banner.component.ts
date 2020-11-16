@@ -26,26 +26,30 @@ export class BloxColumnBannerComponent implements OnInit, OnChanges, OnDestroy {
             this.renderer.setStyle(this.element, 'line-height', [this.font.size, 'px'].join(''));
             this.renderer.setStyle(this.element, 'font-family', this.font.family);
 
-            this.renderer.setStyle(this.element, 'top', 'unset');
-            this.renderer.setStyle(this.element, 'left', 'unset');
-            this.renderer.setStyle(this.element, 'right', 'unset');
-            this.renderer.setStyle(this.element, 'bottom', 'unset');
+            this.renderer.setStyle(this.element, 'align-items', 'unset');
+            this.renderer.setStyle(this.element, 'justify-content', 'unset');
 
             switch(this.font.vertical) {
                 case('top'):
-                    this.renderer.setStyle(this.element, 'top', '0px');
+                    this.renderer.setStyle(this.element, 'align-items', 'flex-start');
+                    break;
+                case('center'):
+                    this.renderer.setStyle(this.element, 'align-items', 'center');
                     break;
                 case('bottom'):
-                    this.renderer.setStyle(this.element, 'bottom', '0px');
+                    this.renderer.setStyle(this.element, 'align-items', 'flex-end');
                     break;
             };
 
             switch(this.font.horizontal) {
                 case('left'):
-                    this.renderer.setStyle(this.element, 'left', '0px');
+                    this.renderer.setStyle(this.element, 'justify-content', 'flex-start');
+                    break;
+                case('center'):
+                    this.renderer.setStyle(this.element, 'justify-content', 'center');
                     break;
                 case('right'):
-                    this.renderer.setStyle(this.element, 'right', '0px');
+                    this.renderer.setStyle(this.element, 'justify-content', 'flex-end');
                     break;
             };
         };

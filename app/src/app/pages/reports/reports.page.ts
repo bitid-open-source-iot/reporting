@@ -13,6 +13,7 @@ import { UnsubscribeComponent } from 'src/app/components/unsubscribe/unsubscribe
 import { BottomSheetComponent } from 'src/app/components/bottom-sheet/bottom-sheet.component';
 import { SubscribersComponent } from 'src/app/components/subscribers/subscribers.component';
 import { OnInit, Component, OnDestroy, ViewChild } from '@angular/core';
+import { MatTableDataSource } from '@angular/material/table';
 
 @Component({
     selector: 'app-reports-page',
@@ -30,8 +31,8 @@ export class ReportsPage implements OnInit, OnDestroy {
         'key': 'description',
         'reverse': false
     };
-    public filter: string = '';
-    public reports: Report[] = [];
+    public columns: string[] = ['description', 'mobile', 'tablet', 'desktop'];
+    public reports: MatTableDataSource<Report> = new MatTableDataSource<Report>();
     public loading: boolean;
     private subscriptions: any = {};
 
@@ -44,18 +45,18 @@ export class ReportsPage implements OnInit, OnDestroy {
             },
             'filter': [
                 'role',
+                'views',
                 'reportId',
                 'description'
-            ],
-            'type': ['ds', 'dashboard']
+            ]
         });
 
         this.loading = false;
 
         if (response.ok) {
-            this.reports = response.result;
+            this.reports.data = response.result;
         } else {
-            this.reports = [];
+            this.reports.data = [];
         };
     };
 
@@ -63,7 +64,7 @@ export class ReportsPage implements OnInit, OnDestroy {
         this.account.logout();
     };
 
-    public async add(type: string) {
+    public async add() {
         this.loading = true;
 
         const response = await this.service.add({
@@ -88,7 +89,6 @@ export class ReportsPage implements OnInit, OnDestroy {
                 'name': 'dark',
                 'type': 'default'
             },
-            'type': type,
             'description': 'Untitled Report'
         });
 
@@ -277,9 +277,9 @@ export class ReportsPage implements OnInit, OnDestroy {
 
                                 if (response.ok) {
                                     this.toast.success('report was deleted!');
-                                    for (let i = 0; i < this.reports.length; i++) {
-                                        if (this.reports[i].reportId == report.reportId) {
-                                            this.reports.splice(i, 1);
+                                    for (let i = 0; i < this.reports.data.length; i++) {
+                                        if (this.reports.data[i].reportId == report.reportId) {
+                                            this.reports.data.splice(i, 1);
                                             break;
                                         };
                                     };
@@ -308,9 +308,9 @@ export class ReportsPage implements OnInit, OnDestroy {
 
                                 if (response.ok) {
                                     this.toast.success('unsubscribed from report!');
-                                    for (let i = 0; i < this.reports.length; i++) {
-                                        if (this.reports[i].reportId == report.reportId) {
-                                            this.reports.splice(i, 1);
+                                    for (let i = 0; i < this.reports.data.length; i++) {
+                                        if (this.reports.data[i].reportId == report.reportId) {
+                                            this.reports.data.splice(i, 1);
                                             break;
                                         };
                                     };
@@ -327,7 +327,7 @@ export class ReportsPage implements OnInit, OnDestroy {
 
     ngOnInit(): void {
         this.subscriptions.search = this.search.change.subscribe(filter => {
-            this.filter = filter;
+            this.reports.filter = filter;
         });
 
         this.list();

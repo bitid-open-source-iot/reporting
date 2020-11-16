@@ -9,63 +9,14 @@ mat-toolbar img {
     z-index: 10;
     position: fixed;
 }
-.reports {
-    display: flex;
-    padding: 5px;
-    flex-wrap: wrap;
-    .report {
-        flex: 0 calc(20% - 10px);
-        width: calc(20% - 10px);
-        margin: 5px;
-        cursor: pointer;
-        overflow: hidden;
-        position: relative;
-        padding-top: calc(20% - 10px);
-        border-radius: 4px;
-        background-color: #fff;
-        .inner {
-            top: 0px;
-            left: 0px;
-            right: 0px;
-            bottom: 0px;
-            display: flex;
-            z-index: 10;
-            position: absolute;
-            align-items: center;
-            justify-content: center;
-            h1 {
-                font-size: 12px;
-                line-height: 12px;
-                text-transform: uppercase;
-            }
-        }
+.mat-column-mobile,
+.mat-column-tablet,
+.mat-column-desktop {
+    width: 40px;
+    mat-icon {
+        color: #E0E0E0;
     }
-}
-@media screen and (max-width: 1200px) {
-    .reports .report {
-        flex: 0 calc(25% - 10px);
-        width: calc(25% - 10px);
-        padding-top: calc(25% - 10px);
-    }
-}
-@media screen and (max-width: 900px) {
-    .reports .report {
-        flex: 0 calc(33.33% - 10px);
-        width: calc(33.33% - 10px);
-        padding-top: calc(33.33% - 10px);
-    }
-}
-@media screen and (max-width: 600px) {
-    .reports .report {
-        flex: 0 calc(50% - 10px);
-        width: calc(50% - 10px);
-        padding-top: calc(50% - 10px);
-    }
-}
-@media screen and (max-width: 400px) {
-    .reports .report {
-        flex: 0 calc(100% - 10px);
-        width: calc(100% - 10px);
-        padding-top: calc(100% - 10px);
+    mat-icon.available {
+        color: #000;
     }
 }

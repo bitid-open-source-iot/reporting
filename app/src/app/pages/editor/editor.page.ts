@@ -201,8 +201,8 @@ export class ReportEditorPage implements OnInit, OnDestroy {
         this.columnId = null;
         this.tabs.selectedIndex = 0;
 
-        // this.setup.reset();
-        // this.style.reset();
+        this.setup.reset();
+        this.style.reset();
         // this.conditions.reset();
 
         this.sidenav.close();
