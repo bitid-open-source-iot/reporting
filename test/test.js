@@ -37,9 +37,8 @@ describe('Reports', function () {
         tools.api.reports.get()
             .then((result) => {
                 try {
-                    result.should.have.property('url');
-                    result.should.have.property('type');
                     result.should.have.property('role');
+                    // result.should.have.property('views');
                     result.should.have.property('users');
                     result.should.have.property('layout');
                     result.should.have.property('reportId');
@@ -65,9 +64,8 @@ describe('Reports', function () {
         tools.api.reports.list()
             .then((result) => {
                 try {
-                    result[0].should.have.property('url');
-                    result[0].should.have.property('type');
                     result[0].should.have.property('role');
+                    result[0].should.have.property('views');
                     result[0].should.have.property('users');
                     result[0].should.have.property('layout');
                     result[0].should.have.property('reportId');
@@ -227,18 +225,10 @@ var tools = {
 
                 tools.post('/reporting/reports/add', {
                     'layout': {
-                        'mobile': {
-                            'rows': []
-                        },
-                        'tablet': {
-                            'rows': []
-                        },
-                        'desktop': {
-                            'rows': []
-                        }
+                        'mobile': [],
+                        'tablet': [],
+                        'desktop': []
                     },
-                    'url': 'xxx',
-                    'type': 'dashboard',
                     'description': 'Mocha Test Report',
                     'organizationOnly': 1
                 })
@@ -251,9 +241,8 @@ var tools = {
 
                 tools.post('/reporting/reports/get', {
                     'filter': [
-                        'url',
-                        'type',
                         'role',
+                        'views',
                         'users',
                         'layout',
                         'reportId',
@@ -272,9 +261,8 @@ var tools = {
 
                 tools.post('/reporting/reports/list', {
                     'filter': [
-                        'url',
-                        'type',
                         'role',
+                        'views',
                         'users',
                         'layout',
                         'reportId',

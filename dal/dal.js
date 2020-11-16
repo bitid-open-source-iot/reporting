@@ -15,8 +15,6 @@ var module = function () {
 						'organizationOnly': args.req.body.organizationOnly
 					}
 				},
-				'url': args.req.body.url,
-				'type': args.req.body.type,
 				'theme': args.req.body.theme,
 				'layout': args.req.body.layout,
 				'serverDate': new Date(),
@@ -88,47 +86,25 @@ var module = function () {
 
 		list: (args) => {
 			var deferred = Q.defer();
-
-			var params = {
+			
+			var match = {
 				'bitid.auth.users.email': args.req.body.header.email
 			};
 
 			if (typeof (args.req.body.reportId) != 'undefined') {
 				if (Array.isArray(args.req.body.reportId) && args.req.body.reportId.length > 0) {
-					params._id = {
+					match._id = {
 						$in: args.req.body.reportId.map(id => ObjectId(id))
 					};
 				} else if (typeof (args.req.body.reportId) == 'string' && args.req.body.reportId.length == 24) {
-					params._id = ObjectId(args.req.body.reportId);
-				};
-			};
-
-			if (typeof (args.req.body.type) != 'undefined') {
-				if (Array.isArray(args.req.body.type) && args.req.body.type.length > 0) {
-					params.type = {
-						$in: args.req.body.type
-					};
-				} else if (typeof (args.req.body.type) == 'string') {
-					params.type = args.req.body.type;
+					match._id = ObjectId(args.req.body.reportId);
 				};
 			};
 
 			if (typeof (args.req.body.description) != 'undefined') {
-				params.description = {
+				match.description = {
 					$regex: args.req.body.description
 				};
-			};
-
-			if (typeof (args.req.body.skip) == 'number') {
-				var skip = args.req.body.skip;
-			};
-
-			if (typeof (args.req.body.sort) == 'object') {
-				var sort = args.req.body.sort;
-			};
-
-			if (typeof (args.req.body.limit) == 'number') {
-				var limit = args.req.body.limit;
 			};
 
 			var filter = {};
@@ -147,13 +123,76 @@ var module = function () {
 				});
 			};
 
+			var params = [
+				{
+					$match: match
+				},
+				{
+					$project: {
+						'views': {
+							'mobile': {
+								'$size': "$layout.mobile"
+							},
+							'tablet': {
+								'$size': "$layout.tablet"
+							},
+							'desktop': {
+								'$size': "$layout.desktop"
+							}
+						},
+						'_id': 1,
+						'bitid': 1,
+						'layout': 1,
+						'serverDate': 1,
+						'description': 1
+					}
+				},
+				{
+					$project: {
+						'views': {
+							'mobile': {
+								$cond: {
+									if: {
+										$gt: [ "$views.mobile", 0]
+									},
+									then: true,
+									else: false
+								}
+							},
+							'tablet': {
+								$cond: {
+									if: {
+										$gt: [ "$views.tablet", 0]
+									},
+									then: true,
+									else: false
+								}
+							},
+							'desktop': {
+								$cond: {
+									if: {
+										$gt: [ "$views.desktop", 0]
+									},
+									then: true,
+									else: false
+								}
+							}
+						},
+						'_id': 1,
+						'bitid': 1,
+						'layout': 1,
+						'serverDate': 1,
+						'description': 1
+					}
+				},
+				{
+					$project: filter
+				}
+			];
+
 			db.call({
-				'skip': skip,
-				'sort': sort,
-				'limit': limit,
-				'filter': filter,
 				'params': params,
-				'operation': 'find',
+				'operation': 'aggregate',
 				'collection': 'tblReports'
 			})
 				.then(result => {
@@ -288,12 +327,6 @@ var module = function () {
 				$set: {
 					'serverDate': new Date()
 				}
-			};
-			if (typeof (args.req.body.url) != 'undefined') {
-				update.$set.url = args.req.body.url;
-			};
-			if (typeof (args.req.body.type) != 'undefined') {
-				update.$set.type = args.req.body.type;
 			};
 			if (typeof (args.req.body.theme) != 'undefined' && args.req.body.theme != null && args.req.body.theme != '') {
 				update.$set.theme = args.req.body.theme;
