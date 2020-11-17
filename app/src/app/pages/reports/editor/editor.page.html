@@ -55,10 +55,10 @@
         
                         <image *ngIf="column.type == 'vector'" [src]="column.src"></image>
         
-                        <chart *ngIf="column.type == 'chart'" [font]="column.font" [series]="column.series"></chart>
+                        <chart *ngIf="column.type == 'chart'" [font]="column.font" [fill]="column.fill" [stroke]="column.stroke" [series]="column.series"></chart>
         
                         <value *ngIf="column.type == 'value'" [font]="column.font">
-                            {{ column.data.type == 'analog' ? (column.data.value | number : '0.2-2') : (column.data.value == 0 ? column.data.digital.low : column.data.digital.high) }}{{ (column.data.type == 'analog' && column.data.analog.units) ? column.data.analog.units : '' }}
+                            {{ column.value }}
                         </value>
                         
                         <div class="options" *ngIf="!copying">
