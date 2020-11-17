@@ -30,8 +30,12 @@ import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 
 /* --- COMPONENTS --- */
+import { ChartForm } from './setup/chart-form/chart-form.component';
+import { VectorForm } from './setup/vector-form/vector-form.component';
 import { ThemeDialog } from './theme/theme.dialog';
 import { AddRowDialog } from './add-row/add-row.dialog';
+import { TextFormComponent } from './setup/text-form/text-form.component';
+import { ValueFormComponent } from './setup/value-form/value-form.component';
 import { ColumnSetupComponent } from './setup/setup.component';
 import { ColumnStyleComponent } from './style/style.component';
 import { ColumnConditionsComponent } from './conditions/conditions.component';
@@ -73,9 +77,13 @@ const routes: Routes = [
         RouterModule.forChild(routes)
     ],
     declarations: [
+        ChartForm,
+        VectorForm,
         ThemeDialog,
         AddRowDialog,
         ReportEditorPage,
+        TextFormComponent,
+        ValueFormComponent,
         ColumnSetupComponent,
         ColumnStyleComponent,
         ColumnConditionsComponent

@@ -49,17 +49,17 @@
                             {{ column.label }}
                         </banner>
         
-                        <text *ngIf="!column.error && !column.loading && column.display == 'text'" [font]="column.font" [style.top.px]="column.banner.size + 10" [style.left.px]="column.banner.size" [style.right.px]="column.banner.size" [style.bottom.px]="column.banner.size">
+                        <text *ngIf="!column.error && !column.loading && column.type == 'text'" [font]="column.font" [style.top.px]="column.banner.size + 10" [style.left.px]="column.banner.size" [style.right.px]="column.banner.size" [style.bottom.px]="column.banner.size">
                             {{ column.text.value }}
                         </text>
         
-                        <value *ngIf="!column.error && !column.loading && column.data && column.display == 'value'" [font]="column.font">
+                        <value *ngIf="!column.error && !column.loading && column.data && column.type == 'value'" [font]="column.font">
                             {{ column.data.type == 'analog' ? (column.data.value | number : '0.2-2') : (column.data.value == 0 ? column.data.digital.low : column.data.digital.high) }}{{ (column.data.type == 'analog' && column.data.analog.units) ? column.data.analog.units : '' }}
                         </value>
         
-                        <image *ngIf="!column.error && !column.loading && column.display == 'image'" [src]="column.image.src"></image>
+                        <image *ngIf="!column.error && !column.loading && column.type == 'vector'" [src]="column.src"></image>
         
-                        <!-- <chart *ngIf="!column.error && !column.loading && column.data && column.display == 'chart'" [type]="column.chart.type" [data]="column.data.value" [units]="column.data.analog.units" [font]="column.font" [label]="column.label" [format]="date.format" [chartfill]="column.chartfill" [gridlines]="column.gridlines"></chart> -->
+                        <!-- <chart *ngIf="!column.error && !column.loading && column.data && column.type == 'chart'" [type]="column.chart.type" [data]="column.data.value" [units]="column.data.analog.units" [font]="column.font" [label]="column.label" [format]="date.format" [chartfill]="column.chartfill" [gridlines]="column.gridlines"></chart> -->
                         
                         <error *ngIf="column.error && !column.loading" [font]="column.font">
                             Issue loading data!
@@ -74,19 +74,17 @@
                                 </mat-icon>
                             </button>
 
-                            <div>
-                                <button mat-icon-button matTooltip="Edit Column" (click)="select(row, column)">
-                                    <mat-icon svgIcon="edit"></mat-icon>
-                                </button>
+                            <button mat-icon-button matTooltip="Edit Column" (click)="select(row, column)">
+                                <mat-icon svgIcon="edit"></mat-icon>
+                            </button>
 
-                                <button mat-icon-button matTooltip="Copy Column">
-                                    <mat-icon svgIcon="copy"></mat-icon>
-                                </button>
+                            <button mat-icon-button matTooltip="Copy Column">
+                                <mat-icon svgIcon="copy"></mat-icon>
+                            </button>
 
-                                <button mat-icon-button matTooltip="Delete Column" (click)="remove($event, row, column.id)">
-                                    <mat-icon svgIcon="delete"></mat-icon>
-                                </button>
-                            </div>
+                            <button mat-icon-button matTooltip="Delete Column" (click)="remove($event, row, column.id)">
+                                <mat-icon svgIcon="delete"></mat-icon>
+                            </button>
 
                             <button mat-icon-button matTooltip="Move Right" (click)="right(row, column)" [disabled]="column.position == row.columns.length">
                                 <mat-icon>
@@ -140,5 +138,9 @@
                 </mat-tab>
             </mat-tab-group>
         </mat-content>
+        
+        <mat-footer>
+            Close panel to save changes *
+        </mat-footer>
     </mat-sidenav>
 </mat-sidenav-container>

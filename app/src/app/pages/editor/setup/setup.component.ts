@@ -1,10 +1,8 @@
-import { environment } from 'src/environments/environment';
-import { ToastService } from 'src/app/services/toast/toast.service';
 import { DevicesService } from 'src/app/services/devices/devices.service';
 import { FormErrorService } from 'src/app/services/form-error/form-error.service';
-import { LocalstorageService } from 'src/app/services/localstorage/localstorage.service';
 import { FormGroup, FormControl, Validators } from '@angular/forms';
-import { OnInit, Component, OnDestroy, ElementRef, EventEmitter, ViewEncapsulation } from '@angular/core';
+import { OnInit, Component, OnDestroy, ViewChild, ElementRef, EventEmitter, ViewEncapsulation } from '@angular/core';
+import { VectorForm } from './vector-form/vector-form.component';
 
 @Component({
     selector: 'column-setup',
@@ -15,7 +13,9 @@ import { OnInit, Component, OnDestroy, ElementRef, EventEmitter, ViewEncapsulati
 
 export class ColumnSetupComponent implements OnInit, OnDestroy {
 
-    constructor(private el: ElementRef, private toast: ToastService, public devices: DevicesService, private formerror: FormErrorService, private localstorage: LocalstorageService) {
+    @ViewChild(VectorForm, {'static': true}) private vector: VectorForm;
+
+    constructor(private el: ElementRef, public devices: DevicesService, private formerror: FormErrorService) {
         this.element = this.el.nativeElement;
     };
 
@@ -26,34 +26,42 @@ export class ColumnSetupComponent implements OnInit, OnDestroy {
     public types: any[] = [
         {
             'value': 'chart',
+            'disabled': false,
             'description': 'Chart'
         },
         {
             'value': 'blank',
+            'disabled': false,
             'description': 'Blank'
         },
         {
             'value': 'gauge',
+            'disabled': true,
             'description': 'Gauge'
         },
         {
             'value': 'vector',
+            'disabled': false,
             'description': 'Vector'
         },
         {
             'value': 'map',
+            'disabled': true,
             'description': 'Map'
         },
         {
             'value': 'table',
+            'disabled': true,
             'description': 'Table'
         },
         {
             'value': 'text',
+            'disabled': false,
             'description': 'Text'
         },
         {
             'value': 'value',
+            'disabled': false,
             'description': 'Value'
         }
     ];
@@ -92,44 +100,8 @@ export class ColumnSetupComponent implements OnInit, OnDestroy {
                 this.form.controls[key].setValue(data[key]);
             };
         });
+        this.vector.set(data);
         this.setting = false;
-    };
-
-    public async upload() {
-        const input = document.createElement('input');
-        input.min = '1';
-        input.max = '1';
-        input.type = 'file';
-        input.accept = 'image/*';
-        input.click();
-        input.onchange = async (event: any) => {
-            this.uploading = true;
-            const url = [environment.drive, '/drive/files/upload?email=', this.localstorage.get('email'), '&appId=', environment.appId].join('');
-            const form = new FormData();
-            const request = new XMLHttpRequest();
-
-            for (var i = 0; i < event.target.files.length; i++) {
-                form.append("uploads[]", event.target.files[i], event.target.files[i].name);
-            };
-
-            request.onreadystatechange = (event) => {
-                if (request.readyState == 4) {
-                    if (request.status == 200) {
-                        const response = JSON.parse(request.response);
-                        const image: FormGroup = <any>this.form.controls['image'];
-                        image.controls['src'].setValue([environment.drive, '/drive/files/get?fileId=', response.fileId, "&token=", response.token].join(''));
-                        this.uploading = false;
-                    } else {
-                        this.toast.error('issue uploading image!');
-                        this.uploading = false;
-                    };
-                };
-            };
-
-            request.open("POST", url, true);
-            request.setRequestHeader('Authorization', this.localstorage.get('token'));
-            request.send(form);
-        };
     };
 
     ngOnInit(): void {
@@ -139,10 +111,21 @@ export class ColumnSetupComponent implements OnInit, OnDestroy {
                 this.change.next(data);
             };
         });
+        
+        this.subscriptions.vector = this.vector.change.subscribe(vector => {
+            if (!this.setting) {
+                let data = this.form.value;
+                Object.keys(vector).map(key => {
+                    data[key] = vector[key];
+                });
+                this.change.next(data);
+            };
+        });
     };
 
     ngOnDestroy(): void {
         this.subscriptions.form.unsubscribe();
+        this.subscriptions.vector.unsubscribe();
     };
 
 }

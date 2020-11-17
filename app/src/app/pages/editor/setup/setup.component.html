@@ -17,7 +17,7 @@
         </mat-label>
         
         <mat-select name="type" placeholder="display type" formControlName="type" required>
-            <mat-option *ngFor="let type of types | orderBy : 'description'" [value]="type.value">
+            <mat-option *ngFor="let type of types | orderBy : 'description'" [value]="type.value" [disabled]="type.disabled">
                 {{ type.description }}
             </mat-option>
         </mat-select>
@@ -27,3 +27,7 @@
         </mat-error>
     </mat-form-field>
 </form>
+
+<chart-form [type]="form.value.type"></chart-form>
+
+<vector-form [type]="form.value.type"></vector-form>

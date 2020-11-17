@@ -8,15 +8,18 @@ import { MatSidenav } from '@angular/material/sidenav';
 import { ThemeDialog } from './theme/theme.dialog';
 import { MatTabGroup } from '@angular/material/tabs';
 import { AddRowDialog } from './add-row/add-row.dialog';
+import { ToastService } from 'src/app/services/toast/toast.service';
 import { BloxComponent } from 'src/app/lib/blox/blox.component';
 import { HistoryService } from 'src/app/services/history/history.service';
 import { DevicesService } from 'src/app/services/devices/devices.service';
+import { ReportsService } from 'src/app/services/reports/reports.service';
+import { ActivatedRoute } from '@angular/router';
 import { ColumnSetupComponent } from './setup/setup.component';
 import { ColumnStyleComponent } from './style/style.component';
 import { ColumnConditionsComponent } from './conditions/conditions.component';
 import { CdkDragDrop, moveItemInArray } from '@angular/cdk/drag-drop';
 import { OnInit, Component, OnDestroy, ViewChild } from '@angular/core';
-import { Map, Text, Chart, Value, Blank, Gauge, Vector } from 'src/app/lib/utilities/index';
+import { Map, Text, Chart, Value, Blank, Gauge, Vector, ParseUtility, UnparseUtility } from 'src/app/lib/utilities/index';
 
 @Component({
     selector: 'report-editor-page',
@@ -33,7 +36,7 @@ export class ReportEditorPage implements OnInit, OnDestroy {
     @ViewChild(ColumnStyleComponent, { 'static': true }) private style: ColumnStyleComponent;
     @ViewChild(ColumnConditionsComponent, { 'static': true }) private conditions: ColumnConditionsComponent;
 
-    constructor(private dialog: MatDialog, public history: HistoryService, public devices: DevicesService) { };
+    constructor(private route: ActivatedRoute, private toast: ToastService, private dialog: MatDialog, private service: ReportsService, public history: HistoryService, public devices: DevicesService) { };
 
     public rowId: string;
     public report: Report = {
@@ -67,6 +70,22 @@ export class ReportEditorPage implements OnInit, OnDestroy {
     public columnId: string;
     private subscriptions: any = {};
 
+    public unselect() {
+        this.rowId = null;
+        this.columnId = null;
+        this.tabs.selectedIndex = 0;
+
+        this.setup.reset();
+        this.style.reset();
+        // this.conditions.reset();
+
+        this.sidenav.close();
+        // this.conditions.close();
+        this.save({
+            'layout': this.report.layout
+        });
+    };
+
     public async add() {
         const dialog = await this.dialog.open(AddRowDialog, {
             'data': this.layout,
@@ -96,9 +115,9 @@ export class ReportEditorPage implements OnInit, OnDestroy {
                 };
 
                 this.report.layout[this.layout].push(row);
-                // this.save({
-                //     'layout': this.report.layout
-                // });
+                this.save({
+                    'layout': this.report.layout
+                });
             };
         });
     };
@@ -113,7 +132,7 @@ export class ReportEditorPage implements OnInit, OnDestroy {
         await dialog.afterClosed().subscribe(async (result: Theme) => {
             if (result) {
                 this.report.theme = result;
-                // this.service.theme.next(result);
+                this.service.theme.next(result);
                 this.report.layout.mobile.map(row => {
                     row.columns.map(column => {
                         if (typeof (column.display) == 'undefined' || column.display == null || column.display == '') {
@@ -138,16 +157,45 @@ export class ReportEditorPage implements OnInit, OnDestroy {
                         };
                     });
                 });
-                // this.save({
-                //     'theme': this.report.theme,
-                //     'layout': this.report.layout
-                // });
+                this.save({
+                    'theme': this.report.theme,
+                    'layout': this.report.layout
+                });
             };
         });
     };
 
     private async load() {
         this.loading = true;
+
+        const report = await this.service.get({
+            'filter': [
+                'role',
+                'theme',
+                'layout',
+                'description'
+            ],
+            'reportId': this.reportId
+        });
+
+        if (report.ok) {
+            const data = report.result;
+            
+            data.layout.mobile.map(row => {
+                row.columns = ParseUtility(row.columns);
+            });
+            data.layout.tablet.map(row => {
+                row.columns = ParseUtility(row.columns);
+            });
+            data.layout.desktop.map(row => {
+                row.columns = ParseUtility(row.columns);
+            });
+
+            this.report = data;
+        } else {
+            this.toast.error(report.error.message);
+            this.history.back();
+        };
 
         const devices = await this.devices.list({
             'filter': [
@@ -168,6 +216,29 @@ export class ReportEditorPage implements OnInit, OnDestroy {
         };
 
         this.loading = false;
+    };
+
+    public async save(params) {
+        params.reportId = this.reportId;
+        
+        if (typeof(params.layout) != 'undefined' && params.layout !== null) {
+            params.layout = JSON.parse(JSON.stringify(params.layout));
+            params.layout.mobile.map(row => {
+                row.columns = UnparseUtility(row.columns);
+            });
+            params.layout.tablet.map(row => {
+                row.columns = UnparseUtility(row.columns);
+            });
+            params.layout.desktop.map(row => {
+                row.columns = UnparseUtility(row.columns);
+            });
+        };
+
+        const response = await this.service.update(params);
+
+        if (!response.ok) {
+            this.toast.error(response.error.message);
+        };
     };
 
     public left(row: Row, column: Column) {
@@ -194,19 +265,6 @@ export class ReportEditorPage implements OnInit, OnDestroy {
         // this.conditions.open();
         // this.conditions.set(column.conditions);
         this.style.set(column);
-    };
-
-    public unselect() {
-        this.rowId = null;
-        this.columnId = null;
-        this.tabs.selectedIndex = 0;
-
-        this.setup.reset();
-        this.style.reset();
-        // this.conditions.reset();
-
-        this.sidenav.close();
-        // this.conditions.close();
     };
 
     public remove(event, row: Row, columnId) {
@@ -245,9 +303,7 @@ export class ReportEditorPage implements OnInit, OnDestroy {
                 };
             };
         };
-        // this.save({
-        //     'layout': this.report.layout
-        // });
+        this.unselect();
     };
 
     public reorder(event: CdkDragDrop<string[]>) {
@@ -258,12 +314,17 @@ export class ReportEditorPage implements OnInit, OnDestroy {
                 this.report.layout[this.layout][a].columns[b].position = b + 1;
             };
         };
-        // this.save({
-        //     'layout': this.report.layout
-        // });
+        this.save({
+            'layout': this.report.layout
+        });
     };
 
     ngOnInit(): void {
+        this.subscriptions.route = this.route.queryParams.subscribe(params => {
+            this.reportId = params.reportId;
+            this.load();
+        });
+
         this.subscriptions.setup = this.setup.change.subscribe(setup => {
             for (let a = 0; a < this.report.layout[this.layout].length; a++) {
                 if (this.report.layout[this.layout][a].rowId == this.rowId) {
@@ -325,7 +386,7 @@ export class ReportEditorPage implements OnInit, OnDestroy {
                         this.report.layout[this.layout][a].height = row.height;
                         row.columns.map(column => {
                             for (let b = 0; b < this.report.layout[this.layout][a].columns.length; b++) {
-                                if (this.report.layout[this.layout][a].columns[b].columnId == column.id) {
+                                if (this.report.layout[this.layout][a].columns[b].id == column.id) {
                                     this.report.layout[this.layout][a].columns[b].width = column.width;
                                 };
                             };
@@ -333,17 +394,17 @@ export class ReportEditorPage implements OnInit, OnDestroy {
                     };
                 };
             });
-            // this.save({
-            //     'layout': this.report.layout
-            // });
+            this.save({
+                'layout': this.report.layout
+            });
         });
-        
-        this.load();
     };
 
     ngOnDestroy(): void {
+        this.subscriptions.route.unsubscribe();
         this.subscriptions.setup.unsubscribe();
         this.subscriptions.style.unsubscribe();
+        this.subscriptions.changes.unsubscribe();
     };
 
 }

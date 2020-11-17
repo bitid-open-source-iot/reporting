@@ -8,11 +8,15 @@ export class Chart extends Style {
     public id?: string = ObjectId();
     public label?: string = '';
     public width?: number = 0;
+    public series?: SERIES[] = [];
     public position?: number = 0;
 
     constructor(chart?: CHART) {
         super(chart);
         if (typeof(chart) != 'undefined' && chart !== null) {
+            if (Array.isArray(chart.series)) {
+                this.series = chart.series;
+            };
             if (typeof(chart.id) != 'undefined' && chart.id !== null) {
                 this.id = chart.id;
             };
@@ -35,5 +39,15 @@ export interface CHART extends STYLE {
     'type'?: string;
     'label'?: string;
     'width'?: number;
+    'series'?: SERIES[];
     'position'?: number;
+}
+
+export interface SERIES {
+    'id'?: string;
+    'type'?: string;
+    'color'?: string;
+    'opacity'?: number;
+    'inputId'?: string;
+    'deviceId'?: string;
 }

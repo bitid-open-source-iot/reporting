@@ -7,6 +7,7 @@ export class Text extends Style {
 
     public id?: string = ObjectId();
     public label?: string = '';
+    public value?: string|number = '';
     public width?: number = 0;
     public position?: number = 0;
 
@@ -22,6 +23,9 @@ export class Text extends Style {
             if (typeof(text.width) != 'undefined' && text.width !== null) {
                 this.width = text.width;
             };
+            if (typeof(text.value) != 'undefined' && text.value !== null) {
+                this.value = text.value;
+            };
             if (typeof(text.position) != 'undefined' && text.position !== null) {
                 this.position = text.position;
             };
@@ -35,5 +39,6 @@ export interface TEXT extends STYLE {
     'type'?: string;
     'label'?: string;
     'width'?: number;
+    'value'?: string|number;
     'position'?: number;
 }

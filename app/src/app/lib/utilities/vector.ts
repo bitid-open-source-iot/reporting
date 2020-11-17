@@ -6,6 +6,7 @@ export class Vector extends Style {
     readonly type: string = 'vector';
 
     public id?: string = ObjectId();
+    public src?: string = '';
     public label?: string = '';
     public width?: number = 0;
     public position?: number = 0;
@@ -15,6 +16,9 @@ export class Vector extends Style {
         if (typeof(vector) != 'undefined' && vector !== null) {
             if (typeof(vector.id) != 'undefined' && vector.id !== null) {
                 this.id = vector.id;
+            };
+            if (typeof(vector.src) != 'undefined' && vector.src !== null) {
+                this.src = vector.src;
             };
             if (typeof(vector.label) != 'undefined' && vector.label !== null) {
                 this.label = vector.label;
@@ -32,6 +36,7 @@ export class Vector extends Style {
 
 export interface VECTOR extends STYLE {
     'id'?: string;
+    'src'?: string;
     'type'?: string;
     'label'?: string;
     'width'?: number;

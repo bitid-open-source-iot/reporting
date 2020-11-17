@@ -14,6 +14,12 @@ mat-sidenav {
     box-shadow: 0px 0px 5px 0px rgba(0, 0, 0, 0.25);
     -moz-box-shadow: 0px 0px 5px 0px rgba(0, 0, 0, 0.25);
     -webkit-box-shadow: 0px 0px 5px 0px rgba(0, 0, 0, 0.25);
+    mat-content mat-tab-group {
+        height: calc(100% - 56px - 56px) !important;
+    }
+    mat-footer {
+        text-align: center;
+    }
 }
 .add {
     display: flex;
@@ -99,7 +105,4 @@ column:active .options {
     mat-sidenav {
         width: 100%;
     }
-}
-mat-tab-group {
-    height: calc(100% - 56px) !important;
 }

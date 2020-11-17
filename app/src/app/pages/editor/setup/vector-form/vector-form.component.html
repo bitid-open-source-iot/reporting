@@ -1,0 +1,8 @@
+<form [formGroup]="form" *ngIf="type == 'vector'">
+    <div class="upload" (click)="upload()" [style.background-image]="'url(' + form.value.src + ')'">
+        <label>
+            Upload Image
+            <span>*</span>
+        </label>
+    </div>
+</form>
