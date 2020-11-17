@@ -67,7 +67,7 @@
         
                         <mat-spinner *ngIf="column.loading" diameter="30"></mat-spinner>
 
-                        <div class="options">
+                        <div class="options" *ngIf="!copying">
                             <button mat-icon-button matTooltip="Move Left" (click)="left(row, column)" [disabled]="column.position == 1">
                                 <mat-icon>
                                     arrow_back
@@ -78,7 +78,7 @@
                                 <mat-icon svgIcon="edit"></mat-icon>
                             </button>
 
-                            <button mat-icon-button matTooltip="Copy Column">
+                            <button mat-icon-button matTooltip="Copy Column" (click)="copy(column)">
                                 <mat-icon svgIcon="copy"></mat-icon>
                             </button>
 
@@ -91,6 +91,10 @@
                                     arrow_forward
                                 </mat-icon>
                             </button>
+                        </div>
+
+                        <div class="options paste" *ngIf="copying && columnId != column.id" (click)="paste(column)">
+                            paste
                         </div>
                     </column>
     

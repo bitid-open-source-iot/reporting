@@ -63,11 +63,13 @@ export class ReportEditorPage implements OnInit, OnDestroy {
         }
     };
     public layout: string = 'desktop';
+    public copying: boolean;
     public loading: boolean;
     public editing: boolean = true;
     public reportId: string;
     public resizing: boolean = false;
     public columnId: string;
+    private clipboard: any;
     private subscriptions: any = {};
 
     public unselect() {
@@ -120,6 +122,27 @@ export class ReportEditorPage implements OnInit, OnDestroy {
                 });
             };
         });
+    };
+
+    public copy(column) {
+        this.unselect();
+        this.copying = true;
+        this.columnId = column.id;
+        this.clipboard = JSON.parse(JSON.stringify(column));
+        delete this.clipboard.id;
+        delete this.clipboard.width;
+        delete this.clipboard.position;
+    };
+
+    public paste(column) {
+        this.clipboard.id = ObjectId();
+        Object.keys(this.clipboard).map(key => {
+            column[key] = this.clipboard[key]
+        });
+        this.copying = false;
+        this.columnId = null;
+        this.clipboard = null;
+        this.unselect();
     };
 
     public async theme() {
