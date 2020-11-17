@@ -1,8 +1,11 @@
+import { TextForm } from './text-form/text-form.component';
+import { ValueForm } from './value-form/value-form.component';
+import { ChartForm } from './chart-form/chart-form.component';
+import { VectorForm } from './vector-form/vector-form.component';
 import { DevicesService } from 'src/app/services/devices/devices.service';
 import { FormErrorService } from 'src/app/services/form-error/form-error.service';
 import { FormGroup, FormControl, Validators } from '@angular/forms';
 import { OnInit, Component, OnDestroy, ViewChild, ElementRef, EventEmitter, ViewEncapsulation } from '@angular/core';
-import { VectorForm } from './vector-form/vector-form.component';
 
 @Component({
     selector: 'column-setup',
@@ -13,6 +16,9 @@ import { VectorForm } from './vector-form/vector-form.component';
 
 export class ColumnSetupComponent implements OnInit, OnDestroy {
 
+    @ViewChild(TextForm, {'static': true}) private text: TextForm;
+    @ViewChild(ValueForm, {'static': true}) private value: ValueForm;
+    @ViewChild(ChartForm, {'static': true}) private chart: ChartForm;
     @ViewChild(VectorForm, {'static': true}) private vector: VectorForm;
 
     constructor(private el: ElementRef, public devices: DevicesService, private formerror: FormErrorService) {
@@ -100,6 +106,9 @@ export class ColumnSetupComponent implements OnInit, OnDestroy {
                 this.form.controls[key].setValue(data[key]);
             };
         });
+        this.text.set(data);
+        this.chart.set(data);
+        this.value.set(data);
         this.vector.set(data);
         this.setting = false;
     };
@@ -111,7 +120,37 @@ export class ColumnSetupComponent implements OnInit, OnDestroy {
                 this.change.next(data);
             };
         });
-        
+                
+        this.subscriptions.text = this.text.change.subscribe(text => {
+            if (!this.setting) {
+                let data = this.form.value;
+                Object.keys(text).map(key => {
+                    data[key] = text[key];
+                });
+                this.change.next(data);
+            };
+        });
+
+        this.subscriptions.chart = this.chart.change.subscribe(chart => {
+            if (!this.setting) {
+                let data = this.form.value;
+                Object.keys(chart).map(key => {
+                    data[key] = chart[key];
+                });
+                this.change.next(data);
+            };
+        });
+
+        this.subscriptions.value = this.value.change.subscribe(value => {
+            if (!this.setting) {
+                let data = this.form.value;
+                Object.keys(value).map(key => {
+                    data[key] = value[key];
+                });
+                this.change.next(data);
+            };
+        });
+
         this.subscriptions.vector = this.vector.change.subscribe(vector => {
             if (!this.setting) {
                 let data = this.form.value;
@@ -125,6 +164,9 @@ export class ColumnSetupComponent implements OnInit, OnDestroy {
 
     ngOnDestroy(): void {
         this.subscriptions.form.unsubscribe();
+        this.subscriptions.text.unsubscribe();
+        this.subscriptions.chart.unsubscribe();
+        this.subscriptions.value.unsubscribe();
         this.subscriptions.vector.unsubscribe();
     };
 

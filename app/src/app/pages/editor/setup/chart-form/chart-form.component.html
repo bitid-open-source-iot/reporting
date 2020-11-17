@@ -1,0 +1,38 @@
+<div class="series" *ngIf="type == 'chart'">
+    <div class="chart" *ngFor="let item of series">
+        <div class="backdrop" [style.opacity]="item.opacity / 100" [style.background-color]="item.color"></div>
+
+        <mat-icon svgIcon="bar-chart"></mat-icon>
+
+        <div class="details">
+            <h3>
+                {{ devices.data | device : item.deviceId : '-' }}
+            </h3>
+            <p>
+                {{ devices.data | input : item.deviceId : item.inputId : '-' }}
+            </p>
+        </div>
+        
+        <button mat-icon-button [matMenuTriggerFor]="menu">
+            <mat-icon>
+                more_vert
+            </mat-icon>
+        </button>
+
+        <mat-menu #menu="matMenu">
+            <button mat-menu-item (click)="editor('update', item)">
+                Edit Series
+            </button>
+            <button mat-menu-item (click)="remove(item)">
+                Remove Series
+            </button>
+        </mat-menu>
+    </div>
+</div>
+        
+<button mat-icon-button matTooltip="Add Chart Series" class="add" *ngIf="type == 'chart'" (click)="editor('add')">
+    <mat-icon>
+        addchart
+    </mat-icon>
+</button>
+

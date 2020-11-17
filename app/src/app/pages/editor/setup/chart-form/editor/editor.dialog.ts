@@ -1,54 +1,58 @@
 import { DevicesService } from 'src/app/services/devices/devices.service';
 import { FormErrorService } from 'src/app/services/form-error/form-error.service';
+import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
-import { Input, OnInit, Component, OnDestroy, EventEmitter } from '@angular/core';
+import { OnInit, Inject, Component, OnDestroy, ViewEncapsulation } from '@angular/core';
 
 @Component({
-    selector: 'value-form',
-    styleUrls: ['./value-form.component.scss'],
-    templateUrl: './value-form.component.html'
+    selector: 'series-editor',
+    styleUrls: ['./editor.dialog.scss'],
+    templateUrl: './editor.dialog.html',
+    encapsulation: ViewEncapsulation.None
 })
 
-export class ValueForm implements OnInit, OnDestroy {
+export class SeriesEditorDialog implements OnInit, OnDestroy {
 
-    @Input('type') public type: string;
-
-    constructor(public devices: DevicesService, private formerror: FormErrorService) { };
+    constructor(private dialog: MatDialogRef<SeriesEditorDialog>, @Inject(MAT_DIALOG_DATA) private data: any, public devices: DevicesService, private formerror: FormErrorService) { };
 
     public form: FormGroup = new FormGroup({
+        'id': new FormControl(null, [Validators.required]),
+        'type': new FormControl(null, [Validators.required]),
+        'color': new FormControl('#000000', [Validators.required]),
+        'opacity': new FormControl(100, [Validators.required, Validators.min(0), Validators.max(100)]),
         'inputId': new FormControl(null, [Validators.required]),
-        'deviceId': new FormControl(null, [Validators.required]),
-        'expression': new FormControl(null, [Validators.required])
+        'deviceId': new FormControl(null, [Validators.required])
     });
     public errors: any = {
+        'id': '',
+        'type': '',
+        'color': '',
+        'opacity': '',
         'inputId': '',
-        'deviceId': '',
-        'expression': ''
+        'deviceId': ''
     };
     public filter: FormGroup = new FormGroup({
         'input': new FormControl(''),
         'device': new FormControl('')
     });
     public inputs: any[] = [];
-    public change: EventEmitter<any> = new EventEmitter<any>();
-    public setting: boolean;
-    public loading: boolean;
     private subscriptions: any = {};
 
-    public async set(data) {
-        this.setting = true;
-        
-        Object.keys(this.form.controls).map(key => this.form.controls[key].setValue(data[key]));
-        
-        this.setting = false;
+    private set() {
+        Object.keys(this.form.controls).map(key => this.form.controls[key].setValue(this.data[key]));
+    };
+
+    public close() {
+        this.dialog.close();
+    };
+
+    public submit() {
+        this.dialog.close(this.form.value);
     };
 
     ngOnInit(): void {
         this.subscriptions.form = this.form.valueChanges.subscribe(data => {
             this.errors = this.formerror.validateForm(this.form, this.errors, true);
-            if (!this.setting) {
-                this.change.next(data);
-            };
         });
 
         this.subscriptions.deviceId = this.form.controls['deviceId'].valueChanges.subscribe(deviceId => {
@@ -59,6 +63,8 @@ export class ValueForm implements OnInit, OnDestroy {
                 };
             };
         });
+    
+        this.set();
     };
 
     ngOnDestroy(): void {

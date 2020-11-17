@@ -1,0 +1,51 @@
+chart-form .series {
+    margin: 0px 10px;
+    display: flex;
+    flex-direction: column;
+    .chart {
+        margin: 5px 0px;
+        border: 1px solid #E0E0E0;
+        height: 40px;
+        display: flex;
+        overflow: hidden;
+        position: relative;
+        align-items: center;
+        padding-left: 10px;
+        border-radius: 4px;
+        .icon {
+            margin: 0px 10px !important;
+        }
+        .details {
+            flex: 1 auto;
+            display: flex;
+            margin-left: 10px;
+            flex-direction: column;
+            h3, p {
+                margin: 0px !important;
+            }
+            h3 {
+                height: 12px;
+                font-size: 12px;
+                line-height: 12px;
+                font-weight: 500;
+            }
+            p {
+                height: 10px;
+                font-size: 10px;
+                line-height: 10px;
+            }
+        }
+        .backdrop {
+            top: 0px;
+            left: 0px;
+            right: 0px;
+            bottom: 0px;
+            z-index: -1;
+            position: absolute;
+        }
+    }
+}
+chart-form .add {
+    margin: 0px auto;
+    display: block;
+}

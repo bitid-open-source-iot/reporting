@@ -1,1 +1,13 @@
-<p>text-form works!</p>
+<form [formGroup]="form" *ngIf="type == 'text'">
+    <mat-form-field appearance="outline">
+        <mat-label>
+            Text Value
+        </mat-label>
+
+        <textarea matInput name="value" placeholder="text value" formControlName="value" required></textarea>
+
+        <mat-error *ngIf="errors.value">
+            {{ errors.value }}
+        </mat-error>
+    </mat-form-field>
+</form>

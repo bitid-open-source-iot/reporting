@@ -1,8 +1,8 @@
 import { SERIES } from 'src/app/lib/utilities/index';
+import { ObjectId } from 'src/app/id';
+import { MatDialog } from '@angular/material/dialog';
 import { DevicesService } from 'src/app/services/devices/devices.service';
-import { FormErrorService } from 'src/app/services/form-error/form-error.service';
-import { MatTableDataSource } from '@angular/material/table';
-import { FormGroup, Validators, FormControl } from '@angular/forms';
+import { SeriesEditorDialog } from './editor/editor.dialog';
 import { Input, OnInit, Component, OnDestroy, EventEmitter, ViewEncapsulation } from '@angular/core';
 
 @Component({
@@ -16,40 +16,69 @@ export class ChartForm implements OnInit, OnDestroy {
 
     @Input('type') public type: string;
 
-    constructor(public devices: DevicesService, private formerror: FormErrorService) { };
+    constructor(private dialog: MatDialog, public devices: DevicesService) { };
 
-    public form: FormGroup = new FormGroup({
-        'src': new FormControl(null, [Validators.required])
-    });
-    public errors: any = {
-        'src': ''
-    };
-    public series: MatTableDataSource<SERIES> = new MatTableDataSource<SERIES>();
+    public series: SERIES[] = [];
     public change: EventEmitter<any> = new EventEmitter<any>();
-    public columns: string[] = [];
-    public setting: boolean;
     public loading: boolean;
-    private subscriptions: any = {};
+
+    public remove(item) {
+        for (let i = 0; i < this.series.length; i++) {
+            if (this.series[i].id == item.id) {
+                this.series.splice(i, 1);
+                break;
+            };
+        };
+        this.change.emit({
+            'series': this.series
+        });
+    };
 
     public async set(data) {
-        this.setting = true;
-        
-        Object.keys(this.form.controls).map(key => this.form.controls[key].setValue(data[key]));
-        
-        this.setting = false;
+        if (Array.isArray(data.series)) {
+            this.series = data.series;
+        };
     };
 
-    ngOnInit(): void {
-        this.subscriptions.form = this.form.valueChanges.subscribe(data => {
-            this.errors = this.formerror.validateForm(this.form, this.errors, true);
-            if (!this.setting) {
-                this.change.next(data);
+    public async editor(mode: string, chart?: SERIES) {
+        if (mode == 'add') {
+            chart = {
+                'id': ObjectId(),
+                'type': null,
+                'color': '#000000',
+                'inputId': null,
+                'opacity': 100,
+                'deviceId': null
+            };
+        };
+        const dialog = await this.dialog.open(SeriesEditorDialog, {
+            'data': chart,
+            'panelClass': 'series-dialog'
+        });
+
+        await dialog.afterClosed().subscribe(async result => {
+            if (result) {
+                switch (mode) {
+                    case ('add'):
+                        this.series.push(result);
+                        break;
+                    case ('update'):
+                        this.series.map(chart => {
+                            Object.keys(result).map(key => {
+                                chart[key] = result[key];
+                            });
+                        });
+                        break;
+                };
+                this.change.emit({
+                    'series': this.series
+                });
             };
         });
     };
 
-    ngOnDestroy(): void {
-        this.subscriptions.form.unsubscribe();
-    };
+    ngOnInit(): void { };
+
+    ngOnDestroy(): void { };
 
 }

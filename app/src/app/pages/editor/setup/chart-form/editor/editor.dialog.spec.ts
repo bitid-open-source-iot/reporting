@@ -1,20 +1,20 @@
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { ValueForm } from './value-form.component';
+import { SeriesEditorDialog } from './editor.dialog';
 
-describe('ValueForm', () => {
-  let component: ValueForm;
-  let fixture: ComponentFixture<ValueForm>;
+describe('SeriesEditorDialog', () => {
+  let component: SeriesEditorDialog;
+  let fixture: ComponentFixture<SeriesEditorDialog>;
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      declarations: [ ValueForm ]
+      declarations: [ SeriesEditorDialog ]
     })
     .compileComponents();
   }));
 
   beforeEach(() => {
-    fixture = TestBed.createComponent(ValueForm);
+    fixture = TestBed.createComponent(SeriesEditorDialog);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

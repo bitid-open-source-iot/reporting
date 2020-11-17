@@ -1,0 +1,107 @@
+<mat-toolbar color="primary">
+    <div class="page-label spacer">
+        series editor
+    </div>
+
+    <button mat-icon-button (click)="close()">
+        <mat-icon>
+            close
+        </mat-icon>
+    </button>
+</mat-toolbar>
+
+<mat-content>
+    <form [formGroup]="form" (ngSubmit)="!form.invalid && submit()">
+        <mat-form-field appearance="outline">
+            <mat-label>
+                Type
+            </mat-label>
+
+            <mat-select name="type" placeholder="type" formControlName="type" required>
+                <mat-option value="bar">
+                    Bar
+                </mat-option>
+                <mat-option value="area">
+                    Area
+                </mat-option>
+                <mat-option value="line">
+                    Line
+                </mat-option>
+            </mat-select>
+
+            <mat-error *ngIf="errors.type">
+                {{ errors.type }}
+            </mat-error>
+        </mat-form-field>
+
+        <section>
+            <mat-form-field appearance="outline">
+                <mat-label>
+                    Color
+                </mat-label>
+
+                <input matInput type="color" name="color" placeholder="color" formControlName="color" required>
+
+                <mat-error *ngIf="errors.color">
+                    {{ errors.color }}
+                </mat-error>
+            </mat-form-field>
+
+            <mat-form-field appearance="outline">
+                <mat-label>
+                    Opacity
+                </mat-label>
+
+                <input matInput min="0" max="100" type="number" name="opacity" placeholder="opacity" formControlName="opacity" required>
+
+                <mat-icon matSuffix svgIcon="percentage"></mat-icon>
+
+                <mat-error *ngIf="errors.opacity">
+                    {{ errors.opacity }}
+                </mat-error>
+            </mat-form-field>
+        </section>
+        
+        <mat-form-field appearance="outline">
+            <mat-label>
+                Device
+            </mat-label>
+
+            <mat-select name="deviceId" placeholder="device" formControlName="deviceId" required>
+                <mat-option [formGroup]="filter">
+                    <ngx-mat-select-search placeholderLabel="filter devices" noEntriesFoundLabel="no devices found" formControlName="device"></ngx-mat-select-search>
+                </mat-option>
+                <mat-option *ngFor="let device of devices.data | filterBy : {'description': filter.value.device}" [value]="device.deviceId">
+                    {{ device.description }}
+                </mat-option>
+            </mat-select>
+
+            <mat-error *ngIf="errors.deviceId">
+                {{ errors.deviceId }}
+            </mat-error>
+        </mat-form-field>
+
+        <mat-form-field appearance="outline">
+            <mat-label>
+                Input
+            </mat-label>
+
+            <mat-select name="inputId" placeholder="input" formControlName="inputId" required>
+                <mat-option [formGroup]="filter">
+                    <ngx-mat-select-search placeholderLabel="filter inputs" noEntriesFoundLabel="no inputs found" formControlName="input"></ngx-mat-select-search>
+                </mat-option>
+                <mat-option *ngFor="let input of inputs | filterBy : {'description': filter.value.input}" [value]="input.inputId">
+                    {{ input.description }}
+                </mat-option>
+            </mat-select>
+
+            <mat-error *ngIf="errors.inputId">
+                {{ errors.inputId }}
+            </mat-error>
+        </mat-form-field>
+
+        <button type="submit" color="primary" mat-flat-button>
+            submit
+        </button>
+    </form>
+</mat-content>

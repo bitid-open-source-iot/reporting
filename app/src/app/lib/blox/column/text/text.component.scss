@@ -4,5 +4,9 @@ text {
     right: 0px;
     bottom: 0px;
     z-index: 100;
+    display: flex;
+    padding: 10px;
+    overflow: hidden;
     position: absolute;
+    word-break: break-all;
 }

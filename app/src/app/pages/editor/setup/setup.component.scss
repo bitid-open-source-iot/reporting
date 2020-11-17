@@ -1,3 +1,6 @@
-form {
-    padding: 10px;
+column-setup form {
+    padding: 0px 10px;
+}
+column-setup > form {
+    padding-top: 10px;
 }
