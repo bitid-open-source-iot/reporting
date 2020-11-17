@@ -1,8 +1,7 @@
+blox {
+    min-height: calc(100vh - 56px - 10px);
+}
 mat-toolbar {
-    button.selected {
-        color: #FFFFFF;
-        background-color: #2196F3;
-    }
     input {
         color: #FFF !important;
         height: 40px !important;
@@ -20,33 +19,30 @@ mat-toolbar {
         width: calc(100% - 15px);
     }
 }
-.dot {
-    width: 5px;
-    height: 5px;
-    margin: 10px;
-    border-radius: 100%;
-    background-color: #fff;
+mat-sidenav,
+mat-sidenav-content {
+    flex: 1 auto;
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
 }
-.hide {
-    display: none;
+mat-sidenav {
+    width: 300px;
+    border: none !important;
+    box-shadow: 0px 0px 5px 0px rgba(0, 0, 0, 0.25);
+    -moz-box-shadow: 0px 0px 5px 0px rgba(0, 0, 0, 0.25);
+    -webkit-box-shadow: 0px 0px 5px 0px rgba(0, 0, 0, 0.25);
+    mat-content mat-tab-group {
+        height: calc(100% - 56px - 56px) !important;
+    }
+    mat-footer {
+        text-align: center;
+    }
 }
 .add {
     display: flex;
     align-items: center;
     justify-content: center;
-}
-form {
-    width:  400px;
-    margin: auto;
-    padding-top: 20px;
-    [mat-stroked-button] {
-        margin-top: 20px;
-    }
-}
-@media screen and (max-width: 420px) {
-    form {
-        width: calc(100% - 20px);
-    }
 }
 .mobile {
     margin: auto;
@@ -60,56 +56,34 @@ form {
     margin: auto;
     max-width: 2000px;
 }
-.cdk-drag-preview {
-    margin: 5px;
-    display: flex;
-    min-height: 100px;
-    box-shadow: 0 5px 5px -3px rgba(0, 0, 0, 0.2), 0 8px 10px 1px rgba(0, 0, 0, 0.14), 0 3px 14px 2px rgba(0, 0, 0, 0.12);
-    border-radius: 10px;
-    flex-direction: row;
+.paste {
+    color: #FFFFFF !important;
+    display: flex !important;
+    align-items: center !important;
+    text-transform: uppercase !important;
+    justify-content: center !important;
+    background-color: #000000 !important;
 }
-.cdk-drag-animating {
-    transition: transform 250ms cubic-bezier(0, 0, 0.2, 1);
-}
-.drag-placeholder {
-    margin: 5px;
-    height: 100px;
+.options {
+    top: 0px;
+    left: 0px;
+    right: 0px;
+    color: #FFF;
+    bottom: 0px;
     display: flex;
-    transition: transform 250ms cubic-bezier(0, 0, 0.2, 1);
-    align-items: center;
-    border-radius: 10px;
-    justify-content: center;
-    background-color: rgba(255, 255, 255, 0.5);
-}
-column .options {
-    top: calc(50% - 25px);
-    left: calc(50% - 50px);
-    width: 100px;
-    height: 50px;
-    display: flex;
-    z-index: 1000;
     opacity: 0;
+    z-index: 100;
     position: absolute;
     transition: all 0.5s ease-in-out;
     align-items: center;
-    border-radius: 50px;
+    border-radius: 10px;
     flex-direction: row;
-    justify-content: center;
-    background-color: #FFFFFF;
+    justify-content: space-between;
+    background-color: rgba(0, 0, 0, 0.5);
 }
-column:hover,
-column:active {
-    .options {
-        opacity: 1;
-    }
-}
-.editor {
-    display: flex;
-    flex-direction: row;
-    .dashboard {
-        flex: 0 calc(100% - 50px);
-        width: calc(100% - 50px);
-    }
+column:hover .options,
+column:active .options {
+    opacity: 1;
 }
 .dashboard {
     overflow-y: auto;
@@ -118,8 +92,43 @@ column:active {
 .dashboard::-webkit-scrollbar {
     display: none;
 }
+.row-properties {
+    color: #FFF;
+    right: 5px;
+    bottom: 0px;
+    height: 10px;
+    position: absolute;
+    font-size: 10px;
+    line-height: 10px;
+}
 .drag-handle {
     left: -35px;
     position: absolute;
     align-self: center;
+}
+.cdk-drag-preview {
+    margin: 5px;
+    display: flex;
+    min-height: 100px;
+    box-shadow: 0 5px 5px -3px rgba(0, 0, 0, 0.2), 0 8px 10px 1px rgba(0, 0, 0, 0.14), 0 3px 14px 2px rgba(0, 0, 0, 0.12);
+    border-radius: 10px !important;
+    flex-direction: row;
+}
+.drag-placeholder {
+    margin: 5px;
+    height: 100px;
+    display: flex;
+    transition: transform 250ms cubic-bezier(0, 0, 0.2, 1);
+    align-items: center;
+    border-radius: 10px !important;
+    justify-content: center;
+    background-color: rgba(255, 255, 255, 0.5);
+}
+.cdk-drag-animating {
+    transition: transform 250ms cubic-bezier(0, 0, 0.2, 1);
+}
+@media screen and (max-width: 600px) {
+    mat-sidenav {
+        width: 100%;
+    }
 }

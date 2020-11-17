@@ -1,12 +1,7 @@
 /* --- PAGES --- */
 import { ReportsPage } from './reports.page';
-import { ThemeDialog } from './editor/theme/theme.dialog';
-import { AddRowDialog } from './editor/add-row/add-row.dialog';
-import { ConditionDialog } from './editor/column/condition/condition.dialog';
 import { ReportViewerPage } from './viewer/viewer.page';
 import { ReportEditorPage } from './editor/editor.page';
-import { CustomDatesDialog } from './viewer/custom-dates/custom-dates.dialog';
-import { ColumnEditorDialog } from './editor/column/column.dialog';
 
 /* --- MODULES --- */
 import { NgModule } from '@angular/core';
@@ -18,6 +13,7 @@ import { SearchModule } from 'src/app/components/search/search.module';
 import { MatListModule } from '@angular/material/list';
 import { MatMenuModule } from '@angular/material/menu';
 import { MatIconModule } from '@angular/material/icon';
+import { MatTabsModule } from '@angular/material/tabs';
 import { MatInputModule } from '@angular/material/input';
 import { DragDropModule } from '@angular/cdk/drag-drop';
 import { MatTableModule } from '@angular/material/table';
@@ -26,6 +22,12 @@ import { MatDialogModule } from '@angular/material/dialog';
 import { MatButtonModule } from '@angular/material/button';
 import { MatRippleModule } from '@angular/material/core';
 import { OrderPipeModule } from 'src/app/pipes/order/order.module';
+import { FormFieldModule } from 'src/app/lib/form-field/form-field.module';
+import { MatFooterModule } from 'src/app/lib/mat-footer/mat-footer.module';
+import { InputPipeModule } from 'src/app/pipes/input/input.module';
+import { MatSidenavModule } from '@angular/material/sidenav';
+import { MatContentModule } from 'src/app/lib/mat-content/mat-content.module';
+import { DevicePipeModule } from 'src/app/pipes/device/device.module';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { FilterPipeModule } from 'src/app/pipes/filter/filter.module';
 import { MatTooltipModule } from '@angular/material/tooltip';
@@ -38,8 +40,22 @@ import { MatProgressBarModule } from '@angular/material/progress-bar';
 import { MatBottomSheetModule } from '@angular/material/bottom-sheet';
 import { MatAutocompleteModule } from '@angular/material/autocomplete';
 import { MatButtonToggleModule } from '@angular/material/button-toggle';
+import { NgxMatSelectSearchModule } from 'ngx-mat-select-search';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+
+/* --- COMPONENTS --- */
+import { TextForm } from './editor/setup/text-form/text-form.component';
+import { ValueForm } from './editor/setup/value-form/value-form.component';
+import { ChartForm } from './editor/setup/chart-form/chart-form.component';
+import { VectorForm } from './editor/setup/vector-form/vector-form.component';
+import { ThemeDialog } from './editor/theme/theme.dialog';
+import { AddRowDialog } from './editor/add-row/add-row.dialog';
+import { CustomDatesDialog } from './viewer/custom-dates/custom-dates.dialog';
+import { SeriesEditorDialog } from './editor/setup/chart-form/editor/editor.dialog';
+import { ColumnSetupComponent } from './editor/setup/setup.component';
+import { ColumnStyleComponent } from './editor/style/style.component';
+import { ColumnConditionsComponent } from './editor/conditions/conditions.component';
 
 @NgModule({
     imports: [
@@ -50,6 +66,7 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
         DeleteModule,
         SearchModule,
         MatMenuModule,
+        MatTabsModule,
         MatIconModule,
         MatListModule,
         MatTableModule,
@@ -60,9 +77,15 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
         MatRippleModule,
         MatButtonModule,
         OrderPipeModule,
+        FormFieldModule,
+        MatFooterModule,
+        InputPipeModule,
         MatTooltipModule,
         MatToolbarModule,
         FilterPipeModule,
+        MatContentModule,
+        MatSidenavModule,
+        DevicePipeModule,
         BottomSheetModule,
         UnsubscribeModule,
         SubscribersModule,
@@ -73,17 +96,24 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
         MatProgressBarModule,
         MatAutocompleteModule,
         MatButtonToggleModule,
+        NgxMatSelectSearchModule,
         MatProgressSpinnerModule
     ],
     declarations: [
+        TextForm,
+        ChartForm,
+        ValueForm,
+        VectorForm,
         ThemeDialog,
         ReportsPage,
         AddRowDialog,
-        ConditionDialog,
         ReportViewerPage,
         ReportEditorPage,
         CustomDatesDialog,
-        ColumnEditorDialog
+        SeriesEditorDialog,
+        ColumnSetupComponent,
+        ColumnStyleComponent,
+        ColumnConditionsComponent
     ]
 })
 

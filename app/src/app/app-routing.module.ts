@@ -7,10 +7,6 @@ import { AuthManager } from './services/account/account.manager';
 
 const routes: Routes = [
     {
-        'path':         'editor',
-        'loadChildren': () => import('./pages/editor/editor.module').then(m => m.ReportEditorModule)
-    },
-    {
         'path':         'signin',
         'loadChildren': () => import('./pages/signin/signin.module').then(m => m.SigninModule)
     },

@@ -57,7 +57,7 @@
 
         <row *ngFor="let row of report.layout[layout]" [id]="row.rowId" [height]="row.height" [position]="row.position">
             <column *ngFor="let column of row.columns" [fill]="column.fill" [font]="column.font" [width]="column.width" [stroke]="column.stroke" [position]="column.position">
-                <banner [font]="column.banner">
+                <!-- <banner [font]="column.banner">
                     {{ column.label }}
                 </banner>
 
@@ -105,7 +105,7 @@
                             Year
                         </button>
                     </mat-menu>
-                </div>
+                </div> -->
             </column>
         </row>
     </blox>

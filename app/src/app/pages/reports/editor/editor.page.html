@@ -1,111 +1,144 @@
-<mat-toolbar color="primary">
-    <button mat-icon-button class="menu-toggle" routerLink="/reports">
-        <mat-icon>
-            arrow_back
-        </mat-icon>
-    </button>
+<mat-sidenav-container>
+    <mat-sidenav-content>
+        <mat-toolbar color="primary">
+            <button mat-icon-button class="menu-toggle" (click)="history.back()">
+                <mat-icon>
+                    arrow_back
+                </mat-icon>
+            </button>
 
-    <div class="page-label spacer" *ngIf="report.type == 'ds'">
-        data studio editor
-    </div>
+            <div class="spacer">
+                <input matInput type="text" [(ngModel)]="report.description" (blur)="save({'description': report.description})" required *ngIf="!loading">
+            </div>
 
-    <div class="spacer" *ngIf="report.type == 'dashboard'">
-        <input matInput type="text" [(ngModel)]="report.description" (blur)="save({'description': report.description})" required *ngIf="!loading">
-    </div>
+            <button mat-icon-button matTooltip="Change Layout" [matMenuTriggerFor]="layoutmenu">
+                <mat-icon [svgIcon]="layout"></mat-icon>
+            </button>
 
-    <button mat-icon-button matTooltip="Mobile View" [class.selected]="layout == 'mobile'" (click)="layout = 'mobile'" *ngIf="report.type == 'dashboard'">
-        <mat-icon svgIcon="mobile"></mat-icon>
-    </button>
+            <mat-menu #layoutmenu="matMenu">
+                <button mat-menu-item (click)="layout = 'mobile'">
+                    <mat-icon svgIcon="mobile"></mat-icon>
+                    Mobile
+                </button>
+                <button mat-menu-item (click)="layout = 'tablet'">
+                    <mat-icon svgIcon="tablet"></mat-icon>
+                    Tablet
+                </button>
+                <button mat-menu-item (click)="layout = 'desktop'">
+                    <mat-icon svgIcon="desktop"></mat-icon>
+                    Desktop
+                </button>
+            </mat-menu>
 
-    <button mat-icon-button matTooltip="Tablet View" [class.selected]="layout == 'tablet'" (click)="layout = 'tablet'" *ngIf="report.type == 'dashboard'">
-        <mat-icon svgIcon="tablet"></mat-icon>
-    </button>
-
-    <button mat-icon-button matTooltip="Desktop View" [class.selected]="layout == 'desktop'" (click)="layout = 'desktop'" *ngIf="report.type == 'dashboard'">
-        <mat-icon svgIcon="desktop"></mat-icon>
-    </button>
-
-    <div class="dot" *ngIf="report.type == 'dashboard'"></div>
-
-    <button mat-icon-button matTooltip="Board Theme" (click)="theme()" *ngIf="report.type == 'dashboard'">
-        <mat-icon svgIcon="theme"></mat-icon>
-    </button>
-
-    <div class="dot" *ngIf="report.type == 'dashboard'"></div>
-
-    <button mat-icon-button matTooltip="View Report" [routerLink]="['/reports', 'viewer']" [queryParams]="{'reportId': reportId}" *ngIf="report.type == 'dashboard'">
-        <mat-icon svgIcon="view"></mat-icon>
-    </button>
-</mat-toolbar>
-
-<mat-progress-bar mode="indeterminate" color="accent" *ngIf="loading"></mat-progress-bar>
-
-<div class="page-body" *ngIf="report.type == 'ds'">
-    <form [formGroup]="form" (ngSubmit)="!form.invalid && !loading && update()">
-        <mat-form-field appearance="outline">
-            <mat-label text-uppercase>
-                data studio url
-            </mat-label>
-            
-            <input matInput type="url" name="url" placeholder="data studio url" formControlName="url" required>
-    
-            <mat-error *ngIf="errors.url">
-                {{ errors.url }}
-            </mat-error>
-        </mat-form-field>
-    
-        <mat-form-field appearance="outline">
-            <mat-label text-uppercase>
-                description
-            </mat-label>
-            
-            <input matInput type="text" name="description" placeholder="description" formControlName="description" required>
-    
-            <mat-error *ngIf="errors.description">
-                {{ errors.description }}
-            </mat-error>
-        </mat-form-field>
-    
-        <button type="submit" mat-flat-button color="primary">
-            submit
-        </button>
-    </form>
-</div>
-
-<div class="page-body editor" [style.background]="report.theme.board.color" [class.hide]="report && report.type != 'dashboard'">
-    <div class="dashboard">
-        <blox class="blox" [class]="layout" [editing]="true" [fill]="report.theme.board" cdkDropList (cdkDropListDropped)="reorder($event)">
-            <row *ngFor="let row of report.layout[layout] | orderBy : 'position'" type="dynamic" [id]="row.rowId" [height]="row.height" [position]="row.position" cdkDragBoundary=".blox"  cdkDragLockAxis="y" cdkDrag [cdkDragDisabled]="!editing || resizing">
-                <column *ngFor="let column of row.columns | orderBy : 'position'" [id]="column.columnId" [fill]="column.fill" [width]="column.width" [stroke]="column.stroke" [position]="column.position">
-                    <banner [font]="column.banner">
-                        {{ column.label }}
-                    </banner>
-    
-                    <div class="options" [style.background-color]="report.theme.board.color">
-                        <button mat-icon-button matTooltip="Edit Column" [style.color]="report.theme.font.color" (click)="edit(row, column)" [disabled]="loading">
-                            <mat-icon svgIcon="edit"></mat-icon>
-                        </button>
+            <button mat-icon-button (click)="theme()" matTooltip="Change Theme">
+                <mat-icon>
+                    palette
+                </mat-icon>
+            </button>
+        </mat-toolbar>
         
-                        <button mat-icon-button matTooltip="Remove Column" color="warn" (click)="remove($event, row, column.columnId)" [disabled]="loading">
-                            <mat-icon svgIcon="delete"></mat-icon>
-                        </button>
+        <mat-content class="dashboard" [style.background]="report.theme.board.color">
+            <blox class="blox" [class]="layout" [editing]="true" [fill]="report.theme.board" cdkDropList (cdkDropListDropped)="reorder($event)">
+                <row *ngFor="let row of report.layout[layout] | orderBy : 'position'" type="dynamic" [id]="row.rowId" [height]="row.height" [position]="row.position" cdkDragBoundary=".blox"  cdkDragLockAxis="y" cdkDrag [cdkDragDisabled]="!editing || resizing">
+                    <div class="drag-handle" cdkDragHandle>
+                        <mat-icon svgIcon="drag" [style.color]="report.theme.font.color"></mat-icon>
                     </div>
-                </column>
 
-                <div class="drag-handle" cdkDragHandle>
-                    <mat-icon svgIcon="drag" [style.color]="report.theme.font.color"></mat-icon>
-                </div>
-
-                <div class="drag-placeholder" *cdkDragPlaceholder></div>
-            </row>
+                    <column *ngFor="let column of row.columns | orderBy : 'position'" [id]="column.id" [fill]="column.fill" [width]="column.width" [stroke]="column.stroke" [position]="column.position">
+                        <banner [font]="column.banner">
+                            {{ column.label }}
+                        </banner>
         
-            <row type="static" [height]="100">
-                <column class="add" [width]="100" [fill]="report.theme.column" matRipple matTooltip="Add Row" (click)="add()">
-                    <mat-icon [style.color]="report.theme.font.color">
-                        add
-                    </mat-icon>
-                </column>
-            </row>
-        </blox>
-    </div>
-</div>
+                        <text *ngIf="column.type == 'text'" [font]="column.font">
+                            {{ column.value }}
+                        </text>
+        
+                        <image *ngIf="column.type == 'vector'" [src]="column.src"></image>
+        
+                        <chart *ngIf="column.type == 'chart'" [font]="column.font" [series]="column.series"></chart>
+        
+                        <value *ngIf="column.type == 'value'" [font]="column.font">
+                            {{ column.data.type == 'analog' ? (column.data.value | number : '0.2-2') : (column.data.value == 0 ? column.data.digital.low : column.data.digital.high) }}{{ (column.data.type == 'analog' && column.data.analog.units) ? column.data.analog.units : '' }}
+                        </value>
+                        
+                        <div class="options" *ngIf="!copying">
+                            <button mat-icon-button matTooltip="Move Left" (click)="left(row, column)" [disabled]="column.position == 1">
+                                <mat-icon>
+                                    arrow_back
+                                </mat-icon>
+                            </button>
+
+                            <button mat-icon-button matTooltip="Edit Column" (click)="select(row, column)">
+                                <mat-icon svgIcon="edit"></mat-icon>
+                            </button>
+
+                            <button mat-icon-button matTooltip="Copy Column" (click)="copy(column)">
+                                <mat-icon svgIcon="copy"></mat-icon>
+                            </button>
+
+                            <button mat-icon-button matTooltip="Delete Column" (click)="remove($event, row, column.id)">
+                                <mat-icon svgIcon="delete"></mat-icon>
+                            </button>
+
+                            <button mat-icon-button matTooltip="Move Right" (click)="right(row, column)" [disabled]="column.position == row.columns.length">
+                                <mat-icon>
+                                    arrow_forward
+                                </mat-icon>
+                            </button>
+                        </div>
+
+                        <div class="options paste" *ngIf="copying && columnId != column.id" (click)="paste(column)">
+                            paste
+                        </div>
+                    </column>
+    
+                    <div class="drag-placeholder" *cdkDragPlaceholder></div>
+
+                    <div class="row-properties" [style.color]="report.theme.font.color">
+                        {{ row.height | number : '0.0-0' }}PX
+                    </div>
+                </row>
+            
+                <row type="static" [height]="100">
+                    <column class="add" [width]="100" [fill]="report.theme.column" matRipple matTooltip="Add Row" (click)="add()">
+                        <mat-icon [style.color]="report.theme.font.color">
+                            add
+                        </mat-icon>
+                    </column>
+                </row>
+            </blox>
+        </mat-content>
+
+        <column-conditions></column-conditions>
+    </mat-sidenav-content>
+
+    <mat-sidenav mode="side" position="end">
+        <mat-toolbar color="primary">
+            <div class="page-label spacer">
+                column editor
+            </div>
+
+            <button mat-icon-button (click)="unselect()">
+                <mat-icon>
+                    arrow_forward
+                </mat-icon>
+            </button>
+        </mat-toolbar>
+
+        <mat-content>
+            <mat-tab-group id="side-tabs">
+                <mat-tab label="Setup">
+                    <column-setup></column-setup>
+                </mat-tab>
+
+                <mat-tab label="Style">
+                    <column-style></column-style>
+                </mat-tab>
+            </mat-tab-group>
+        </mat-content>
+        
+        <mat-footer>
+            Close panel to save changes *
+        </mat-footer>
+    </mat-sidenav>
+</mat-sidenav-container>

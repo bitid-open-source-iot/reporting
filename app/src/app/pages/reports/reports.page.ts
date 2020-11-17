@@ -8,12 +8,12 @@ import { MatBottomSheet } from '@angular/material/bottom-sheet';
 import { ShareComponent } from 'src/app/components/share/share.component';
 import { DeleteComponent } from 'src/app/components/delete/delete.component';
 import { SearchComponent } from 'src/app/components/search/search.component';
+import { MatTableDataSource } from '@angular/material/table';
 import { LocalstorageService } from 'src/app/services/localstorage/localstorage.service';
 import { UnsubscribeComponent } from 'src/app/components/unsubscribe/unsubscribe.component';
 import { BottomSheetComponent } from 'src/app/components/bottom-sheet/bottom-sheet.component';
 import { SubscribersComponent } from 'src/app/components/subscribers/subscribers.component';
 import { OnInit, Component, OnDestroy, ViewChild } from '@angular/core';
-import { MatTableDataSource } from '@angular/material/table';
 
 @Component({
     selector: 'app-reports-page',
@@ -60,10 +60,6 @@ export class ReportsPage implements OnInit, OnDestroy {
         };
     };
 
-    public async logout() {
-        this.account.logout();
-    };
-
     public async add() {
         this.loading = true;
 
@@ -105,6 +101,10 @@ export class ReportsPage implements OnInit, OnDestroy {
         } else {
             this.toast.error(response.error.message);
         };
+    };
+
+    public async logout() {
+        this.account.logout();
     };
 
     public async options(report: Report) {
@@ -174,7 +174,6 @@ export class ReportsPage implements OnInit, OnDestroy {
                     case (1):
                         this.router.navigate(['/reports', 'editor'], {
                             'queryParams': {
-                                'mode': 'update',
                                 'reportId': report.reportId
                             }
                         });
