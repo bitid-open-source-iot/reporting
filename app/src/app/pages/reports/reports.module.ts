@@ -49,13 +49,13 @@ import { TextForm } from './editor/setup/text-form/text-form.component';
 import { ValueForm } from './editor/setup/value-form/value-form.component';
 import { ChartForm } from './editor/setup/chart-form/chart-form.component';
 import { VectorForm } from './editor/setup/vector-form/vector-form.component';
-import { ThemeDialog } from './editor/theme/theme.dialog';
 import { AddRowDialog } from './editor/add-row/add-row.dialog';
 import { CustomDatesDialog } from './viewer/custom-dates/custom-dates.dialog';
 import { SeriesEditorDialog } from './editor/setup/chart-form/editor/editor.dialog';
 import { ColumnSetupComponent } from './editor/setup/setup.component';
 import { ColumnStyleComponent } from './editor/style/style.component';
 import { ColumnConditionsComponent } from './editor/conditions/conditions.component';
+import { ReportSettingsDialog } from './editor/settings/settings.dialog';
 
 @NgModule({
     imports: [
@@ -104,7 +104,6 @@ import { ColumnConditionsComponent } from './editor/conditions/conditions.compon
         ChartForm,
         ValueForm,
         VectorForm,
-        ThemeDialog,
         ReportsPage,
         AddRowDialog,
         ReportViewerPage,
@@ -113,6 +112,7 @@ import { ColumnConditionsComponent } from './editor/conditions/conditions.compon
         SeriesEditorDialog,
         ColumnSetupComponent,
         ColumnStyleComponent,
+        ReportSettingsDialog,
         ColumnConditionsComponent
     ]
 })

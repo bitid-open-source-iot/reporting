@@ -1,7 +1,7 @@
 import { SERIES } from 'src/app/lib/utilities';
 import { ObjectId } from 'src/app/id';
 import { ReportsService } from 'src/app/services/reports/reports.service';
-import { Input, Component, OnChanges, ViewChild, ElementRef, AfterViewInit, ViewEncapsulation } from '@angular/core';
+import { Input, Component, OnChanges, ElementRef, AfterViewInit, ViewEncapsulation } from '@angular/core';
 
 @Component({
     selector: 'chart',
@@ -18,13 +18,11 @@ export class BloxColumnChartComponent implements OnChanges, AfterViewInit {
     @Input('stroke') private stroke: any = {};
     @Input('series') private series: SERIES[] = [];
 
-    @ViewChild('canvas', { 'static': true }) private canvas: ElementRef;
-
     constructor(private el: ElementRef, private service: ReportsService) {
         this.element = this.el.nativeElement;
+        this.element.id = this.id;
     };
 
-    private chart: any;
     private element: HTMLElement;
 
     ngOnChanges(): void { };

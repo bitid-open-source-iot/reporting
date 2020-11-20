@@ -46,5 +46,11 @@ export function ParseUtility (array) {
 };
 
 export function UnparseUtility (array) {
-    return JSON.parse(JSON.stringify(ParseUtility(array)));
+    array = JSON.parse(JSON.stringify(ParseUtility(array)));
+    array.map(item => {
+        delete item.data;
+        delete item.error;
+        delete item.loading;
+    });
+    return array;
 };

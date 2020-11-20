@@ -36,30 +36,6 @@ export class ReportsPage implements OnInit, OnDestroy {
     public loading: boolean;
     private subscriptions: any = {};
 
-    private async list() {
-        this.loading = true;
-
-        const response = await this.service.list({
-            'sort': {
-                [this.sort.key]: (this.sort.reverse ? -1 : 1)
-            },
-            'filter': [
-                'role',
-                'views',
-                'reportId',
-                'description'
-            ]
-        });
-
-        this.loading = false;
-
-        if (response.ok) {
-            this.reports.data = response.result;
-        } else {
-            this.reports.data = [];
-        };
-    };
-
     public async add() {
         this.loading = true;
 
@@ -100,6 +76,30 @@ export class ReportsPage implements OnInit, OnDestroy {
             this.toast.success('new report created!');
         } else {
             this.toast.error(response.error.message);
+        };
+    };
+
+    private async list() {
+        this.loading = true;
+
+        const response = await this.service.list({
+            'sort': {
+                [this.sort.key]: (this.sort.reverse ? -1 : 1)
+            },
+            'filter': [
+                'role',
+                'views',
+                'reportId',
+                'description'
+            ]
+        });
+
+        this.loading = false;
+
+        if (response.ok) {
+            this.reports.data = response.result;
+        } else {
+            this.reports.data = [];
         };
     };
 
@@ -282,6 +282,7 @@ export class ReportsPage implements OnInit, OnDestroy {
                                             break;
                                         };
                                     };
+                                    this.reports.data = JSON.parse(JSON.stringify(this.reports.data));
                                 } else {
                                     this.toast.error('issue deleting report!');
                                 };
@@ -313,6 +314,7 @@ export class ReportsPage implements OnInit, OnDestroy {
                                             break;
                                         };
                                     };
+                                    this.reports.data = JSON.parse(JSON.stringify(this.reports.data));
                                 } else {
                                     this.toast.error('issue unsubscribing from report!');
                                 };

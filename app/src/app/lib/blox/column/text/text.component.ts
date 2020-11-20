@@ -10,6 +10,7 @@ import { Input, OnInit, OnChanges, Component, OnDestroy, Renderer2, ElementRef, 
 export class BloxColumnTextComponent implements OnInit, OnChanges, OnDestroy {
 
     @Input('font') private font: any = {};
+    @Input('banner') private banner: any = {};
 
     constructor(private el: ElementRef, private renderer: Renderer2) {
         this.element = this.el.nativeElement;
@@ -19,7 +20,7 @@ export class BloxColumnTextComponent implements OnInit, OnChanges, OnDestroy {
 
     private process() {
         /* --- FONT --- */
-        if (typeof(this.font) != 'undefined' && this.font != null && this.font != '') {
+        if (typeof(this.font) != 'undefined' && this.font != null) {
             this.renderer.setStyle(this.element, 'color', this.font.color);
             this.renderer.setStyle(this.element, 'opacity', this.font.opacity / 100);
             this.renderer.setStyle(this.element, 'font-size', [this.font.size, 'px'].join(''));
@@ -52,6 +53,9 @@ export class BloxColumnTextComponent implements OnInit, OnChanges, OnDestroy {
                     this.renderer.setStyle(this.element, 'justify-content', 'flex-end');
                     break;
             };
+        };
+        if (typeof(this.banner) != 'undefined' && this.banner != null) {
+            this.renderer.setStyle(this.element, 'top', [this.banner.size, 'px'].join(''));
         };
     };
 

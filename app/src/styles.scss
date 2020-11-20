@@ -299,7 +299,13 @@ mat-list {
         border-bottom: 1px solid #E0E0E0;
     }
 }
-report-editor-page {
+report-editor-page .mat-tab-label .mat-tab-label-content {
+    display: inline-flex;
+    font-size: 10px;
+    flex-direction: column;
+}
+report-editor-page,
+report-settings-dialog {
     flex: 1 auto;
     height: 100vh;
     display: flex;
@@ -307,7 +313,7 @@ report-editor-page {
 }
 #side-tabs {
     .mat-tab-label {
-        flex: 1 auto !important;
+        width: 33.33%;
         min-width: 0px !important;
     }
     .mat-tab-header-pagination {

@@ -41,6 +41,7 @@ describe('Reports', function () {
                     // result.should.have.property('views');
                     result.should.have.property('users');
                     result.should.have.property('layout');
+                    result.should.have.property('settings');
                     result.should.have.property('reportId');
                     result.should.have.property('serverDate');
                     result.should.have.property('description');
@@ -69,6 +70,7 @@ describe('Reports', function () {
                     result[0].should.have.property('users');
                     result[0].should.have.property('layout');
                     result[0].should.have.property('reportId');
+                    result[0].should.have.property('settings');
                     result[0].should.have.property('serverDate');
                     result[0].should.have.property('description');
                     result[0].should.have.property('organizationOnly');
@@ -229,6 +231,38 @@ var tools = {
                         'tablet': [],
                         'desktop': []
                     },
+                    'settings': {
+                        'fill': {
+                            'color': '#FFFFFF',
+                            'opacity': 25,
+                        },
+                        'font': {
+                            'size': 24,
+                            'color': '#FFFFFF',
+                            'family': 'Arial',
+                            'opacity': 100,
+                            'vertical': 'center',
+                            'horizontal': 'center'
+                        },
+                        'board': {
+                            'color': '#FFFFFF',
+                            'opacity': 25,
+                        },
+                        'stroke': {
+                            'color': '#FFFFFF',
+                            'width': 2,
+                            'style': 'solid',
+                            'opacity': 25,
+                        },
+                        'banner': {
+                            'size': 24,
+                            'color': '#FFFFFF',
+                            'family': 'Arial',
+                            'opacity': 100,
+                            'vertical': 'center',
+                            'horizontal': 'center'
+                        }
+                    },
                     'description': 'Mocha Test Report',
                     'organizationOnly': 1
                 })
@@ -246,6 +280,7 @@ var tools = {
                         'users',
                         'layout',
                         'reportId',
+                        'settings',
                         'serverDate',
                         'description',
                         'organizationOnly'
@@ -265,11 +300,13 @@ var tools = {
                         'views',
                         'users',
                         'layout',
+                        'settings',
                         'reportId',
                         'serverDate',
                         'description',
                         'organizationOnly'
-                    ]
+                    ],
+                    'reportId': reportId
                 })
                     .then(deferred.resolve, deferred.resolve);
 

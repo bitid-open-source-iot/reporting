@@ -15,8 +15,8 @@ var module = function () {
 						'organizationOnly': args.req.body.organizationOnly
 					}
 				},
-				'theme': args.req.body.theme,
 				'layout': args.req.body.layout,
+				'settings': args.req.body.settings,
 				'serverDate': new Date(),
 				'description': args.req.body.description
 			};
@@ -143,6 +143,7 @@ var module = function () {
 						'_id': 1,
 						'bitid': 1,
 						'layout': 1,
+						'settings': 1,
 						'serverDate': 1,
 						'description': 1
 					}
@@ -181,6 +182,7 @@ var module = function () {
 						'_id': 1,
 						'bitid': 1,
 						'layout': 1,
+						'settings': 1,
 						'serverDate': 1,
 						'description': 1
 					}
@@ -328,14 +330,11 @@ var module = function () {
 					'serverDate': new Date()
 				}
 			};
-			if (typeof (args.req.body.theme) != 'undefined' && args.req.body.theme != null && args.req.body.theme != '') {
-				update.$set.theme = args.req.body.theme;
-			};
 			if (typeof (args.req.body.layout) != 'undefined' && args.req.body.layout != null && args.req.body.layout != '') {
 				update.$set.layout = args.req.body.layout;
 			};
-			if (typeof (args.req.body.widgets) != 'undefined' && args.req.body.widgets != null && args.req.body.widgets != '') {
-				update.$set.widgets = args.req.body.widgets;
+			if (typeof (args.req.body.settings) != 'undefined' && args.req.body.settings != null && args.req.body.settings != '') {
+				update.$set.settings = args.req.body.settings;
 			};
 			if (typeof (args.req.body.description) != 'undefined') {
 				update.$set.description = args.req.body.description;

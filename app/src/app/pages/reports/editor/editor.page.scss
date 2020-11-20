@@ -87,7 +87,6 @@ column:active .options {
 }
 .dashboard {
     overflow-y: auto;
-    padding-left: 50px;
 }
 .dashboard::-webkit-scrollbar {
     display: none;
@@ -101,9 +100,8 @@ column:active .options {
     font-size: 10px;
     line-height: 10px;
 }
+.add-to-row,
 .drag-handle {
-    left: -35px;
-    position: absolute;
     align-self: center;
 }
 .cdk-drag-preview {

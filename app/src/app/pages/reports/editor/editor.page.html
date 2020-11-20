@@ -30,26 +30,28 @@
                 </button>
             </mat-menu>
 
-            <button mat-icon-button (click)="theme()" matTooltip="Change Theme">
+            <button mat-icon-button (click)="settings()" matTooltip="Change Theme">
                 <mat-icon>
-                    palette
+                    settings
                 </mat-icon>
             </button>
         </mat-toolbar>
+
+        <mat-progress-bar mode="indeterminate" *ngIf="loading"></mat-progress-bar>
         
-        <mat-content class="dashboard" [style.background]="report.theme.board.color">
-            <blox class="blox" [class]="layout" [editing]="true" [fill]="report.theme.board" cdkDropList (cdkDropListDropped)="reorder($event)">
+        <mat-content class="dashboard" [style.background]="report ? report.settings.board.color : '#FFF'">
+            <blox class="blox" [class]="layout" [editing]="true" [fill]="report.settings.board" cdkDropList (cdkDropListDropped)="reorder($event)">
                 <row *ngFor="let row of report.layout[layout] | orderBy : 'position'" type="dynamic" [id]="row.rowId" [height]="row.height" [position]="row.position" cdkDragBoundary=".blox"  cdkDragLockAxis="y" cdkDrag [cdkDragDisabled]="!editing || resizing">
-                    <div class="drag-handle" cdkDragHandle>
-                        <mat-icon svgIcon="drag" [style.color]="report.theme.font.color"></mat-icon>
-                    </div>
+                    <button mat-icon-button class="drag-handle" cdkDragHandle>
+                        <mat-icon svgIcon="drag" [style.color]="report.settings.font.color"></mat-icon>
+                    </button>
 
                     <column *ngFor="let column of row.columns | orderBy : 'position'" [id]="column.id" [fill]="column.fill" [width]="column.width" [stroke]="column.stroke" [position]="column.position">
                         <banner [font]="column.banner">
                             {{ column.label }}
                         </banner>
         
-                        <text *ngIf="column.type == 'text'" [font]="column.font">
+                        <text *ngIf="column.type == 'text'" [font]="column.font" [banner]="column.banner">
                             {{ column.value }}
                         </text>
         
@@ -62,25 +64,25 @@
                         </value>
                         
                         <div class="options" *ngIf="!copying">
-                            <button mat-icon-button matTooltip="Move Left" (click)="left(row, column)" [disabled]="column.position == 1">
+                            <button mat-icon-button matTooltip="Move Left" (click)="left(row, column)" [disabled]="loading || column.position == 1">
                                 <mat-icon>
                                     arrow_back
                                 </mat-icon>
                             </button>
 
-                            <button mat-icon-button matTooltip="Edit Column" (click)="select(row, column)">
+                            <button mat-icon-button matTooltip="Edit Column" (click)="select(row, column)" [disabled]="loading">
                                 <mat-icon svgIcon="edit"></mat-icon>
                             </button>
 
-                            <button mat-icon-button matTooltip="Copy Column" (click)="copy(column)">
+                            <button mat-icon-button matTooltip="Copy Column" (click)="copy(column)" [disabled]="loading">
                                 <mat-icon svgIcon="copy"></mat-icon>
                             </button>
 
-                            <button mat-icon-button matTooltip="Delete Column" (click)="remove($event, row, column.id)">
+                            <button mat-icon-button matTooltip="Delete Column" (click)="remove($event, row, column.id)" [disabled]="loading">
                                 <mat-icon svgIcon="delete"></mat-icon>
                             </button>
 
-                            <button mat-icon-button matTooltip="Move Right" (click)="right(row, column)" [disabled]="column.position == row.columns.length">
+                            <button mat-icon-button matTooltip="Move Right" (click)="right(row, column)" [disabled]="loading || column.position == row.columns.length">
                                 <mat-icon>
                                     arrow_forward
                                 </mat-icon>
@@ -90,26 +92,32 @@
                         <div class="options paste" *ngIf="copying && columnId != column.id" (click)="paste(column)">
                             paste
                         </div>
+
+                        <div class="options paste" *ngIf="copying && columnId == column.id" (click)="CancelCopy()">
+                            cancel copy
+                        </div>
                     </column>
+
+                    <button mat-icon-button class="add-to-row" (click)="extend(row)" [disabled]="row.columns.length >= 8">
+                        <mat-icon [style.color]="report.settings.font.color">add</mat-icon>
+                    </button>
     
                     <div class="drag-placeholder" *cdkDragPlaceholder></div>
 
-                    <div class="row-properties" [style.color]="report.theme.font.color">
+                    <div class="row-properties" [style.color]="report.settings.font.color">
                         {{ row.height | number : '0.0-0' }}PX
                     </div>
                 </row>
             
                 <row type="static" [height]="100">
-                    <column class="add" [width]="100" [fill]="report.theme.column" matRipple matTooltip="Add Row" (click)="add()">
-                        <mat-icon [style.color]="report.theme.font.color">
+                    <column class="add" [width]="100" [fill]="report.settings.fill" matRipple matTooltip="Add Row" (click)="add()">
+                        <mat-icon [style.color]="report.settings.font.color">
                             add
                         </mat-icon>
                     </column>
                 </row>
             </blox>
         </mat-content>
-
-        <column-conditions></column-conditions>
     </mat-sidenav-content>
 
     <mat-sidenav mode="side" position="end">
@@ -127,12 +135,37 @@
 
         <mat-content>
             <mat-tab-group id="side-tabs">
-                <mat-tab label="Setup">
+                <mat-tab>
+                    <ng-template mat-tab-label>
+                        <mat-icon>
+                            dashboard
+                        </mat-icon>
+                        Setup
+                    </ng-template>
+
                     <column-setup></column-setup>
                 </mat-tab>
 
-                <mat-tab label="Style">
+                <mat-tab>
+                    <ng-template mat-tab-label>
+                        <mat-icon>
+                            style
+                        </mat-icon>
+                        Style
+                    </ng-template>
+
                     <column-style></column-style>
+                </mat-tab>
+
+                <mat-tab>
+                    <ng-template mat-tab-label>
+                        <mat-icon>
+                            dynamic_feed
+                        </mat-icon>
+                        Conditions
+                    </ng-template>
+
+                    <column-conditions></column-conditions>
                 </mat-tab>
             </mat-tab-group>
         </mat-content>
