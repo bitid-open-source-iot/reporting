@@ -1,11 +1,11 @@
 import { Router } from '@angular/router';
-import { Report } from 'src/app/interfaces/report';
 import { MatDialog } from '@angular/material/dialog';
 import { ToastService } from 'src/app/services/toast/toast.service';
 import { AccountService } from 'src/app/services/account/account.service';
 import { ReportsService } from 'src/app/services/reports/reports.service';
 import { MatBottomSheet } from '@angular/material/bottom-sheet';
 import { ShareComponent } from 'src/app/components/share/share.component';
+import { Report, REPORT } from 'src/app/utilities/report';
 import { DeleteComponent } from 'src/app/components/delete/delete.component';
 import { SearchComponent } from 'src/app/components/search/search.component';
 import { MatTableDataSource } from '@angular/material/table';
@@ -32,37 +32,18 @@ export class ReportsPage implements OnInit, OnDestroy {
         'reverse': false
     };
     public columns: string[] = ['description', 'mobile', 'tablet', 'desktop'];
-    public reports: MatTableDataSource<Report> = new MatTableDataSource<Report>();
+    public reports: MatTableDataSource<REPORT> = new MatTableDataSource<REPORT>();
     public loading: boolean;
     private subscriptions: any = {};
 
     public async add() {
         this.loading = true;
 
-        const response = await this.service.add({
-            'layout': {
-                'mobile': [],
-                'tablet': [],
-                'desktop': []
-            },
-            'theme': {
-                'font': {
-                    'color': '#FFFFFF',
-                    'opacity': 100
-                },
-                'board': {
-                    'color': '#000000',
-                    'opacity': 100
-                },
-                'column': {
-                    'color': '#FFFFFF',
-                    'opacity': 25
-                },
-                'name': 'dark',
-                'type': 'default'
-            },
+        const report = new Report({
             'description': 'Untitled Report'
         });
+
+        const response = await this.service.add(report);
 
         this.loading = false;
 
@@ -183,11 +164,9 @@ export class ReportsPage implements OnInit, OnDestroy {
 
                         const item = await this.service.get({
                             'filter': [
-                                'url',
                                 'role',
-                                'type',
-                                'theme',
                                 'layout',
+                                'settings',
                                 'description'
                             ],
                             'reportId': report.reportId
@@ -196,10 +175,8 @@ export class ReportsPage implements OnInit, OnDestroy {
                         if (item.ok) {
                             if (item.result.role > 3) {
                                 const response = await this.service.add({
-                                    'url': item.result.url,
-                                    'type': item.result.type,
-                                    'theme': item.result.theme,
                                     'layout': item.result.layout,
+                                    'settings': item.result.settings,
                                     'description': item.description
                                 });
                                 if (response.ok) {
