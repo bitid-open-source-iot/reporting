@@ -4,7 +4,7 @@
             Device
         </mat-label>
 
-        <mat-select name="deviceId" placeholder="device" formControlName="deviceId" required>
+        <mat-select name="deviceId" placeholder="device" formControlName="deviceId" required (selectionChange)="blur()">
             <mat-option [formGroup]="filter">
                 <ngx-mat-select-search placeholderLabel="filter devices" noEntriesFoundLabel="no devices found" formControlName="device"></ngx-mat-select-search>
             </mat-option>
@@ -23,7 +23,7 @@
             Input
         </mat-label>
 
-        <mat-select name="inputId" placeholder="input" formControlName="inputId" required>
+        <mat-select name="inputId" placeholder="input" formControlName="inputId" required (selectionChange)="blur()">
             <mat-option [formGroup]="filter">
                 <ngx-mat-select-search placeholderLabel="filter inputs" noEntriesFoundLabel="no inputs found" formControlName="input"></ngx-mat-select-search>
             </mat-option>
@@ -42,7 +42,7 @@
             Expression
         </mat-label>
 
-        <mat-select name="expression" placeholder="expression" formControlName="expression" required>
+        <mat-select name="expression" placeholder="expression" formControlName="expression" required (selectionChange)="blur()">
             <mat-option value="last-value">
                 Last Value
             </mat-option>

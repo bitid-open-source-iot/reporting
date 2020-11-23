@@ -59,10 +59,6 @@ export class ReportEditorPage implements OnInit, OnDestroy {
         this.conditions.reset();
 
         this.sidenav.close();
-
-        this.save({
-            'layout': this.report.layout
-        });
     };
 
     public async add() {
@@ -123,6 +119,10 @@ export class ReportEditorPage implements OnInit, OnDestroy {
         this.columnId = null;
         this.clipboard = null;
         this.unselect();
+
+        this.save({
+            'layout': this.report.layout
+        });
     };
 
     private async load() {
@@ -320,6 +320,10 @@ export class ReportEditorPage implements OnInit, OnDestroy {
             };
         };
         this.unselect();
+
+        this.save({
+            'layout': this.report.layout
+        });
     };
 
     public reorder(event: CdkDragDrop<string[]>) {
@@ -431,6 +435,84 @@ export class ReportEditorPage implements OnInit, OnDestroy {
                 'layout': this.report.layout
             });
         });
+
+        this.subscriptions.conditions = this.conditions.change.subscribe(data => {
+            for (let a = 0; a < this.report.layout[this.layout].length; a++) {
+                if (this.report.layout[this.layout][a].rowId == this.rowId) {
+                    for (let b = 0; b < this.report.layout[this.layout][a].columns.length; b++) {
+                        if (this.report.layout[this.layout][a].columns[b].id == this.columnId) {
+                            this.report.layout[this.layout][a].columns[b].conditions = data.conditions;
+                        };
+                    };
+                };
+            };
+            
+            this.save({
+                'layout': this.report.layout
+            });
+        });
+
+        this.subscriptions.update_setup = this.setup.update.subscribe(setup => {
+            for (let a = 0; a < this.report.layout[this.layout].length; a++) {
+                if (this.report.layout[this.layout][a].rowId == this.rowId) {
+                    for (let b = 0; b < this.report.layout[this.layout][a].columns.length; b++) {
+                        if (this.report.layout[this.layout][a].columns[b].id == this.columnId) {
+                            Object.keys(setup).map(key => {
+                                if (this.report.layout[this.layout][a].columns[b].type != setup.type) {
+                                    switch(setup.type) {
+                                        case('map'):
+                                            this.report.layout[this.layout][a].columns[b] = new Map(this.report.layout[this.layout][a].columns[b]);
+                                            break;
+                                        case('text'):
+                                            this.report.layout[this.layout][a].columns[b] = new Text(this.report.layout[this.layout][a].columns[b]);
+                                            break;
+                                        case('blank'):
+                                            this.report.layout[this.layout][a].columns[b] = new Blank(this.report.layout[this.layout][a].columns[b]);
+                                            break;
+                                        case('value'):
+                                            this.report.layout[this.layout][a].columns[b] = new Value(this.report.layout[this.layout][a].columns[b]);
+                                            break;
+                                        case('chart'):
+                                            this.report.layout[this.layout][a].columns[b] = new Chart(this.report.layout[this.layout][a].columns[b]);
+                                            break;
+                                        case('gauge'):
+                                            this.report.layout[this.layout][a].columns[b] = new Gauge(this.report.layout[this.layout][a].columns[b]);
+                                            break;
+                                        case('vector'):
+                                            this.report.layout[this.layout][a].columns[b] = new Vector(this.report.layout[this.layout][a].columns[b]);
+                                            break;
+                                    };
+                                } else {
+                                    this.report.layout[this.layout][a].columns[b][key] = setup[key];
+                                };
+                            });
+                        };
+                    };
+                };
+            };
+
+            this.save({
+                'layout': this.report.layout
+            });
+        });
+
+        this.subscriptions.update_style = this.style.update.subscribe(style => {
+            for (let a = 0; a < this.report.layout[this.layout].length; a++) {
+                if (this.report.layout[this.layout][a].rowId == this.rowId) {
+                    for (let b = 0; b < this.report.layout[this.layout][a].columns.length; b++) {
+                        if (this.report.layout[this.layout][a].columns[b].id == this.columnId) {
+                            Object.keys(style).map(key => {
+                                this.report.layout[this.layout][a].columns[b][key] = style[key];
+                            });
+                        };
+                    };
+                };
+            };
+
+            this.save({
+                'layout': this.report.layout
+            });
+        });
     };
 
     ngOnDestroy(): void {
@@ -438,6 +520,8 @@ export class ReportEditorPage implements OnInit, OnDestroy {
         this.subscriptions.setup.unsubscribe();
         this.subscriptions.style.unsubscribe();
         this.subscriptions.changes.unsubscribe();
+        this.subscriptions.update_setup.unsubscribe();
+        this.subscriptions.update_style.unsubscribe();
     };
 
 }

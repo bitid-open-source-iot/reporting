@@ -80,12 +80,17 @@ export class ColumnSetupComponent implements OnInit, OnDestroy {
         'label': ''
     };
     public inputs: any[] = [];
+    public update: EventEmitter<any> = new EventEmitter<any>();
     public change: EventEmitter<any> = new EventEmitter<any>();
     public element: HTMLElement;
     public setting: boolean;
     public loading: boolean;
     public uploading: boolean;
     private subscriptions: any = {};
+
+    public blur() {
+        this.update.next(this.form.value);
+    };
 
     public async reset() {
         this.form.setValue({
@@ -160,6 +165,46 @@ export class ColumnSetupComponent implements OnInit, OnDestroy {
                 this.change.next(data);
             };
         });
+    
+        this.subscriptions.text_update = this.text.update.subscribe(text => {
+            if (!this.setting) {
+                let data = this.form.value;
+                Object.keys(text).map(key => {
+                    data[key] = text[key];
+                });
+                this.update.next(data);
+            };
+        });
+
+        this.subscriptions.chart_update = this.chart.update.subscribe(chart => {
+            if (!this.setting) {
+                let data = this.form.value;
+                Object.keys(chart).map(key => {
+                    data[key] = chart[key];
+                });
+                this.update.next(data);
+            };
+        });
+
+        this.subscriptions.value_update = this.value.update.subscribe(value => {
+            if (!this.setting) {
+                let data = this.form.value;
+                Object.keys(value).map(key => {
+                    data[key] = value[key];
+                });
+                this.update.next(data);
+            };
+        });
+
+        this.subscriptions.vector_update = this.vector.update.subscribe(vector => {
+            if (!this.setting) {
+                let data = this.form.value;
+                Object.keys(vector).map(key => {
+                    data[key] = vector[key];
+                });
+                this.update.next(data);
+            };
+        });
     };
 
     ngOnDestroy(): void {
@@ -168,6 +213,10 @@ export class ColumnSetupComponent implements OnInit, OnDestroy {
         this.subscriptions.chart.unsubscribe();
         this.subscriptions.value.unsubscribe();
         this.subscriptions.vector.unsubscribe();
+        this.subscriptions.text_update.unsubscribe();
+        this.subscriptions.chart_update.unsubscribe();
+        this.subscriptions.value_update.unsubscribe();
+        this.subscriptions.vector_update.unsubscribe();
     };
 
 }

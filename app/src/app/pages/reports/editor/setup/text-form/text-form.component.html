@@ -4,7 +4,7 @@
             Text Value
         </mat-label>
 
-        <textarea matInput name="value" placeholder="text value" formControlName="value" required></textarea>
+        <textarea matInput name="value" placeholder="text value" formControlName="value" required (blur)="blur()"></textarea>
 
         <mat-error *ngIf="errors.value">
             {{ errors.value }}

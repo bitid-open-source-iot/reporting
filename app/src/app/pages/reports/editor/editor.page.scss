@@ -35,9 +35,6 @@ mat-sidenav {
     mat-content mat-tab-group {
         height: calc(100% - 56px - 56px) !important;
     }
-    mat-footer {
-        text-align: center;
-    }
 }
 .add {
     display: flex;

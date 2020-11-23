@@ -30,10 +30,15 @@ export class ValueForm implements OnInit, OnDestroy {
         'device': new FormControl('')
     });
     public inputs: any[] = [];
+    public update: EventEmitter<any> = new EventEmitter<any>();
     public change: EventEmitter<any> = new EventEmitter<any>();
     public setting: boolean;
     public loading: boolean;
     private subscriptions: any = {};
+
+    public blur() {
+        this.update.next(this.form.value);
+    };
 
     public async set(data) {
         this.setting = true;

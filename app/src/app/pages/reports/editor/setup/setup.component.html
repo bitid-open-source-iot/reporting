@@ -4,7 +4,7 @@
             Label
         </mat-label>
         
-        <input matInput type="text" name="label" placeholder="label" formControlName="label" required>
+        <input matInput type="text" name="label" placeholder="label" formControlName="label" required (blur)="blur()">
 
         <mat-error *ngIf="errors.label">
             {{ errors.label }}
@@ -16,7 +16,7 @@
             Display Type
         </mat-label>
         
-        <mat-select name="type" placeholder="display type" formControlName="type" required>
+        <mat-select name="type" placeholder="display type" formControlName="type" required (selectionChange)="blur()">
             <mat-option *ngFor="let type of types | orderBy : 'description'" [value]="type.value" [disabled]="type.disabled">
                 {{ type.description }}
             </mat-option>

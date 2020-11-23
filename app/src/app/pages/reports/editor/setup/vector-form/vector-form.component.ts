@@ -24,6 +24,7 @@ export class VectorForm implements OnInit, OnDestroy {
     public errors: any = {
         'src': ''
     };
+    public update: EventEmitter<any> = new EventEmitter<any>();
     public change: EventEmitter<any> = new EventEmitter<any>();
     public setting: boolean;
     public loading: boolean;
@@ -78,6 +79,7 @@ export class VectorForm implements OnInit, OnDestroy {
             this.errors = this.formerror.validateForm(this.form, this.errors, true);
             if (!this.setting) {
                 this.change.next(data);
+                this.update.next(data);
             };
         });
     };

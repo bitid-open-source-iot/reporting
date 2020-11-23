@@ -22,10 +22,15 @@ export class TextForm implements OnInit, OnDestroy {
     public errors: any = {
         'value': ''
     };
+    public update: EventEmitter<any> = new EventEmitter<any>();
     public change: EventEmitter<any> = new EventEmitter<any>();
     public setting: boolean;
     public loading: boolean;
     private subscriptions: any = {};
+
+    public blur() {
+        this.update.next(this.form.value);
+    };
 
     public async set(data) {
         this.setting = true;

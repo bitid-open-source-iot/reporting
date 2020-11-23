@@ -12,7 +12,7 @@
                 </span>
             </label>
 
-            <input matInput type="color" formControlName="color" required>
+            <input matInput type="color" formControlName="color" required (blur)="blur()">
         </form-field>
 
         <form-field>
@@ -23,7 +23,7 @@
                 </span>
             </label>
 
-            <input matInput min="0" max="100" type="number" formControlName="opacity" required>
+            <input matInput min="0" max="100" type="number" formControlName="opacity" required (blur)="blur()">
 
             <mat-icon svgIcon="percentage"></mat-icon>
         </form-field>
@@ -42,7 +42,7 @@
                 </span>
             </label>
 
-            <input matInput type="color" formControlName="color" required>
+            <input matInput type="color" formControlName="color" required (blur)="blur()">
         </form-field>
 
         <form-field>
@@ -53,7 +53,7 @@
                 </span>
             </label>
 
-            <input matInput min="0" max="100" type="number" formControlName="opacity" required>
+            <input matInput min="0" max="100" type="number" formControlName="opacity" required (blur)="blur()">
 
             <mat-icon svgIcon="percentage"></mat-icon>
         </form-field>
@@ -68,7 +68,7 @@
                 </span>
             </label>
 
-            <mat-select formControlName="family" required>
+            <mat-select formControlName="family" required (selectionChange)="blur()">
                 <mat-option value="Arial">
                     Arial
                 </mat-option>
@@ -83,7 +83,7 @@
                 </span>
             </label>
 
-            <input matInput min="24" max="48" type="number" formControlName="size" required>
+            <input matInput min="24" max="48" type="number" formControlName="size" required (blur)="blur()">
         </form-field>
     </section>
 
@@ -96,7 +96,7 @@
                 </span>
             </label>
 
-            <mat-select formControlName="vertical" required>
+            <mat-select formControlName="vertical" required (selectionChange)="blur()">
                 <mat-option value="top">
                     Top
                 </mat-option>
@@ -117,7 +117,7 @@
                 </span>
             </label>
 
-            <mat-select formControlName="horizontal" required>
+            <mat-select formControlName="horizontal" required (selectionChange)="blur()">
                 <mat-option value="left">
                     Left
                 </mat-option>
@@ -144,7 +144,7 @@
                 </span>
             </label>
 
-            <input matInput type="color" formControlName="color" required>
+            <input matInput type="color" formControlName="color" required (blur)="blur()">
         </form-field>
 
         <form-field>
@@ -155,7 +155,7 @@
                 </span>
             </label>
 
-            <input matInput min="0" max="100" type="number" formControlName="opacity" required>
+            <input matInput min="0" max="100" type="number" formControlName="opacity" required (blur)="blur()">
 
             <mat-icon svgIcon="percentage"></mat-icon>
         </form-field>
@@ -170,7 +170,7 @@
                 </span>
             </label>
 
-            <input matInput min="0" max="5" type="number" formControlName="width" required>
+            <input matInput min="0" max="5" type="number" formControlName="width" required (blur)="blur()">
         </form-field>
 
         <form-field>
@@ -181,7 +181,7 @@
                 </span>
             </label>
 
-            <mat-select formControlName="style" required>
+            <mat-select formControlName="style" required (selectionChange)="blur()">
                 <mat-option value="solid">
                     Solid
                 </mat-option>
@@ -217,7 +217,7 @@
                 </span>
             </label>
 
-            <input matInput type="color" formControlName="color" required>
+            <input matInput type="color" formControlName="color" required (blur)="blur()">
         </form-field>
 
         <form-field>
@@ -228,7 +228,7 @@
                 </span>
             </label>
 
-            <input matInput min="0" max="100" type="number" formControlName="opacity" required>
+            <input matInput min="0" max="100" type="number" formControlName="opacity" required (blur)="blur()">
 
             <mat-icon svgIcon="percentage"></mat-icon>
         </form-field>
@@ -243,7 +243,7 @@
                 </span>
             </label>
 
-            <mat-select formControlName="family" required>
+            <mat-select formControlName="family" required (selectionChange)="blur()">
                 <mat-option value="Arial">
                     Arial
                 </mat-option>
@@ -258,7 +258,7 @@
                 </span>
             </label>
 
-            <input matInput min="8" max="24" type="number" formControlName="size" required>
+            <input matInput min="8" max="24" type="number" formControlName="size" required (blur)="blur()">
         </form-field>
     </section>
 
@@ -271,7 +271,7 @@
                 </span>
             </label>
 
-            <mat-select formControlName="vertical" required>
+            <mat-select formControlName="vertical" required (selectionChange)="blur()">
                 <mat-option value="top">
                     Top
                 </mat-option>
@@ -292,7 +292,7 @@
                 </span>
             </label>
 
-            <mat-select formControlName="horizontal" required>
+            <mat-select formControlName="horizontal" required (selectionChange)="blur()">
                 <mat-option value="left">
                     Left
                 </mat-option>

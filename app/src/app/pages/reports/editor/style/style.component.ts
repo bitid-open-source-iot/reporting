@@ -71,10 +71,15 @@ export class ColumnStyleComponent implements OnInit, OnDestroy {
             'horizontal': ''
         }
     };
+    public update: EventEmitter<any> = new EventEmitter<any>();
     public change: EventEmitter<any> = new EventEmitter<any>();
     public element: HTMLElement;
     public setting: boolean;
     private subscriptions: any = {};
+
+    public blur() {
+        this.update.next(this.form.value);
+    };
 
     public async reset() {
         this.form.setValue({

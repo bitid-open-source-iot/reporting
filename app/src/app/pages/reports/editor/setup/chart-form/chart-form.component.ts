@@ -19,6 +19,7 @@ export class ChartForm implements OnInit, OnDestroy {
     constructor(private dialog: MatDialog, public devices: DevicesService) { };
 
     public series: SERIES[] = [];
+    public update: EventEmitter<any> = new EventEmitter<any>();
     public change: EventEmitter<any> = new EventEmitter<any>();
     public loading: boolean;
 
@@ -30,6 +31,9 @@ export class ChartForm implements OnInit, OnDestroy {
             };
         };
         this.change.emit({
+            'series': this.series
+        });
+        this.update.emit({
             'series': this.series
         });
     };
@@ -71,6 +75,9 @@ export class ChartForm implements OnInit, OnDestroy {
                         break;
                 };
                 this.change.emit({
+                    'series': this.series
+                });
+                this.update.emit({
                     'series': this.series
                 });
             };
