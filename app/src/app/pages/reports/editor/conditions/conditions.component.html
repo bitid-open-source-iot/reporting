@@ -1,0 +1,38 @@
+<div class="condition" *ngFor="let condition of conditions">
+    <div class="portal" [class.active]="condition.selected" (click)="select(condition)" matRipple>
+        <mat-icon>
+            done
+        </mat-icon>
+    </div>
+
+    <div class="details">
+        <h3>
+            {{ devices.data | device : condition.deviceId : '-' }}
+        </h3>
+        <p>
+            {{ devices.data | input : condition.deviceId : condition.inputId : '-' }}: {{ value(condition) }}
+        </p>
+    </div>
+        
+    <button mat-icon-button [matMenuTriggerFor]="menu">
+        <mat-icon>
+            more_vert
+        </mat-icon>
+    </button>
+
+    <mat-menu #menu="matMenu">
+        <button mat-menu-item (click)="editor('update', condition)">
+            Edit Condition
+        </button>
+        <button mat-menu-item (click)="editor('copy', condition)">
+            Copy Condition
+        </button>
+        <button mat-menu-item (click)="remove(condition)">
+            Remove Condition
+        </button>
+    </mat-menu>
+</div>
+
+<button class="add" mat-icon-button (click)="editor('add')">
+    <mat-icon svgIcon="add-condition"></mat-icon>
+</button>

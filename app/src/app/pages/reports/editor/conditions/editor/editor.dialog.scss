@@ -1,0 +1,26 @@
+.condition-dialog {
+    .mat-dialog-container {
+        top: 0px;
+        left: 0px;
+        right: 0px;
+        bottom: 0px;
+        padding: 0px;
+        z-index: 5000;
+        position: fixed;
+        border-radius: 0px;
+        mat-toolbar {
+            position: relative;
+            font-size: 16px;
+            font-weight: 400;
+            text-transform: uppercase;
+        }
+        form {
+            padding: 10px 0px;
+        }
+        mat-footer button {
+            width: 100%;
+            margin: auto;
+            max-width: 400px;
+        }
+    }
+}

@@ -54,8 +54,9 @@ import { CustomDatesDialog } from './viewer/custom-dates/custom-dates.dialog';
 import { SeriesEditorDialog } from './editor/setup/chart-form/editor/editor.dialog';
 import { ColumnSetupComponent } from './editor/setup/setup.component';
 import { ColumnStyleComponent } from './editor/style/style.component';
-import { ColumnConditionsComponent } from './editor/conditions/conditions.component';
 import { ReportSettingsDialog } from './editor/settings/settings.dialog';
+import { ConditionEditorDialog } from './editor/conditions/editor/editor.dialog';
+import { ColumnConditionsComponent } from './editor/conditions/conditions.component';
 
 @NgModule({
     imports: [
@@ -113,6 +114,7 @@ import { ReportSettingsDialog } from './editor/settings/settings.dialog';
         ColumnSetupComponent,
         ColumnStyleComponent,
         ReportSettingsDialog,
+        ConditionEditorDialog,
         ColumnConditionsComponent
     ]
 })

@@ -1,0 +1,439 @@
+<mat-toolbar color="primary">
+    <div class="page-label spacer">
+        condition editor
+    </div>
+
+    <button mat-icon-button (click)="close()">
+        <mat-icon>
+            close
+        </mat-icon>
+    </button>
+</mat-toolbar>
+
+<mat-content>
+    <div class="container">
+        <form [formGroup]="form">
+            <h2>
+                connector
+            </h2>
+
+            <section>
+                <mat-form-field appearance="outline">
+                    <mat-label>
+                        Device
+                    </mat-label>
+            
+                    <mat-select name="deviceId" placeholder="device" formControlName="deviceId" required>
+                        <mat-option [formGroup]="filter">
+                            <ngx-mat-select-search placeholderLabel="filter devices" noEntriesFoundLabel="no devices found" formControlName="device"></ngx-mat-select-search>
+                        </mat-option>
+                        <mat-option *ngFor="let device of devices.data | filterBy : {'description': filter.value.device}" [value]="device.deviceId">
+                            {{ device.description }}
+                        </mat-option>
+                    </mat-select>
+            
+                    <mat-error *ngIf="errors.deviceId">
+                        {{ errors.deviceId }}
+                    </mat-error>
+                </mat-form-field>
+            
+                <mat-form-field appearance="outline">
+                    <mat-label>
+                        Input
+                    </mat-label>
+            
+                    <mat-select name="inputId" placeholder="input" formControlName="inputId" required>
+                        <mat-option [formGroup]="filter">
+                            <ngx-mat-select-search placeholderLabel="filter inputs" noEntriesFoundLabel="no inputs found" formControlName="input"></ngx-mat-select-search>
+                        </mat-option>
+                        <mat-option *ngFor="let input of inputs | filterBy : {'description': filter.value.input}" [value]="input.inputId">
+                            {{ input.description }}
+                        </mat-option>
+                    </mat-select>
+            
+                    <mat-error *ngIf="errors.inputId">
+                        {{ errors.inputId }}
+                    </mat-error>
+                </mat-form-field>
+            </section>
+
+            <section formGroupName="analog" *ngIf="form.value.type == 'analog'">
+                <mat-form-field appearance="outline">
+                    <mat-label>
+                        Min
+                    </mat-label>
+        
+                    <input matInput type="number" formControlName="min" [required]="form.value.type == 'analog'">
+        
+                    <mat-error *ngIf="errors.analog.min">
+                        {{ errors.analog.min }}
+                    </mat-error>
+                </mat-form-field>
+
+                <mat-form-field appearance="outline">
+                    <mat-label>
+                        Max
+                    </mat-label>
+        
+                    <input matInput type="number" formControlName="max" [required]="form.value.type == 'analog'">
+        
+                    <mat-error *ngIf="errors.analog.max">
+                        {{ errors.analog.max }}
+                    </mat-error>
+                </mat-form-field>
+            </section>
+            
+            <section formGroupName="digital" *ngIf="form.value.type == 'digital'">
+                <mat-form-field appearance="outline">
+                    <mat-label>
+                        Value
+                    </mat-label>
+            
+                    <mat-select name="value" placeholder="value" formControlName="value" [required]="form.value.type == 'digital'">
+                        <mat-option [value]="0">
+                            0
+                        </mat-option>
+                        <mat-option [value]="1">
+                            1
+                        </mat-option>
+                    </mat-select>
+            
+                    <mat-error *ngIf="errors.digital.value">
+                        {{ errors.digital.value }}
+                    </mat-error>
+                </mat-form-field>
+            </section>
+
+            <h2>
+                fill
+            </h2>
+        
+            <section formGroupName="fill">
+                <mat-form-field appearance="outline">
+                    <mat-label>
+                        Color
+                    </mat-label>
+        
+                    <input matInput type="color" formControlName="color" required>
+                    
+                    <mat-error *ngIf="errors.fill.color">
+                        {{ errors.fill.color }}
+                    </mat-error>
+                </mat-form-field>
+        
+                <mat-form-field appearance="outline">
+                    <mat-label>
+                        Opacity
+                    </mat-label>
+        
+                    <input matInput min="0" max="100" type="number" formControlName="opacity" required>
+        
+                    <mat-icon svgIcon="percentage" matSuffix></mat-icon>
+                    
+                    <mat-error *ngIf="errors.fill.opacity">
+                        {{ errors.fill.opacity }}
+                    </mat-error>
+                </mat-form-field>
+            </section>
+        
+            <h2>
+                font
+            </h2>
+        
+            <section formGroupName="font">
+                <mat-form-field appearance="outline">
+                    <mat-label>
+                        Color
+                    </mat-label>
+        
+                    <input matInput type="color" formControlName="color" required>
+                    
+                    <mat-error *ngIf="errors.font.color">
+                        {{ errors.font.color }}
+                    </mat-error>
+                </mat-form-field>
+        
+                <mat-form-field appearance="outline">
+                    <mat-label>
+                        Opacity
+                    </mat-label>
+        
+                    <input matInput min="0" max="100" type="number" formControlName="opacity" required>
+        
+                    <mat-icon svgIcon="percentage" matSuffix></mat-icon>
+                    
+                    <mat-error *ngIf="errors.font.opacity">
+                        {{ errors.font.opacity }}
+                    </mat-error>
+                </mat-form-field>
+            </section>
+        
+            <section formGroupName="font">
+                <mat-form-field appearance="outline">
+                    <mat-label>
+                        Family
+                    </mat-label>
+        
+                    <mat-select formControlName="family" required>
+                        <mat-option value="Arial">
+                            Arial
+                        </mat-option>
+                    </mat-select>
+                    
+                    <mat-error *ngIf="errors.font.family">
+                        {{ errors.font.family }}
+                    </mat-error>
+                </mat-form-field>
+        
+                <mat-form-field appearance="outline">
+                    <mat-label>
+                        Size
+                    </mat-label>
+        
+                    <input matInput min="24" max="48" type="number" formControlName="size" required>
+                    
+                    <mat-error *ngIf="errors.font.size">
+                        {{ errors.font.size }}
+                    </mat-error>
+                </mat-form-field>
+            </section>
+        
+            <section formGroupName="font">
+                <mat-form-field appearance="outline">
+                    <mat-label>
+                        Vertical
+                    </mat-label>
+        
+                    <mat-select formControlName="vertical" required>
+                        <mat-option value="top">
+                            Top
+                        </mat-option>
+                        <mat-option value="center">
+                            Center
+                        </mat-option>
+                        <mat-option value="bottom">
+                            Bottom
+                        </mat-option>
+                    </mat-select>
+                    
+                    <mat-error *ngIf="errors.font.vertical">
+                        {{ errors.font.vertical }}
+                    </mat-error>
+                </mat-form-field>
+        
+                <mat-form-field appearance="outline">
+                    <mat-label>
+                        Horizontal
+                    </mat-label>
+        
+                    <mat-select formControlName="horizontal" required>
+                        <mat-option value="left">
+                            Left
+                        </mat-option>
+                        <mat-option value="center">
+                            Center
+                        </mat-option>
+                        <mat-option value="right">
+                            Right
+                        </mat-option>
+                    </mat-select>
+                    
+                    <mat-error *ngIf="errors.font.horizontal">
+                        {{ errors.font.horizontal }}
+                    </mat-error>
+                </mat-form-field>
+            </section>
+        
+            <h2>
+                stroke
+            </h2>
+        
+            <section formGroupName="stroke">
+                <mat-form-field appearance="outline">
+                    <mat-label>
+                        Color
+                    </mat-label>
+        
+                    <input matInput type="color" formControlName="color" required>
+                    
+                    <mat-error *ngIf="errors.stroke.color">
+                        {{ errors.stroke.color }}
+                    </mat-error>
+                </mat-form-field>
+        
+                <mat-form-field appearance="outline">
+                    <mat-label>
+                        Opacity
+                    </mat-label>
+        
+                    <input matInput min="0" max="100" type="number" formControlName="opacity" required>
+        
+                    <mat-icon svgIcon="percentage" matSuffix></mat-icon>
+                    
+                    <mat-error *ngIf="errors.stroke.opacity">
+                        {{ errors.stroke.opacity }}
+                    </mat-error>
+                </mat-form-field>
+            </section>
+        
+            <section formGroupName="stroke">
+                <mat-form-field appearance="outline">
+                    <mat-label>
+                        Width
+                    </mat-label>
+        
+                    <input matInput min="0" max="5" type="number" formControlName="width" required>
+                    
+                    <mat-error *ngIf="errors.stroke.width">
+                        {{ errors.stroke.width }}
+                    </mat-error>
+                </mat-form-field>
+        
+                <mat-form-field appearance="outline">
+                    <mat-label>
+                        Style
+                    </mat-label>
+        
+                    <mat-select formControlName="style" required>
+                        <mat-option value="solid">
+                            Solid
+                        </mat-option>
+                        <mat-option value="ridge">
+                            Ridge
+                        </mat-option>
+                        <mat-option value="dotted">
+                            Dotted
+                        </mat-option>
+                        <mat-option value="dashed">
+                            Dashed
+                        </mat-option>
+                        <mat-option value="double">
+                            Double
+                        </mat-option>
+                        <mat-option value="groove">
+                            Groove
+                        </mat-option>
+                    </mat-select>
+                    
+                    <mat-error *ngIf="errors.stroke.style">
+                        {{ errors.stroke.style }}
+                    </mat-error>
+                </mat-form-field>
+            </section>
+        
+            <h2>
+                banner
+            </h2>
+        
+            <section formGroupName="banner">
+                <mat-form-field appearance="outline">
+                    <mat-label>
+                        Color
+                    </mat-label>
+        
+                    <input matInput type="color" formControlName="color" required>
+                    
+                    <mat-error *ngIf="errors.banner.color">
+                        {{ errors.banner.color }}
+                    </mat-error>
+                </mat-form-field>
+        
+                <mat-form-field appearance="outline">
+                    <mat-label>
+                        Opacity
+                    </mat-label>
+        
+                    <input matInput min="0" max="100" type="number" formControlName="opacity" required>
+        
+                    <mat-icon svgIcon="percentage" matSuffix></mat-icon>
+                    
+                    <mat-error *ngIf="errors.banner.opacity">
+                        {{ errors.banner.opacity }}
+                    </mat-error>
+                </mat-form-field>
+            </section>
+        
+            <section formGroupName="banner">
+                <mat-form-field appearance="outline">
+                    <mat-label>
+                        Family
+                    </mat-label>
+        
+                    <mat-select formControlName="family" required>
+                        <mat-option value="Arial">
+                            Arial
+                        </mat-option>
+                    </mat-select>
+                    
+                    <mat-error *ngIf="errors.banner.family">
+                        {{ errors.banner.family }}
+                    </mat-error>
+                </mat-form-field>
+        
+                <mat-form-field appearance="outline">
+                    <mat-label>
+                        Size
+                    </mat-label>
+        
+                    <input matInput min="8" max="24" type="number" formControlName="size" required>
+                    
+                    <mat-error *ngIf="errors.banner.size">
+                        {{ errors.banner.size }}
+                    </mat-error>
+                </mat-form-field>
+            </section>
+        
+            <section formGroupName="banner">
+                <mat-form-field appearance="outline">
+                    <mat-label>
+                        Vertical
+                    </mat-label>
+        
+                    <mat-select formControlName="vertical" required>
+                        <mat-option value="top">
+                            Top
+                        </mat-option>
+                        <mat-option value="center">
+                            Center
+                        </mat-option>
+                        <mat-option value="bottom">
+                            Bottom
+                        </mat-option>
+                    </mat-select>
+                    
+                    <mat-error *ngIf="errors.banner.vertical">
+                        {{ errors.banner.vertical }}
+                    </mat-error>
+                </mat-form-field>
+        
+                <mat-form-field appearance="outline">
+                    <mat-label>
+                        Horizontal
+                    </mat-label>
+        
+                    <mat-select formControlName="horizontal" required>
+                        <mat-option value="left">
+                            Left
+                        </mat-option>
+                        <mat-option value="center">
+                            Center
+                        </mat-option>
+                        <mat-option value="right">
+                            Right
+                        </mat-option>
+                    </mat-select>
+                    
+                    <mat-error *ngIf="errors.banner.horizontal">
+                        {{ errors.banner.horizontal }}
+                    </mat-error>
+                </mat-form-field>
+            </section>
+        </form>
+    </div>
+</mat-content>
+
+<mat-footer>
+    <button type="button" color="primary" mat-flat-button (click)="submit()">
+        submit
+    </button>
+</mat-footer>

@@ -1,3 +1,5 @@
+import { Condition, CONDITION } from 'src/app/utilities/condition';
+
 /* --- STYLE --- */
 export class Style {
 
@@ -5,9 +7,13 @@ export class Style {
     public font?: FONT = new Font();
     public stroke?: STROKE = new Stroke();
     public banner?: BANNER = new Banner();
+    public conditions?: CONDITION[] = [];
 
     constructor(style?: STYLE) {
         if (typeof(style) != 'undefined' && style !== null) {
+            if (Array.isArray(style.conditions)) {
+                this.conditions = <CONDITION[]>style.conditions.map(condition => new Condition(condition));
+            };
             if (typeof(style.fill) != 'undefined' && style.fill !== null) {
                 this.fill = new Fill(style.fill);
             };
@@ -30,6 +36,7 @@ export interface STYLE {
     'font'?: FONT;
     'stroke'?: STROKE;
     'banner'?: BANNER;
+    'conditions'?: CONDITION[];
 }
 /* --- STYLE --- */
 

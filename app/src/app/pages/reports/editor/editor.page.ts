@@ -56,10 +56,10 @@ export class ReportEditorPage implements OnInit, OnDestroy {
 
         this.setup.reset();
         this.style.reset();
-        // this.conditions.reset();
+        this.conditions.reset();
 
         this.sidenav.close();
-        // this.conditions.close();
+
         this.save({
             'layout': this.report.layout
         });
@@ -89,7 +89,7 @@ export class ReportEditorPage implements OnInit, OnDestroy {
                     });
                     row.columns.push(item);
                 };
-
+                debugger
                 this.report.layout[this.layout].push(row);
                 this.save({
                     'layout': this.report.layout
@@ -277,11 +277,10 @@ export class ReportEditorPage implements OnInit, OnDestroy {
         this.columnId = column.id;
 
         this.setup.set(column);
+        this.style.set(column);
+        this.conditions.set(column);
 
         this.sidenav.open();
-        // this.conditions.open();
-        // this.conditions.set(column.conditions);
-        this.style.set(column);
     };
 
     public remove(event, row: Row, columnId) {

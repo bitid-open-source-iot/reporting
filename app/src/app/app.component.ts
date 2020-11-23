@@ -19,6 +19,7 @@ export class AppComponent implements OnInit {
         this.registry.addSvgIcon('bar-chart', this.sanitizer.bypassSecurityTrustResourceUrl('./assets/charts/bar.svg'));
         this.registry.addSvgIcon('area-chart', this.sanitizer.bypassSecurityTrustResourceUrl('./assets/charts/area.svg'));
         this.registry.addSvgIcon('line-chart', this.sanitizer.bypassSecurityTrustResourceUrl('./assets/charts/line.svg'));
+        this.registry.addSvgIcon('add-condition', this.sanitizer.bypassSecurityTrustResourceUrl('./assets/add-condition.svg'));
 
         this.registry.addSvgIcon('copy', this.sanitizer.bypassSecurityTrustResourceUrl('./assets/copy.svg'));
         this.registry.addSvgIcon('data', this.sanitizer.bypassSecurityTrustResourceUrl('./assets/data.svg'));
