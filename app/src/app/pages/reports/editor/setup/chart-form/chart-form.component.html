@@ -2,7 +2,11 @@
     <div class="chart" *ngFor="let item of series">
         <div class="backdrop" [style.opacity]="item.opacity / 100" [style.background-color]="item.color"></div>
 
-        <mat-icon svgIcon="bar-chart"></mat-icon>
+        <mat-icon *ngIf="item.type == 'area'" svgIcon="area-chart"></mat-icon>
+
+        <mat-icon *ngIf="item.type == 'line'" svgIcon="line-chart"></mat-icon>
+
+        <mat-icon *ngIf="item.type == 'column'" svgIcon="column-chart"></mat-icon>
 
         <div class="details">
             <h3>
@@ -22,6 +26,9 @@
         <mat-menu #menu="matMenu">
             <button mat-menu-item (click)="editor('update', item)">
                 Edit Series
+            </button>
+            <button mat-menu-item (click)="editor('copy', item)">
+                Copy Series
             </button>
             <button mat-menu-item (click)="remove(item)">
                 Remove Series

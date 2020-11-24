@@ -46,6 +46,7 @@ export interface CHART extends STYLE {
 export interface SERIES {
     'id'?: string;
     'type'?: string;
+    'data'?: any[];
     'color'?: string;
     'opacity'?: number;
     'inputId'?: string;

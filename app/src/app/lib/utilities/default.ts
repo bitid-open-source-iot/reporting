@@ -1,22 +1,12 @@
-import { Default, DEFAULT } from './default';
-import { Condition, CONDITION } from 'src/app/utilities/condition';
-
-/* --- STYLE --- */
-export class Style {
+export class Default {
 
     public fill?: FILL = new Fill();
     public font?: FONT = new Font();
     public stroke?: STROKE = new Stroke();
     public banner?: BANNER = new Banner();
-    public default?: DEFAULT = new Default();
-    public conditions?: CONDITION[] = [];
 
-    constructor(style?: STYLE) {
+    constructor(style?: DEFAULT) {
         if (typeof(style) != 'undefined' && style !== null) {
-            this.default = new Default(style);
-            if (Array.isArray(style.conditions)) {
-                this.conditions = <CONDITION[]>style.conditions.map(condition => new Condition(condition));
-            };
             if (typeof(style.fill) != 'undefined' && style.fill !== null) {
                 this.fill = new Fill(style.fill);
             };
@@ -34,15 +24,12 @@ export class Style {
 
 }
 
-export interface STYLE {
+export interface DEFAULT {
     'fill'?: FILL;
     'font'?: FONT;
     'stroke'?: STROKE;
     'banner'?: BANNER;
-    'default'?: DEFAULT;
-    'conditions'?: CONDITION[];
 }
-/* --- STYLE --- */
 
 /* --- FILL --- */
 export class Fill {

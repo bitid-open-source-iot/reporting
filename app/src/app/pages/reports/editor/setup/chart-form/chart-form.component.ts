@@ -54,7 +54,10 @@ export class ChartForm implements OnInit, OnDestroy {
                 'opacity': 100,
                 'deviceId': null
             };
+        } else if (mode == 'copy') {
+            chart.id = ObjectId();
         };
+        
         const dialog = await this.dialog.open(SeriesEditorDialog, {
             'data': chart,
             'panelClass': 'series-dialog'
@@ -64,12 +67,13 @@ export class ChartForm implements OnInit, OnDestroy {
             if (result) {
                 switch (mode) {
                     case ('add'):
+                    case ('copy'):
                         this.series.push(result);
                         break;
                     case ('update'):
-                        this.series.map(chart => {
+                        this.series.map(o => {
                             Object.keys(result).map(key => {
-                                chart[key] = result[key];
+                                o[key] = result[key];
                             });
                         });
                         break;

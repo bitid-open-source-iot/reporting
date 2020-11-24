@@ -19,6 +19,7 @@ export class ColumnConditionsComponent {
 
     public style: EventEmitter<any> = new EventEmitter<any>();
     public change: EventEmitter<any> = new EventEmitter<any>();
+    public preview: EventEmitter<any> = new EventEmitter<any>();
     public element: HTMLElement;
     public conditions: any[] = [];
 
@@ -68,8 +69,10 @@ export class ColumnConditionsComponent {
         this.conditions.map(o => {
             if (condition.id == o.id && !o.selected) {
                 o.selected = true;
+                this.preview.next(condition);
             } else {
                 o.selected = false;
+                this.preview.next(false);
             };
         });
     };

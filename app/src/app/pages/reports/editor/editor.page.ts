@@ -1,5 +1,6 @@
 import { Row } from 'src/app/interfaces/row';
 import { Column } from 'src/app/interfaces/column';
+import { Default } from 'src/app/lib/utilities/default';
 import { ObjectId } from 'src/app/id';
 import { MatDialog } from '@angular/material/dialog';
 import { MatSidenav } from '@angular/material/sidenav';
@@ -11,13 +12,13 @@ import { HistoryService } from 'src/app/services/history/history.service';
 import { DevicesService } from 'src/app/services/devices/devices.service';
 import { ReportsService } from 'src/app/services/reports/reports.service';
 import { ActivatedRoute } from '@angular/router';
-import { Report, REPORT, ReportLayout, ReportSettings } from 'src/app/utilities/report';
 import { ColumnSetupComponent } from './setup/setup.component';
 import { ColumnStyleComponent } from './style/style.component';
 import { ReportSettingsDialog } from './settings/settings.dialog';
 import { ColumnConditionsComponent } from './conditions/conditions.component';
 import { CdkDragDrop, moveItemInArray } from '@angular/cdk/drag-drop';
 import { OnInit, Component, OnDestroy, ViewChild } from '@angular/core';
+import { Report, REPORT, ReportLayout, ReportSettings } from 'src/app/utilities/report';
 import { Map, Text, Chart, Value, Blank, Gauge, Vector, ParseUtility, UnparseUtility } from 'src/app/lib/utilities/index';
 
 @Component({
@@ -225,6 +226,36 @@ export class ReportEditorPage implements OnInit, OnDestroy {
         if (typeof(params.layout) != 'undefined' && params.layout !== null) {
             params.layout = JSON.parse(JSON.stringify(params.layout));
             params.layout.mobile.map(row => {
+                row.columns = row.columns.map(column => {
+                    column.fill = column.default.fill;
+                    column.font = column.default.font;
+                    column.banner = column.default.banner;
+                    column.stroke = column.default.stroke;
+                    delete column.default;
+                    return column;
+                });
+            });
+            params.layout.tablet.map(row => {
+                row.columns = row.columns.map(column => {
+                    column.fill = column.default.fill;
+                    column.font = column.default.font;
+                    column.banner = column.default.banner;
+                    column.stroke = column.default.stroke;
+                    delete column.default;
+                    return column;
+                });
+            });
+            params.layout.desktop.map(row => {
+                row.columns = row.columns.map(column => {
+                    column.fill = column.default.fill;
+                    column.font = column.default.font;
+                    column.banner = column.default.banner;
+                    column.stroke = column.default.stroke;
+                    delete column.default;
+                    return column;
+                });
+            });
+            params.layout.mobile.map(row => {
                 row.columns = UnparseUtility(row.columns);
             });
             params.layout.tablet.map(row => {
@@ -243,19 +274,28 @@ export class ReportEditorPage implements OnInit, OnDestroy {
     };
 
     public async extend(row: Row) {
-        let width = 100 / row.columns.length;
-        let subtract = width / row.columns.length;
-        row.columns.map(column => {
-            column.width -= subtract;
-        });
-        row.columns.push(new Blank({
-            'fill': this.report.settings.fill,
-            'width': width,
-            'position': row.columns.length + 1
-        }));
-        this.save({
-            'layout': this.report.layout
-        });
+        const limit = {
+            'mobile': 2,
+            'tablet': 5,
+            'desktop': 8
+        };
+
+        if (row.columns.length < limit[this.layout]) {
+            const width = 100 / (row.columns.length + 1);
+            row.columns.map(column => {
+                column.width = width;
+            });
+            row.columns.push(new Blank({
+                'fill': this.report.settings.fill,
+                'width': width,
+                'position': row.columns.length + 1
+            }));
+            this.save({
+                'layout': this.report.layout
+            });
+        } else {
+            this.toast.error('row is full!');
+        };
     };
 
     public left(row: Row, column: Column) {
@@ -366,7 +406,25 @@ export class ReportEditorPage implements OnInit, OnDestroy {
                                         debugger
                                     };
                                 };
+                            } else if (this.report.layout[this.layout][a].columns[b].type == 'chart') {
+                                this.report.layout[this.layout][a].columns[b].series.map(async series => {
+                                    series.data = [
+                                        {
+                                            'x': new Date(),
+                                            'y': 0
+                                        },
+                                        {
+                                            'x': new Date(),
+                                            'y': 10
+                                        },
+                                        {
+                                            'x': new Date(),
+                                            'y': 0
+                                        }
+                                    ];
+                                });
                             };
+                            
                             Object.keys(setup).map(key => {
                                 if (this.report.layout[this.layout][a].columns[b].type != setup.type) {
                                     switch(setup.type) {
@@ -410,6 +468,7 @@ export class ReportEditorPage implements OnInit, OnDestroy {
                             Object.keys(style).map(key => {
                                 this.report.layout[this.layout][a].columns[b][key] = style[key];
                             });
+                            this.report.layout[this.layout][a].columns[b].default = new Default(style);
                         };
                     };
                 };
@@ -434,6 +493,30 @@ export class ReportEditorPage implements OnInit, OnDestroy {
             this.save({
                 'layout': this.report.layout
             });
+        });
+
+        this.subscriptions.preview = this.conditions.preview.subscribe(preview => {
+            this.report.layout[this.layout].map(row => {
+                row.columns.map(column => {
+                    Object.keys(column.default).map(key => {
+                        column[key] = column.default[key];
+                    });
+                });
+            });
+            if (preview) {
+                for (let a = 0; a < this.report.layout[this.layout].length; a++) {
+                    if (this.report.layout[this.layout][a].rowId == this.rowId) {
+                        for (let b = 0; b < this.report.layout[this.layout][a].columns.length; b++) {
+                            if (this.report.layout[this.layout][a].columns[b].id == this.columnId) {
+                                this.report.layout[this.layout][a].columns[b].fill = preview.fill;
+                                this.report.layout[this.layout][a].columns[b].font = preview.font;
+                                this.report.layout[this.layout][a].columns[b].banner = preview.banner;
+                                this.report.layout[this.layout][a].columns[b].stroke = preview.stroke;
+                            };
+                        };
+                    };
+                };
+            };
         });
 
         this.subscriptions.conditions = this.conditions.change.subscribe(data => {
@@ -503,6 +586,7 @@ export class ReportEditorPage implements OnInit, OnDestroy {
                         if (this.report.layout[this.layout][a].columns[b].id == this.columnId) {
                             Object.keys(style).map(key => {
                                 this.report.layout[this.layout][a].columns[b][key] = style[key];
+                                this.report.layout[this.layout][a].columns[b].default[key] = style[key];
                             });
                         };
                     };
@@ -520,6 +604,7 @@ export class ReportEditorPage implements OnInit, OnDestroy {
         this.subscriptions.setup.unsubscribe();
         this.subscriptions.style.unsubscribe();
         this.subscriptions.changes.unsubscribe();
+        this.subscriptions.preview.unsubscribe();
         this.subscriptions.update_setup.unsubscribe();
         this.subscriptions.update_style.unsubscribe();
     };

@@ -57,7 +57,7 @@
         
                         <image *ngIf="column.type == 'vector'" [src]="column.src"></image>
         
-                        <chart *ngIf="column.type == 'chart'" [font]="column.font" [fill]="column.fill" [stroke]="column.stroke" [series]="column.series"></chart>
+                        <chart *ngIf="column.type == 'chart'" [font]="column.font" [stroke]="column.stroke" [series]="column.series"></chart>
         
                         <value *ngIf="column.type == 'value'" [font]="column.font">
                             {{ column.value }}
