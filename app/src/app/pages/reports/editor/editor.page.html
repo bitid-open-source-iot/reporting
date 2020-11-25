@@ -41,13 +41,13 @@
         
         <mat-content class="dashboard" [style.background]="report ? report.settings.board.color : '#FFF'">
             <blox class="blox" [class]="layout" [editing]="true" [fill]="report.settings.board" cdkDropList (cdkDropListDropped)="reorder($event)">
-                <row *ngFor="let row of report.layout[layout] | orderBy : 'position'" type="dynamic" [id]="row.rowId" [height]="row.height" [position]="row.position" cdkDragBoundary=".blox"  cdkDragLockAxis="y" cdkDrag [cdkDragDisabled]="!editing || resizing">
+                <blox-row *ngFor="let row of report.layout[layout] | orderBy : 'position'" type="dynamic" [id]="row.rowId" [height]="row.height" [position]="row.position" cdkDragBoundary=".blox"  cdkDragLockAxis="y" cdkDrag [cdkDragDisabled]="!editing || resizing">
                     <button mat-icon-button class="drag-handle" cdkDragHandle>
                         <mat-icon svgIcon="drag" [style.color]="report.settings.font.color"></mat-icon>
                     </button>
 
-                    <column *ngFor="let column of row.columns | orderBy : 'position'" [id]="column.id" [fill]="column.fill" [width]="column.width" [stroke]="column.stroke" [position]="column.position">
-                        <banner [font]="column.banner">
+                    <blox-column *ngFor="let column of row.columns | orderBy : 'position'" [id]="column.id" [fill]="column.fill" [width]="column.width" [stroke]="column.stroke" [position]="column.position">
+                        <!-- <banner [font]="column.banner">
                             {{ column.label }}
                         </banner>
         
@@ -57,11 +57,15 @@
         
                         <image *ngIf="column.type == 'vector'" [src]="column.src"></image>
         
-                        <chart *ngIf="column.type == 'chart'" [font]="column.font" [stroke]="column.stroke" [series]="column.series"></chart>
+                        <chart *ngIf="column.type == 'chart'" [id]="column.id">
+                            <series *ngFor="let series of column.series" [id]="series.id" [type]="series.type" [color]="series.color" [opacity]="series.opacity">
+                                <point *ngFor="let point of series.data" [date]="point.date" [value]="point.value"></point>
+                            </series>
+                        </chart>
         
                         <value *ngIf="column.type == 'value'" [font]="column.font">
                             {{ column.value }}
-                        </value>
+                        </value> -->
                         
                         <div class="options" *ngIf="!copying">
                             <button mat-icon-button matTooltip="Move Left" (click)="left(row, column)" [disabled]="loading || column.position == 1">
@@ -96,7 +100,7 @@
                         <div class="options paste" *ngIf="copying && columnId == column.id" (click)="CancelCopy()">
                             cancel copy
                         </div>
-                    </column>
+                    </blox-column>
 
                     <button mat-icon-button class="add-to-row" (click)="extend(row)" [disabled]="row.columns.length >= 8">
                         <mat-icon [style.color]="report.settings.font.color">add</mat-icon>
@@ -107,15 +111,15 @@
                     <div class="row-properties" [style.color]="report.settings.font.color">
                         {{ row.height | number : '0.0-0' }}PX
                     </div>
-                </row>
+                </blox-row>
             
-                <row type="static" [height]="100">
-                    <column class="add" [width]="100" [fill]="report.settings.fill" matRipple matTooltip="Add Row" (click)="add()">
+                <blox-row type="static" [height]="100">
+                    <blox-column class="add" [width]="100" [fill]="report.settings.fill" matRipple matTooltip="Add Row" (click)="add()">
                         <mat-icon [style.color]="report.settings.font.color">
                             add
                         </mat-icon>
-                    </column>
-                </row>
+                    </blox-column>
+                </blox-row>
             </blox>
         </mat-content>
     </mat-sidenav-content>

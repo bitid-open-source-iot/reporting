@@ -5,7 +5,7 @@ import { ReportEditorPage } from './editor/editor.page';
 
 /* --- MODULES --- */
 import { NgModule } from '@angular/core';
-import { BloxModule } from 'src/app/lib/blox/blox.module';
+import { BloxModule } from '@bitid/blox';
 import { ShareModule } from 'src/app/components/share/share.module';
 import { DeleteModule } from 'src/app/components/delete/delete.module';
 import { CommonModule } from '@angular/common';

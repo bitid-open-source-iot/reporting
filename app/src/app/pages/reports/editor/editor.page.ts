@@ -7,7 +7,7 @@ import { MatSidenav } from '@angular/material/sidenav';
 import { MatTabGroup } from '@angular/material/tabs';
 import { AddRowDialog } from './add-row/add-row.dialog';
 import { ToastService } from 'src/app/services/toast/toast.service';
-import { BloxComponent } from 'src/app/lib/blox/blox.component';
+import { BloxComponent } from '@bitid/blox';
 import { HistoryService } from 'src/app/services/history/history.service';
 import { DevicesService } from 'src/app/services/devices/devices.service';
 import { ReportsService } from 'src/app/services/reports/reports.service';
