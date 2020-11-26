@@ -78,8 +78,12 @@ export class ReportEditorPage implements OnInit, OnDestroy {
 
                 for (let i = 0; i < count; i++) {
                     let item = new BloxBlank({
+                        'id': ObjectId(),
                         'fill': this.report.settings.fill,
+                        'font': this.report.settings.font,
                         'width': 100 / count,
+                        'stroke': this.report.settings.stroke,
+                        'banner': this.report.settings.banner,
                         'position': i + 1
                     });
                     row.columns.push(item);
@@ -139,12 +143,15 @@ export class ReportEditorPage implements OnInit, OnDestroy {
         if (report.ok) {
             const data = report.result;
             data.layout.mobile.map(row => {
+                row = new BloxRow(row);
                 row.columns = BloxParse(row.columns);
             });
             data.layout.tablet.map(row => {
+                row = new BloxRow(row);
                 row.columns = BloxParse(row.columns);
             });
             data.layout.desktop.map(row => {
+                row = new BloxRow(row);
                 row.columns = BloxParse(row.columns);
             });
 
