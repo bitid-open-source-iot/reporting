@@ -1,7 +1,5 @@
 <div class="series" *ngIf="type == 'chart'">
     <div class="chart" *ngFor="let item of series">
-        <div class="backdrop" [style.opacity]="item.opacity / 100" [style.background-color]="item.color"></div>
-
         <mat-icon *ngIf="item.type == 'area'" svgIcon="area-chart"></mat-icon>
 
         <mat-icon *ngIf="item.type == 'line'" svgIcon="line-chart"></mat-icon>

@@ -1,6 +1,6 @@
-import { SERIES } from 'src/app/lib/utilities/index';
 import { ObjectId } from 'src/app/id';
 import { MatDialog } from '@angular/material/dialog';
+import { BLOXSERIES } from '@bitid/blox';
 import { DevicesService } from 'src/app/services/devices/devices.service';
 import { SeriesEditorDialog } from './editor/editor.dialog';
 import { Input, OnInit, Component, OnDestroy, EventEmitter, ViewEncapsulation } from '@angular/core';
@@ -18,7 +18,7 @@ export class ChartForm implements OnInit, OnDestroy {
 
     constructor(private dialog: MatDialog, public devices: DevicesService) { };
 
-    public series: SERIES[] = [];
+    public series: BLOXSERIES[] = [];
     public update: EventEmitter<any> = new EventEmitter<any>();
     public change: EventEmitter<any> = new EventEmitter<any>();
     public loading: boolean;
@@ -44,7 +44,7 @@ export class ChartForm implements OnInit, OnDestroy {
         };
     };
 
-    public async editor(mode: string, chart?: SERIES) {
+    public async editor(mode: string, chart?: BLOXSERIES) {
         if (mode == 'add') {
             chart = {
                 'id': ObjectId(),

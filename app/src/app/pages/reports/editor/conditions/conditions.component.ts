@@ -66,28 +66,25 @@ export class ColumnConditionsComponent {
     };
     
     public async select(condition) {
-        this.conditions.map(o => {
-            if (condition.id == o.id && !o.selected) {
-                o.selected = true;
-                this.preview.next(condition);
-            } else {
+        if (!condition.selected) {
+            this.conditions.map(o => {
                 o.selected = false;
-                this.preview.next(false);
-            };
-        });
+            });
+            condition.selected = true;
+            this.preview.next(condition);
+        } else {
+            condition.selected = false;
+            this.preview.next(false);
+        }
     };
 
     public async editor(mode: string, condition?: any) {
         if (mode == 'add') {
             condition = {
-                'id': ObjectId(),
-                'type': null,
-                'color': '#000000',
-                'inputId': null,
-                'opacity': 100,
-                'deviceId': null
+                'id': ObjectId()
             };
         } else if (mode == 'copy') {
+            condition = JSON.parse(JSON.stringify(condition));
             condition.id = ObjectId();
         };
 
@@ -104,10 +101,12 @@ export class ColumnConditionsComponent {
                         this.conditions.push(result);
                         break;
                     case ('update'):
-                        this.conditions.map(condition => {
-                            Object.keys(result).map(key => {
-                                condition[key] = result[key];
-                            });
+                        this.conditions.map(item => {
+                            if (item.id == condition.id) {
+                                Object.keys(result).map(key => {
+                                    item[key] = result[key];
+                                });
+                            };
                         });
                         break;
                 };

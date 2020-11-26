@@ -24,7 +24,7 @@
     "@angular/platform-browser-dynamic": "~9.1.7",
     "@angular/router": "~9.1.7",
     "@angular/service-worker": "~9.1.7",
-    "@bitid/blox": "0.0.1",
+    "@bitid/blox": "0.0.8",
     "@types/canvasjs": "^1.9.6",
     "canvasjs": "^1.8.3",
     "html2canvas": "^1.0.0-rc.7",

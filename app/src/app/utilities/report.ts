@@ -1,8 +1,5 @@
+import { BloxBanner, BLOXBANNER, BloxFill, BLOXFILL, BloxFont, BLOXFONT, BloxStroke, BLOXSTROKE } from '@bitid/blox';
 import { User } from '../interfaces/user';
-import { Fill, FILL } from './fill';
-import { Font, FONT } from './font';
-import { Stroke, STROKE } from './stroke';
-import { Banner, BANNER } from './banner';
 
 export class Report {
 
@@ -77,28 +74,28 @@ export interface REPORTLAYOUT {
 
 export class ReportSettings {
 
-    public fill?: FILL = new Fill();
-    public font?: FONT = new Font();
-    public board?: FILL = new Fill();
-    public stroke?: STROKE = new Stroke();
-    public banner?: BANNER = new Banner();
+    public fill?: BLOXFILL = new BloxFill();
+    public font?: BLOXFONT = new BloxFont();
+    public board?: BLOXFILL = new BloxFill();
+    public stroke?: BLOXSTROKE = new BloxStroke();
+    public banner?: BLOXBANNER = new BloxBanner();
     
     constructor(settings?: REPORTSETTINGS) {
         if (typeof(settings) != 'undefined' && settings !== null) {
             if (typeof(settings.fill) != 'undefined' && settings.fill !== null) {
-                this.fill = new Fill(settings.fill);
+                this.fill = new BloxFill(settings.fill);
             };
             if (typeof(settings.font) != 'undefined' && settings.font !== null) {
-                this.font = new Font(settings.font);
+                this.font = new BloxFont(settings.font);
             };
             if (typeof(settings.board) != 'undefined' && settings.board !== null) {
-                this.board = new Fill(settings.board);
+                this.board = new BloxFill(settings.board);
             };
             if (typeof(settings.stroke) != 'undefined' && settings.stroke !== null) {
-                this.stroke = new Stroke(settings.stroke);
+                this.stroke = new BloxStroke(settings.stroke);
             };
             if (typeof(settings.banner) != 'undefined' && settings.banner !== null) {
-                this.banner = new Banner(settings.banner);
+                this.banner = new BloxBanner(settings.banner);
             };
         };
     };
@@ -106,9 +103,9 @@ export class ReportSettings {
 }
 
 export interface REPORTSETTINGS {
-    'fill'?: FILL;
-    'font'?: FONT;
-    'board'?: FILL;
-    'stroke'?: STROKE;
-    'banner'?: BANNER;
+    'fill'?: BLOXFILL;
+    'font'?: BLOXFONT;
+    'board'?: BLOXFILL;
+    'stroke'?: BLOXSTROKE;
+    'banner'?: BLOXBANNER;
 }

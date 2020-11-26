@@ -14,6 +14,18 @@
     <form [formGroup]="form" (ngSubmit)="!form.invalid && submit()">
         <mat-form-field appearance="outline">
             <mat-label>
+                Label
+            </mat-label>
+
+            <input matInput type="text" name="label" placeholder="label" formControlName="label" required>
+
+            <mat-error *ngIf="errors.label">
+                {{ errors.label }}
+            </mat-error>
+        </mat-form-field>
+
+        <mat-form-field appearance="outline">
+            <mat-label>
                 Type
             </mat-label>
 

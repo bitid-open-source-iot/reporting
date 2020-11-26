@@ -91,10 +91,10 @@
             
                     <mat-select name="value" placeholder="value" formControlName="value" [required]="form.value.type == 'digital'">
                         <mat-option [value]="0">
-                            0
+                            {{ digital.low }}
                         </mat-option>
                         <mat-option [value]="1">
-                            1
+                            {{ digital.high }}
                         </mat-option>
                     </mat-select>
             

@@ -47,25 +47,25 @@
                     </button>
 
                     <blox-column *ngFor="let column of row.columns | orderBy : 'position'" [id]="column.id" [fill]="column.fill" [width]="column.width" [stroke]="column.stroke" [position]="column.position">
-                        <!-- <banner [font]="column.banner">
+                        <blox-banner [font]="column.banner">
                             {{ column.label }}
-                        </banner>
+                        </blox-banner>
         
-                        <text *ngIf="column.type == 'text'" [font]="column.font" [banner]="column.banner">
+                        <blox-text *ngIf="column.type == 'text'" [font]="column.font" [banner]="column.banner">
                             {{ column.value }}
-                        </text>
+                        </blox-text>
         
-                        <image *ngIf="column.type == 'vector'" [src]="column.src"></image>
+                        <blox-image *ngIf="column.type == 'vector'" [src]="column.src"></blox-image>
         
-                        <chart *ngIf="column.type == 'chart'" [id]="column.id">
-                            <series *ngFor="let series of column.series" [id]="series.id" [type]="series.type" [color]="series.color" [opacity]="series.opacity">
-                                <point *ngFor="let point of series.data" [date]="point.date" [value]="point.value"></point>
-                            </series>
-                        </chart>
+                        <blox-chart *ngIf="column.type == 'chart'" [id]="column.id">
+                            <blox-series *ngFor="let series of column.series" [id]="series.id" [type]="series.type" [label]="series.label" [color]="series.color" [opacity]="series.opacity">
+                                <blox-point *ngFor="let point of series.data" [date]="point.date" [value]="point.value"></blox-point>
+                            </blox-series>
+                        </blox-chart>
         
-                        <value *ngIf="column.type == 'value'" [font]="column.font">
+                        <blox-value *ngIf="column.type == 'value'" [font]="column.font">
                             {{ column.value }}
-                        </value> -->
+                        </blox-value>
                         
                         <div class="options" *ngIf="!copying">
                             <button mat-icon-button matTooltip="Move Left" (click)="left(row, column)" [disabled]="loading || column.position == 1">

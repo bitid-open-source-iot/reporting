@@ -1,6 +1,6 @@
 import { DevicesService } from 'src/app/services/devices/devices.service';
 import { FormErrorService } from 'src/app/services/form-error/form-error.service';
-import { CONDITION, Condition } from 'src/app/utilities/condition';
+import { BloxCondition, BLOXCONDITION } from '@bitid/blox';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { OnInit, Inject, Component, OnDestroy, ViewEncapsulation } from '@angular/core';
@@ -14,7 +14,7 @@ import { OnInit, Inject, Component, OnDestroy, ViewEncapsulation } from '@angula
 
 export class ConditionEditorDialog implements OnInit, OnDestroy {
 
-    constructor(private dialog: MatDialogRef<ConditionEditorDialog>, @Inject(MAT_DIALOG_DATA) private condition: CONDITION, public devices: DevicesService, private formerror: FormErrorService) { };
+    constructor(private dialog: MatDialogRef<ConditionEditorDialog>, @Inject(MAT_DIALOG_DATA) private condition: BLOXCONDITION, public devices: DevicesService, private formerror: FormErrorService) { };
 
     public form: FormGroup = new FormGroup({
         'fill': new FormGroup({
@@ -97,10 +97,14 @@ export class ConditionEditorDialog implements OnInit, OnDestroy {
         'device': new FormControl('')
     });
     public inputs: any[] = [];
+    public digital: any = {
+        'low': null,
+        'high': null
+    };
     private subscriptions: any = {};
 
     private set() {
-        const condition = new Condition(this.condition);
+        const condition = new BloxCondition(this.condition);
         Object.keys(this.form.controls).map(key => {
             if (this.form.controls[key] instanceof FormGroup) {
                 Object.keys((<any>this.form.controls[key]).controls).map(sub => {
@@ -156,6 +160,10 @@ export class ConditionEditorDialog implements OnInit, OnDestroy {
         this.subscriptions.inputId = this.form.controls['inputId'].valueChanges.subscribe(inputId => {
             for (let i = 0; i < this.inputs.length; i++) {
                 if (this.inputs[i].inputId == inputId) {
+                    if (this.inputs[i].type == 'digital') {
+                        this.digital.low = this.inputs[i].digital.low;
+                        this.digital.high = this.inputs[i].digital.high;
+                    };
                     this.form.controls['type'].setValue(this.inputs[i].type);
                     break;
                 };
@@ -166,6 +174,15 @@ export class ConditionEditorDialog implements OnInit, OnDestroy {
             for (let i = 0; i < this.devices.data.length; i++) {
                 if (this.devices.data[i].deviceId == deviceId) {
                     this.inputs = this.devices.data[i].inputs;
+                    this.inputs.map(input => {
+                        if (input.inputId == this.form.value.inputId) {
+                            if (input.type == 'digital') {
+                                this.digital.low = input.digital.low;
+                                this.digital.high = input.digital.high;
+                            };
+                            this.form.controls['type'].setValue(input.type);
+                        };
+                    });
                     break;
                 };
             };

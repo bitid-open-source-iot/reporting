@@ -18,6 +18,7 @@ export class SeriesEditorDialog implements OnInit, OnDestroy {
     public form: FormGroup = new FormGroup({
         'id': new FormControl(null, [Validators.required]),
         'type': new FormControl(null, [Validators.required]),
+        'label': new FormControl(null, [Validators.required]),
         'color': new FormControl('#000000', [Validators.required]),
         'opacity': new FormControl(100, [Validators.required, Validators.min(0), Validators.max(100)]),
         'inputId': new FormControl(null, [Validators.required]),
@@ -26,6 +27,7 @@ export class SeriesEditorDialog implements OnInit, OnDestroy {
     public errors: any = {
         'id': '',
         'type': '',
+        'label': '',
         'color': '',
         'opacity': '',
         'inputId': '',
