@@ -141,22 +141,22 @@ export class ReportEditorPage implements OnInit, OnDestroy {
         });
 
         if (report.ok) {
-            const data = report.result;
+            let data = report.result;
+            data.layout.mobile = data.layout.mobile.map(row => new BloxRow(row));
             data.layout.mobile.map(row => {
-                row = new BloxRow(row);
                 row.columns = BloxParse(row.columns);
             });
+            data.layout.tablet = data.layout.tablet.map(row => new BloxRow(row));
             data.layout.tablet.map(row => {
-                row = new BloxRow(row);
                 row.columns = BloxParse(row.columns);
             });
+            data.layout.desktop = data.layout.desktop.map(row => new BloxRow(row));
             data.layout.desktop.map(row => {
                 row = new BloxRow(row);
                 row.columns = BloxParse(row.columns);
             });
-
             this.report.role = data.role;
-            this.report.layout = new ReportLayout(data.layout);
+            this.report.layout = data.layout;
             this.report.settings = new ReportSettings(data.settings);
             this.report.description = data.description;
         } else {
@@ -204,8 +204,8 @@ export class ReportEditorPage implements OnInit, OnDestroy {
 
     public async save(params) {
         params.reportId = this.reportId;
-        
-        if (typeof(params.layout) != 'undefined' && params.layout !== null) {
+
+        if (typeof (params.layout) != 'undefined' && params.layout !== null) {
             params.layout = JSON.parse(JSON.stringify(params.layout));
             params.layout.mobile.map(row => {
                 row.columns = row.columns.map(column => {
@@ -326,7 +326,7 @@ export class ReportEditorPage implements OnInit, OnDestroy {
                     break;
                 };
             };
-            
+
             row.columns.map(column => {
                 column.width += parseFloat((width / row.columns.length).toFixed(2));
             });
@@ -380,7 +380,7 @@ export class ReportEditorPage implements OnInit, OnDestroy {
                                     let valid = true;
                                     const fields = [setup.deviceId, setup.inputId, setup.expression];
                                     fields.map(field => {
-                                        if (typeof(field) == 'undefined' || field == null) {
+                                        if (typeof (field) == 'undefined' || field == null) {
                                             valid = false;
                                         };
                                     });
@@ -406,29 +406,29 @@ export class ReportEditorPage implements OnInit, OnDestroy {
                                     ];
                                 });
                             };
-                            
+
                             Object.keys(setup).map(key => {
                                 if (this.report.layout[this.layout][a].columns[b].type != setup.type) {
-                                    switch(setup.type) {
-                                        case('map'):
+                                    switch (setup.type) {
+                                        case ('map'):
                                             this.report.layout[this.layout][a].columns[b] = new BloxMap(this.report.layout[this.layout][a].columns[b]);
                                             break;
-                                        case('text'):
+                                        case ('text'):
                                             this.report.layout[this.layout][a].columns[b] = new BloxText(this.report.layout[this.layout][a].columns[b]);
                                             break;
-                                        case('blank'):
+                                        case ('blank'):
                                             this.report.layout[this.layout][a].columns[b] = new BloxBlank(this.report.layout[this.layout][a].columns[b]);
                                             break;
-                                        case('value'):
+                                        case ('value'):
                                             this.report.layout[this.layout][a].columns[b] = new BloxValue(this.report.layout[this.layout][a].columns[b]);
                                             break;
-                                        case('chart'):
+                                        case ('chart'):
                                             this.report.layout[this.layout][a].columns[b] = new BloxChart(this.report.layout[this.layout][a].columns[b]);
                                             break;
-                                        case('gauge'):
+                                        case ('gauge'):
                                             this.report.layout[this.layout][a].columns[b] = new BloxGauge(this.report.layout[this.layout][a].columns[b]);
                                             break;
-                                        case('vector'):
+                                        case ('vector'):
                                             this.report.layout[this.layout][a].columns[b] = new BloxVector(this.report.layout[this.layout][a].columns[b]);
                                             break;
                                     };
@@ -511,7 +511,7 @@ export class ReportEditorPage implements OnInit, OnDestroy {
                     });
                 };
             });
-            
+
             this.save({
                 'layout': this.report.layout
             });
@@ -524,26 +524,26 @@ export class ReportEditorPage implements OnInit, OnDestroy {
                         if (column.id == this.columnId) {
                             Object.keys(setup).map(key => {
                                 if (column.type != setup.type) {
-                                    switch(setup.type) {
-                                        case('map'):
+                                    switch (setup.type) {
+                                        case ('map'):
                                             column = new BloxMap(column);
                                             break;
-                                        case('text'):
+                                        case ('text'):
                                             column = new BloxText(column);
                                             break;
-                                        case('blank'):
+                                        case ('blank'):
                                             column = new BloxBlank(column);
                                             break;
-                                        case('value'):
+                                        case ('value'):
                                             column = new BloxValue(column);
                                             break;
-                                        case('chart'):
+                                        case ('chart'):
                                             column = new BloxChart(column);
                                             break;
-                                        case('gauge'):
+                                        case ('gauge'):
                                             column = new BloxGauge(column);
                                             break;
-                                        case('vector'):
+                                        case ('vector'):
                                             column = new BloxVector(column);
                                             break;
                                     };

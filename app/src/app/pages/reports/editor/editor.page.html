@@ -41,7 +41,7 @@
         
         <mat-content class="dashboard" [style.background]="report ? report.settings.board.color : '#FFF'">
             <blox class="blox" [class]="layout" [editing]="true" [fill]="report.settings.board" cdkDropList (cdkDropListDropped)="reorder($event)">
-                <blox-row *ngFor="let row of report.layout[layout] | orderBy : 'position'" type="dynamic" [id]="row.rowId" [height]="row.height" [position]="row.position" cdkDragBoundary=".blox"  cdkDragLockAxis="y" cdkDrag [cdkDragDisabled]="!editing || resizing">
+                <blox-row *ngFor="let row of report.layout[layout] | orderBy : 'position'" type="dynamic" [id]="row.id" [height]="row.height" [position]="row.position" cdkDragBoundary=".blox"  cdkDragLockAxis="y" cdkDrag [cdkDragDisabled]="!editing || resizing">
                     <button mat-icon-button class="drag-handle" cdkDragHandle>
                         <mat-icon svgIcon="drag" [style.color]="report.settings.font.color"></mat-icon>
                     </button>

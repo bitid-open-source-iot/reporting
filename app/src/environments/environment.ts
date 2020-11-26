@@ -4,8 +4,7 @@ export const environment = {
     "appId": "000000000000000000000002",
     "appName": "Reporting",
     "reporting": "http://127.0.0.1:2000",
-    // "reporting": "https://reporting.bitid.co.za",
-    "telemetry": "https://telemetry.bitid.co.za",
+    "telemetry": "http://127.0.0.1:8000",
     "production": false,
     "roles": [
         { "value": 1, "title": "Read Only" },
