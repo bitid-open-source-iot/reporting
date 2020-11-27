@@ -415,21 +415,21 @@ var module = function () {
 			var deferred = Q.defer();
 
 			var inputId = null;
-			if (Array.isArray(args.req.body.query.inputId) && args.req.body.query.inputId.length > 0) {
+			if (Array.isArray(args.req.body.inputId) && args.req.body.inputId.length > 0) {
 				inputId = {
-					$in: args.req.body.query.inputId.map(id => ObjectId(id))
+					$in: args.req.body.inputId.map(id => ObjectId(id))
 				};
-			} else if (typeof(args.req.body.query.inputId) == 'string' && args.req.body.query.inputId.length == 24) {
-				inputId = ObjectId(args.req.body.query.inputId);
+			} else if (typeof(args.req.body.inputId) == 'string' && args.req.body.inputId.length == 24) {
+				inputId = ObjectId(args.req.body.inputId);
 			};
 
 			var deviceId = null;
-			if (Array.isArray(args.req.body.query.deviceId) && args.req.body.query.deviceId.length > 0) {
+			if (Array.isArray(args.req.body.deviceId) && args.req.body.deviceId.length > 0) {
 				deviceId = {
-					$in: args.req.body.query.deviceId.map(id => ObjectId(id))
+					$in: args.req.body.deviceId.map(id => ObjectId(id))
 				};
-			} else if (typeof(args.req.body.query.deviceId) == 'string' && args.req.body.query.deviceId.length == 24) {
-				deviceId = ObjectId(args.req.body.query.deviceId);
+			} else if (typeof(args.req.body.deviceId) == 'string' && args.req.body.deviceId.length == 24) {
+				deviceId = ObjectId(args.req.body.deviceId);
 			};
 
 			var params = [

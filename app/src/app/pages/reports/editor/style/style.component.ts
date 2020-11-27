@@ -21,7 +21,7 @@ export class ColumnStyleComponent implements OnInit, OnDestroy {
             'opacity': new FormControl(100, [Validators.required, Validators.min(0), Validators.max(100)])
         }),
         'font': new FormGroup({
-            'size': new FormControl(24, [Validators.required, Validators.min(24), Validators.max(48)]),
+            'size': new FormControl(24, [Validators.required, Validators.min(8), Validators.max(48)]),
             'color': new FormControl('#FFFFFF', [Validators.required]),
             'family': new FormControl('Arial', [Validators.required]),
             'opacity': new FormControl(100, [Validators.required, Validators.min(0), Validators.max(100)]),

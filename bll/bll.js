@@ -67,45 +67,38 @@ var module = function () {
 					var deferred = Q.defer();
 
 					try {
-						var err = new ErrorResponse();
-						err.error.errors[0].code = 503;
-						err.error.errors[0].reason = 'Display type not found!';
-						err.error.errors[0].message = 'Display type not found!';
-						switch (args.req.body.display) {
-							case ('map'):
-								break;
-							case ('chart'):
-								args.params = telemetry.historical.inputs.data(args.req.body.query, args.devices);
-								deferred.resolve(args);
-								break;
-							case ('table'):
-								break;
-							case ('value'):
-								switch (args.req.body.value.expression) {
-									case ('last-value'):
-										args.params = telemetry.historical.inputs.value.last(args.req.body.query, args.devices);
-										deferred.resolve(args);
-										break;
-									case ('first-value'):
-										args.params = telemetry.historical.inputs.value.first(args.req.body.query, args.devices);
-										deferred.resolve(args);
-										break;
-									case ('predicted-value'):
-										args.params = telemetry.historical.inputs.value.predict(args.req.body.query, args.devices);
-										deferred.resolve(args);
-										break;
-									default:
-										var err = new ErrorResponse();
-										err.error.errors[0].code = 503;
-										err.error.errors[0].reason = 'Value expression not found!';
-										err.error.errors[0].message = 'Value expression not found!';
-										deferred.reject(err);
-										break;
-								};
-								break;
-							default:
-								deferred.reject(err);
-								break;
+
+						if (args.req.body.type == 'value') {
+							switch (args.req.body.expression) {
+								case ('last-value'):
+									args.params = telemetry.historical.inputs.value.last(args.req.body, args.devices);
+									deferred.resolve(args);
+									break;
+								case ('first-value'):
+									args.params = telemetry.historical.inputs.value.first(args.req.body, args.devices);
+									deferred.resolve(args);
+									break;
+								case ('predicted-value'):
+									args.params = telemetry.historical.inputs.value.predict(args.req.body, args.devices);
+									deferred.resolve(args);
+									break;
+								default:
+									var err = new ErrorResponse();
+									err.error.errors[0].code = 503;
+									err.error.errors[0].reason = 'Value expression not found!';
+									err.error.errors[0].message = 'Value expression not found!';
+									deferred.reject(err);
+									break;
+							};
+						} else if (args.req.body.type == 'chart') {
+							args.params = telemetry.historical.inputs.data(args.req.body, args.devices);
+							deferred.resolve(args);
+						} else {
+							var err = new ErrorResponse();
+							err.error.errors[0].code = 503;
+							err.error.errors[0].reason = 'Display type not found!';
+							err.error.errors[0].message = 'Display type not found!';
+							deferred.reject(err);
 						};
 					} catch (error) {
 						var err = new ErrorResponse();
@@ -122,8 +115,6 @@ var module = function () {
 					var deferred = Q.defer();
 
 					try {
-						var start = new Date();
-
 						args.result.map(item => {
 							args.devices.map(device => {
 								if (device.deviceId == item.deviceId) {
@@ -138,13 +129,12 @@ var module = function () {
 							});
 						});
 
-						args.req.body.query.date.to = new Date(args.req.body.query.date.to);
-						args.req.body.query.date.from = new Date(args.req.body.query.date.from);
+						args.req.body.date.to = new Date(args.req.body.date.to);
+						args.req.body.date.from = new Date(args.req.body.date.from);
 						
-						var gap = args.req.body.query.date.to - args.req.body.query.date.from;
-						var days = new Date(args.req.body.query.date.to.getFullYear(), args.req.body.query.date.to.getMonth() + 1, 0).getDate();
+						var gap = args.req.body.date.to - args.req.body.date.from;
+						var days = new Date(args.req.body.date.to.getFullYear(), args.req.body.date.to.getMonth() + 1, 0).getDate();
 						var format = 'YYYY/MM/DD HH:mm';
-						var grouping = null;
 
 						if (gap > 0 && gap <= (60 * 60 * 1000)) { /* --- HOUR --- */
 							format = 'YYYY/MM/DD HH:mm';
@@ -160,12 +150,10 @@ var module = function () {
 							grouping = 'month';
 						};
 
-						switch (args.req.body.display) {
-							case ('map'):
-								break;
+						switch (args.req.body.type) {
 							case ('chart'):
-								if (typeof(args.req.body.query.group) != 'undefined' && args.req.body.query.group != null && args.req.body.query.group != '') {
-									switch(args.req.body.query.group) {
+								if (typeof(args.req.body.group) != 'undefined' && args.req.body.group != null && args.req.body.group != '') {
+									switch(args.req.body.group) {
 										case('minute'):
 											format = 'YYYY/MM/DD HH:mm';
 											grouping = 'minute';
@@ -188,7 +176,7 @@ var module = function () {
 											break;
 									};
 								};
-								if (args.req.body.query.counter) {
+								if (args.req.body.counter) {
 									var item = args.result[args.result.length - 1];
 									var result = [];
 									for (let i = 0; i < args.result.length; i++) {
@@ -219,10 +207,8 @@ var module = function () {
 									args.result = item;
 								};
 								break;
-							case ('table'):
-								break;
 							case ('value'):
-								switch (args.req.body.value.expression) {
+								switch (args.req.body.expression) {
 									case ('last-value'):
 									case ('first-value'):
 										args.result = args.result[0];
@@ -232,7 +218,7 @@ var module = function () {
 										args.result.date = moment(args.result.date).format(format);
 										break;
 									case ('predicted-value'):
-										if (args.req.body.query.counter) {
+										if (args.req.body.counter) {
 											try {
 												var item = args.result[args.result.length - 1];
 												var result = [];
@@ -246,12 +232,12 @@ var module = function () {
 														result.push(args.result[i + 1].value - args.result[i].value);
 													};
 												};
-												args.req.body.query.date.to = new Date(args.req.body.query.date.to);
-												args.req.body.query.date.from = new Date(args.req.body.query.date.from);
+												args.req.body.date.to = new Date(args.req.body.date.to);
+												args.req.body.date.from = new Date(args.req.body.date.from);
 												
 												var max = 0;
-												var gap = args.req.body.query.date.to - args.req.body.query.date.from;
-												var days = new Date(args.req.body.query.date.to.getFullYear(), args.req.body.query.date.to.getMonth() + 1, 0).getDate();
+												var gap = args.req.body.date.to - args.req.body.date.from;
+												var days = new Date(args.req.body.date.to.getFullYear(), args.req.body.date.to.getMonth() + 1, 0).getDate();
 												var total = result.reduce((a, b) => a + b, 0);
 												var average = total / result.length;
 			
@@ -260,7 +246,7 @@ var module = function () {
 												} else if (gap > (60 * 60 * 1000) && gap <= (24 * 60 * 60 * 1000)) { /* --- DAY --- */
 													max = 24;
 												} else if (gap > (24 * 60 * 60 * 1000) && gap <= (days * 7 * 24 * 60 * 60 * 1000)) { /* --- MONTH --- */
-													max = new Date(args.req.body.query.date.to.getFullYear(), args.req.body.query.date.to.getMonth() + 1, 0).getDate();
+													max = new Date(args.req.body.date.to.getFullYear(), args.req.body.date.to.getMonth() + 1, 0).getDate();
 												} else { /* --- YEAR --- */
 													max = 12;
 												};

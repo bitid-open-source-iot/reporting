@@ -11,6 +11,10 @@
                 <input matInput type="text" [(ngModel)]="report.description" (blur)="save({'description': report.description})" required *ngIf="!loading">
             </div>
 
+            <button mat-icon-button matTooltip="Viewer" routerLink="/reports/viewer" [queryParams]="{'reportId': reportId}">
+                <mat-icon svgIcon="view"></mat-icon>
+            </button>
+
             <button mat-icon-button matTooltip="Change Layout" [matMenuTriggerFor]="layoutmenu">
                 <mat-icon [svgIcon]="layout"></mat-icon>
             </button>
@@ -30,7 +34,7 @@
                 </button>
             </mat-menu>
 
-            <button mat-icon-button (click)="settings()" matTooltip="Change Theme">
+            <button mat-icon-button (click)="settings()" matTooltip="Report Settings">
                 <mat-icon>
                     settings
                 </mat-icon>

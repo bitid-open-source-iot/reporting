@@ -1,4 +1,4 @@
-import { BloxBanner, BLOXBANNER, BloxFill, BLOXFILL, BloxFont, BLOXFONT, BloxStroke, BLOXSTROKE } from '@bitid/blox';
+import { BloxBanner, BLOXBANNER, BloxFill, BLOXFILL, BloxFont, BLOXFONT, BloxParse, BloxStroke, BLOXSTROKE } from '@bitid/blox';
 import { User } from '../interfaces/user';
 
 export class Report {
@@ -54,12 +54,21 @@ export class ReportLayout {
         if (typeof(layout) != 'undefined' && layout !== null) {
             if (Array.isArray(layout.mobile)) {
                 this.mobile = layout.mobile;
+                this.mobile.map(row => {
+                    row.columns = BloxParse(row.columns);
+                });
             };
             if (Array.isArray(layout.tablet)) {
                 this.tablet = layout.tablet;
+                this.tablet.map(row => {
+                    row.columns = BloxParse(row.columns);
+                });
             };
             if (Array.isArray(layout.desktop)) {
                 this.desktop = layout.desktop;
+                this.desktop.map(row => {
+                    row.columns = BloxParse(row.columns);
+                });
             };
         };
     };

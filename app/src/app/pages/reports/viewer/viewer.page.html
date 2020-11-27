@@ -1,0 +1,41 @@
+<mat-toolbar color="primary">
+    <button mat-icon-button class="menu-toggle" (click)="history.back()">
+        <mat-icon>
+            arrow_back
+        </mat-icon>
+    </button>
+
+    <div class="page-label spacer">
+        {{ !loading ? report.description : 'loading' }}
+    </div>
+</mat-toolbar>
+
+<mat-progress-bar mode="indeterminate" *ngIf="loading"></mat-progress-bar>
+
+<mat-content [style.background]="report.settings.board.color">
+    <blox class="blox" [fill]="report.settings.board">
+        <blox-row *ngFor="let row of report.layout[layout] | orderBy : 'position'" type="dynamic" [id]="row.id" [height]="row.height" [position]="row.position">
+            <blox-column *ngFor="let column of row.columns | orderBy : 'position'" [id]="column.id" [fill]="column.fill" [width]="column.width" [stroke]="column.stroke" [position]="column.position">
+                <blox-banner [font]="column.banner">
+                    {{ column.label }}
+                </blox-banner>
+
+                <blox-text *ngIf="column.type == 'text'" [font]="column.font" [banner]="column.banner">
+                    {{ column.value }}
+                </blox-text>
+
+                <blox-image *ngIf="column.type == 'vector'" [src]="column.src"></blox-image>
+
+                <blox-chart *ngIf="column.type == 'chart'" [id]="column.id">
+                    <blox-series *ngFor="let series of column.series" [id]="series.id" [type]="series.type" [label]="series.label" [color]="series.color" [opacity]="series.opacity">
+                        <blox-point *ngFor="let point of series.data" [date]="point.date" [value]="point.value"></blox-point>
+                    </blox-series>
+                </blox-chart>
+
+                <blox-value *ngIf="column.type == 'value'" [font]="column.font" [innerHtml]="column.value"></blox-value>
+
+                <mat-spinner diameter="30" *ngIf="column.loading"></mat-spinner>
+            </blox-column>
+        </blox-row>
+    </blox>
+</mat-content>

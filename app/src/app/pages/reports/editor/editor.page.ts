@@ -61,6 +61,8 @@ export class ReportEditorPage implements OnInit, OnDestroy {
     };
 
     public async add() {
+        this.unselect();
+        
         const dialog = await this.dialog.open(AddRowDialog, {
             'data': this.layout,
             'panelClass': 'share-dialog',
