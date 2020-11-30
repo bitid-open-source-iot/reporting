@@ -116,7 +116,8 @@ form {
     height: 16px !important;
 }
 mat-toolbar {
-    height:         56px !important;
+    height: 56px !important;
+    min-height: 56px !important;
     text-transform: uppercase !important;
     button.disabled,
     button:disabled {

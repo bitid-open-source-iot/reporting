@@ -5,7 +5,7 @@ import { AccountService } from 'src/app/services/account/account.service';
 import { ReportsService } from 'src/app/services/reports/reports.service';
 import { MatBottomSheet } from '@angular/material/bottom-sheet';
 import { ShareComponent } from 'src/app/components/share/share.component';
-import { Report, REPORT } from 'src/app/utilities/report';
+import { Report, REPORT, ReportSettings } from 'src/app/utilities/report';
 import { DeleteComponent } from 'src/app/components/delete/delete.component';
 import { SearchComponent } from 'src/app/components/search/search.component';
 import { MatTableDataSource } from '@angular/material/table';
@@ -40,6 +40,28 @@ export class ReportsPage implements OnInit, OnDestroy {
         this.loading = true;
 
         const report = new Report({
+            'settings': new ReportSettings({
+                'fill': {
+                    'color': '#FFFFFF',
+                    'opacity': 25
+                },
+                'font': {
+                    'color': '#FFFFFF',
+                    'opacity': 100
+                },
+                'stroke': {
+                    'color': '#FFFFFF',
+                    'opacity': 100
+                },
+                'board': {
+                    'color': '#000000',
+                    'opacity': 100
+                },
+                'banner': {
+                    'color': '#FFFFFF',
+                    'opacity': 100
+                }
+            }),
             'description': 'Untitled Report'
         });
 

@@ -21,7 +21,7 @@
 <mat-content [style.background]="report.settings.board.color">
     <blox class="blox" [fill]="report.settings.board">
         <blox-row height="60">
-            <blox-column width="100">
+            <blox-column width="100" [fill]="{'opacity':0}">
                 <form class="filter-form" [formGroup]="form">
                     <input matInput class="filter" type="date" format="YYYY-MM-DD" formControlName="from" placeholder="From Date" required>
                     
