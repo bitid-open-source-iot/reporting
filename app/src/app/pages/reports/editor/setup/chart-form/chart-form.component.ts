@@ -3,7 +3,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { BLOXSERIES } from '@bitid/blox';
 import { DevicesService } from 'src/app/services/devices/devices.service';
 import { SeriesEditorDialog } from './editor/editor.dialog';
-import { Input, OnInit, Component, OnDestroy, EventEmitter, ViewEncapsulation } from '@angular/core';
+import { Input, Component, EventEmitter, ViewEncapsulation } from '@angular/core';
 
 @Component({
     selector: 'chart-form',
@@ -12,7 +12,7 @@ import { Input, OnInit, Component, OnDestroy, EventEmitter, ViewEncapsulation } 
     encapsulation: ViewEncapsulation.None
 })
 
-export class ChartForm implements OnInit, OnDestroy {
+export class ChartForm {
 
     @Input('type') public type: string;
 
@@ -55,6 +55,7 @@ export class ChartForm implements OnInit, OnDestroy {
                 'deviceId': null
             };
         } else if (mode == 'copy') {
+            chart = JSON.parse(JSON.stringify(chart));
             chart.id = ObjectId();
         };
         
@@ -87,9 +88,5 @@ export class ChartForm implements OnInit, OnDestroy {
             };
         });
     };
-
-    ngOnInit(): void { };
-
-    ngOnDestroy(): void { };
 
 }

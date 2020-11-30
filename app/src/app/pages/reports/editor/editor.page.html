@@ -65,6 +65,8 @@
                             <blox-series *ngFor="let series of column.series" [id]="series.id" [type]="series.type" [label]="series.label" [color]="series.color" [opacity]="series.opacity">
                                 <blox-point *ngFor="let point of series.data" [date]="point.date" [value]="point.value"></blox-point>
                             </blox-series>
+                    
+                            <blox-legend></blox-legend>
                         </blox-chart>
         
                         <blox-value *ngIf="column.type == 'value'" [font]="column.font">

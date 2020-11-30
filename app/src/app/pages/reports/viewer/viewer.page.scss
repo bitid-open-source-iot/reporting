@@ -2,4 +2,14 @@ blox-column {
     display: flex;
     align-items: center;
     justify-content: center;
+    form {
+        flex-direction: row;
+        input {
+            height: 40px;
+            border: none;
+            margin: 0px 10px;
+            padding: 0px 10px;
+            border-radius: 5px;
+        }
+    }
 }

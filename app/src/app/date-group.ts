@@ -1,13 +1,15 @@
 export class DateGroup {
 
-    public to: Date;
-    public from: Date;
+    public to: Date = new Date();;
+    public from: Date = new Date();;
     public group: string;
     public format: string;
 
-    constructor(to: Date, from: Date) {
-        this.to = new Date(to);
-        this.from = new Date(from);
+    constructor(date?) {
+        if (typeof(date) != 'undefined' && date !== null) {
+            this.to = new Date(date.to);
+            this.from = new Date(date.from);
+        };
 
         this.to.setHours(23);
         this.to.setMinutes(59);

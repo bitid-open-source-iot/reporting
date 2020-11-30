@@ -8,12 +8,28 @@
     <div class="page-label spacer">
         {{ !loading ? report.description : 'loading' }}
     </div>
+
+    <button mat-icon-button routerLink="/reports/editor" [queryParams]="{'reportId': reportId}" [disabled]="report.role < 2">
+        <mat-icon>
+            edit
+        </mat-icon>
+    </button>
 </mat-toolbar>
 
 <mat-progress-bar mode="indeterminate" *ngIf="loading"></mat-progress-bar>
 
 <mat-content [style.background]="report.settings.board.color">
     <blox class="blox" [fill]="report.settings.board">
+        <blox-row height="60">
+            <blox-column width="100">
+                <form [formGroup]="form">
+                    <input matInput type="date" formControlName="from" placeholder="From Date" required>
+                    
+                    <input matInput type="date" formControlName="to" placeholder="To Date" required>
+                </form>
+            </blox-column>
+        </blox-row>
+
         <blox-row *ngFor="let row of report.layout[layout] | orderBy : 'position'" type="dynamic" [id]="row.id" [height]="row.height" [position]="row.position">
             <blox-column *ngFor="let column of row.columns | orderBy : 'position'" [id]="column.id" [fill]="column.fill" [width]="column.width" [stroke]="column.stroke" [position]="column.position">
                 <blox-banner [font]="column.banner">
@@ -27,9 +43,11 @@
                 <blox-image *ngIf="column.type == 'vector'" [src]="column.src"></blox-image>
 
                 <blox-chart *ngIf="column.type == 'chart'" [id]="column.id">
-                    <blox-series *ngFor="let series of column.series" [id]="series.id" [type]="series.type" [label]="series.label" [color]="series.color" [opacity]="series.opacity">
-                        <blox-point *ngFor="let point of series.data" [date]="point.date" [value]="point.value"></blox-point>
+                    <blox-series *ngFor="let item of column.series" [id]="item.id" [type]="item.type" [label]="item.label" [color]="item.color" [opacity]="item.opacity">
+                        <blox-point *ngFor="let o of item.data" [date]="o.date" [value]="o.value"></blox-point>
                     </blox-series>
+                    
+                    <blox-legend></blox-legend>
                 </blox-chart>
 
                 <blox-value *ngIf="column.type == 'value'" [font]="column.font" [innerHtml]="column.value"></blox-value>

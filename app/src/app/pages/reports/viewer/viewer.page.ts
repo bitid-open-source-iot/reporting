@@ -1,8 +1,11 @@
+import * as moment from 'moment';
 import { DateGroup } from 'src/app/date-group';
 import { ToastService } from 'src/app/services/toast/toast.service';
 import { ReportsService } from 'src/app/services/reports/reports.service';
 import { ActivatedRoute } from '@angular/router';
 import { HistoryService } from 'src/app/services/history/history.service';
+import { FormErrorService } from 'src/app/services/form-error/form-error.service';
+import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { Report, ReportLayout, ReportSettings } from 'src/app/utilities/report';
 import { OnInit, Component, OnDestroy, HostListener } from '@angular/core';
 
@@ -18,13 +21,16 @@ export class ReportViewerPage implements OnInit, OnDestroy {
         this.set();
     };
 
-    constructor(private route: ActivatedRoute, private toast: ToastService, public history: HistoryService, private service: ReportsService) { };
+    constructor(private route: ActivatedRoute, private toast: ToastService, public history: HistoryService, private service: ReportsService, private formerror: FormErrorService) { };
 
-    public period: any = {
-        'tense': 'current',
-        'frame': 'month'
-    };
-    public date: any = new DateGroup(new Date(), new Date());
+    public date: DateGroup = new DateGroup({
+        'to': new Date(),
+        'from': new Date(new Date().setMonth(new Date().getMonth() - 1))
+    });
+    public form: FormGroup = new FormGroup({
+        'to': new FormControl(this.date.to, [Validators.required]),
+        'from': new FormControl(this.date.from, [Validators.required])
+    });
     public layout: string;
     public report: Report = new Report();
     public loading: boolean;
@@ -57,9 +63,76 @@ export class ReportViewerPage implements OnInit, OnDestroy {
         });
 
         if (response.ok) {
+            this.report.role = response.result.role;
             this.report.layout = new ReportLayout(response.result.layout);
             this.report.settings = new ReportSettings(response.result.settings);
             this.report.description = response.result.description;
+            Object.keys(this.report.layout).map(layout => {
+                this.report.layout[layout].map(row => {
+                    row.columns.map(column => {
+                        if (column.type == 'value') {
+                            column.handler = async (date) => {
+                                column.loading = true;
+
+                                const response = await this.service.load({
+                                    'date': date,
+                                    'type': column.type,
+                                    'inputId': column.inputId,
+                                    'deviceId': column.deviceId,
+                                    'expression': column.expression
+                                });
+
+                                if (response.ok) {
+                                    if (response.result.type == 'analog') {
+                                        column.value = [response.result.value.toFixed(response.result.analog.decimals || 0), '<small>', response.result.analog.units, '</small>'].join('');
+                                    } else if (response.result.type == 'digital') {
+                                        if (response.result.value == 0) {
+                                            column.value = response.result.digital.low;
+                                        } else if (response.result.value == 1) {
+                                            column.value = response.result.digital.high;
+                                        } else {
+                                            column.value = '❗';
+                                        };
+                                    } else {
+                                        column.value = '❗';
+                                    };
+                                } else {
+                                    column.value = '❗';
+                                };
+                                column.loading = false;
+                            };
+                        } else if (column.type == 'chart') {
+                            column.series.map(series => {
+                                series.handler = async (date) => {
+                                    const response = await this.service.load({
+                                        'date': date,
+                                        'type': column.type,
+                                        'inputId': series.inputId,
+                                        'deviceId': series.deviceId
+                                    });
+                                    if (response.ok) {
+                                        if (response.result.type == 'analog') {
+                                            series.data = response.result.value.map(o => {
+                                                return {
+                                                    'date': moment(o.date).format('YYYY-MM-DD'),
+                                                    'value': o.value
+                                                };
+                                            });
+                                        } if (response.result.type == 'digital') {
+                                            series.data = response.result.value.map(o => {
+                                                return {
+                                                    'date': moment(o.date).format('YYYY-MM-DD'),
+                                                    'value': o.value
+                                                };
+                                            });
+                                        };
+                                    };
+                                };
+                            });
+                        };
+                    });
+                });
+            });
             this.load();
         } else {
             this.toast.error(response.error.message);
@@ -73,57 +146,10 @@ export class ReportViewerPage implements OnInit, OnDestroy {
         this.report.layout[this.layout].map(row => {
             row.columns.map(async column => {
                 if (column.type == 'value') {
-                    column.loading = true;
-                    const response = await this.service.load({
-                        'date': {
-                            'to': new Date(2020, 11, 31),
-                            'from': new Date(2020, 0, 1)
-                        },
-                        'type': column.type,
-                        'inputId': column.inputId,
-                        'deviceId': column.deviceId,
-                        'expression': column.expression
-                    });
-                    if (response.ok) {
-                        if (response.result.type == 'analog') {
-                            column.value = [response.result.value.toFixed(response.result.analog.decimals || 0), '<small>', response.result.analog.units, '</small>'].join('');
-                        } else if (response.result.type == 'digital') {
-                            if (response.result.value == 0) {
-                                column.value = response.result.digital.low;
-                            } else if (response.result.value == 1) {
-                                column.value = response.result.digital.high;
-                            } else {
-                                column.value = '❗';
-                            };
-                        } else {
-                            column.value = '❗';
-                        };
-                    } else {
-                        column.value = '❗';
-                    };
-                    column.loading = false;
+                    column.handler(this.date);
                 } else if (column.type == 'chart') {
                     column.series.map(async series => {
-                        const response = await this.service.load({
-                            'date': {
-                                'to': new Date(2020, 11, 31),
-                                'from': new Date(2020, 0, 1)
-                            },
-                            'type': column.type,
-                            'inputId': series.inputId,
-                            'deviceId': series.deviceId
-                        });
-                        if (response.ok) {
-                            if (response.result.type == 'analog') {
-                                series.data = response.result.value;
-                            } if (response.result.type == 'digital') {
-                                series.data = response.result.value;
-                            } else {
-                                series.data = [];
-                            };
-                        } else {
-                            series.data = [];
-                        };
+                        series.handler(this.date);
                     });
                 };
             });
@@ -133,6 +159,11 @@ export class ReportViewerPage implements OnInit, OnDestroy {
     ngOnInit(): void {
         this.set();
 
+        this.subscriptions.form = this.form.valueChanges.subscribe(data => {
+            this.date = new DateGroup(data);
+            this.load();
+        });
+
         this.subscriptions.route = this.route.queryParams.subscribe(params => {
             this.reportId = params.reportId;
             this.get();
@@ -140,6 +171,7 @@ export class ReportViewerPage implements OnInit, OnDestroy {
     };
 
     ngOnDestroy(): void {
+        this.subscriptions.form.unsubscribe();
         this.subscriptions.route.unsubscribe();
     };
 

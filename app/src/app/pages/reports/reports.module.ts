@@ -35,9 +35,10 @@ import { UnsubscribeModule } from 'src/app/components/unsubscribe/unsubscribe.mo
 import { SubscribersModule } from 'src/app/components/subscribers/subscribers.module';
 import { BottomSheetModule } from 'src/app/components/bottom-sheet/bottom-sheet.module';
 import { MatFormFieldModule } from '@angular/material/form-field';
-import { ReportsRoutingModule } from './reports-routing.module';
+import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MatProgressBarModule } from '@angular/material/progress-bar';
 import { MatBottomSheetModule } from '@angular/material/bottom-sheet';
+import { Routes, RouterModule } from '@angular/router';
 import { MatAutocompleteModule } from '@angular/material/autocomplete';
 import { MatButtonToggleModule } from '@angular/material/button-toggle';
 import { NgxMatSelectSearchModule } from 'ngx-mat-select-search';
@@ -50,13 +51,27 @@ import { ValueForm } from './editor/setup/value-form/value-form.component';
 import { ChartForm } from './editor/setup/chart-form/chart-form.component';
 import { VectorForm } from './editor/setup/vector-form/vector-form.component';
 import { AddRowDialog } from './editor/add-row/add-row.dialog';
-import { CustomDatesDialog } from './viewer/custom-dates/custom-dates.dialog';
 import { SeriesEditorDialog } from './editor/setup/chart-form/editor/editor.dialog';
 import { ColumnSetupComponent } from './editor/setup/setup.component';
 import { ColumnStyleComponent } from './editor/style/style.component';
 import { ReportSettingsDialog } from './editor/settings/settings.dialog';
 import { ConditionEditorDialog } from './editor/conditions/editor/editor.dialog';
 import { ColumnConditionsComponent } from './editor/conditions/conditions.component';
+
+const routes: Routes = [
+    {
+        'path': '',
+        'component': ReportsPage
+    },
+    {
+        'path': 'viewer',
+        'component': ReportViewerPage
+    },
+    {
+        'path': 'editor',
+        'component': ReportEditorPage
+    }
+];
 
 @NgModule({
     imports: [
@@ -92,13 +107,14 @@ import { ColumnConditionsComponent } from './editor/conditions/conditions.compon
         SubscribersModule,
         MatFormFieldModule,
         ReactiveFormsModule,
-        ReportsRoutingModule,
+        MatDatepickerModule,
         MatBottomSheetModule,
         MatProgressBarModule,
         MatAutocompleteModule,
         MatButtonToggleModule,
         NgxMatSelectSearchModule,
-        MatProgressSpinnerModule
+        MatProgressSpinnerModule,
+        RouterModule.forChild(routes)
     ],
     declarations: [
         TextForm,
@@ -109,7 +125,6 @@ import { ColumnConditionsComponent } from './editor/conditions/conditions.compon
         AddRowDialog,
         ReportViewerPage,
         ReportEditorPage,
-        CustomDatesDialog,
         SeriesEditorDialog,
         ColumnSetupComponent,
         ColumnStyleComponent,
