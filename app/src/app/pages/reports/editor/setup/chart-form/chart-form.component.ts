@@ -48,7 +48,7 @@ export class ChartForm {
         if (mode == 'add') {
             chart = {
                 'id': ObjectId(),
-                'type': null,
+                'type': 'area',
                 'color': '#000000',
                 'inputId': null,
                 'opacity': 100,
@@ -74,7 +74,9 @@ export class ChartForm {
                     case ('update'):
                         this.series.map(o => {
                             Object.keys(result).map(key => {
-                                o[key] = result[key];
+                                if (key !== 'id') {
+                                    o[key] = result[key];
+                                };
                             });
                         });
                         break;

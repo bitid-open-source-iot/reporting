@@ -2,14 +2,21 @@ blox-column {
     display: flex;
     align-items: center;
     justify-content: center;
-    form {
+    .filter-form {
+        width: 100%;
+        max-width: 600px;
         flex-direction: row;
+        justify-content: space-between;
         input {
+            flex: 0 calc(50% - 25px);
+            width: calc(50% - 25px);
             height: 40px;
             border: none;
-            margin: 0px 10px;
             padding: 0px 10px;
+            min-width: 0px;
+            max-width: 400px;
             border-radius: 5px;
+            background-color: #fff;
         }
     }
 }

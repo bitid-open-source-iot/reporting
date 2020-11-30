@@ -28,8 +28,8 @@ export class ReportViewerPage implements OnInit, OnDestroy {
         'from': new Date(new Date().setMonth(new Date().getMonth() - 1))
     });
     public form: FormGroup = new FormGroup({
-        'to': new FormControl(this.date.to, [Validators.required]),
-        'from': new FormControl(this.date.from, [Validators.required])
+        'to': new FormControl(null, [Validators.required]),
+        'from': new FormControl(null, [Validators.required])
     });
     public layout: string;
     public report: Report = new Report();
@@ -130,10 +130,34 @@ export class ReportViewerPage implements OnInit, OnDestroy {
                                 };
                             });
                         };
+                        column.conditions.map(condition => {
+                            condition.handler = async (date) => {
+                                const response = await this.service.load({
+                                    'date': date,
+                                    'type': 'value',
+                                    'inputId': condition.inputId,
+                                    'deviceId': condition.deviceId,
+                                    'expression': 'last-value'
+                                });
+
+                                if (response.ok) {
+                                    column.fill = condition.fill;
+                                    column.font = condition.font;
+                                    column.stroke = condition.stroke;
+                                    column.banner = condition.banner;
+                                } else {
+                                    column.restore();
+                                };
+                            };
+                        });
                     });
                 });
             });
-            this.load();
+            
+            this.form.setValue({
+                'to': moment(this.date.to).format('YYYY-MM-DD'),
+                'from': moment(this.date.from).format('YYYY-MM-DD')
+            });
         } else {
             this.toast.error(response.error.message);
             this.history.back();
@@ -152,6 +176,9 @@ export class ReportViewerPage implements OnInit, OnDestroy {
                         series.handler(this.date);
                     });
                 };
+                column.conditions.map(condition => {
+                    condition.handler(this.date);
+                });
             });
         });
     };

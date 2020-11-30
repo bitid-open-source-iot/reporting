@@ -3,6 +3,7 @@ import { Row } from 'src/app/interfaces/row';
 import { Column } from 'src/app/interfaces/column';
 import { ObjectId } from 'src/app/id';
 import { MatDialog } from '@angular/material/dialog';
+import { DateGroup } from 'src/app/date-group';
 import { MatSidenav } from '@angular/material/sidenav';
 import { MatTabGroup } from '@angular/material/tabs';
 import { AddRowDialog } from './add-row/add-row.dialog';
@@ -16,8 +17,9 @@ import { ColumnStyleComponent } from './style/style.component';
 import { ReportSettingsDialog } from './settings/settings.dialog';
 import { ColumnConditionsComponent } from './conditions/conditions.component';
 import { CdkDragDrop, moveItemInArray } from '@angular/cdk/drag-drop';
+import { Report, REPORT, ReportSettings } from 'src/app/utilities/report';
+import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { OnInit, Component, OnDestroy, ViewChild } from '@angular/core';
-import { Report, REPORT, ReportLayout, ReportSettings } from 'src/app/utilities/report';
 import { BloxMap, BloxText, BloxBlank, BloxChart, BloxGauge, BloxValue, BloxParse, BloxVector, BloxDefault, BloxUnparse, BloxComponent, BloxRow, BLOXROW } from '@bitid/blox';
 
 @Component({
@@ -37,6 +39,14 @@ export class ReportEditorPage implements OnInit, OnDestroy {
 
     constructor(private route: ActivatedRoute, private toast: ToastService, private dialog: MatDialog, private service: ReportsService, public history: HistoryService, public devices: DevicesService) { };
 
+    public date: DateGroup = new DateGroup({
+        'to': new Date(),
+        'from': new Date(new Date().setMonth(new Date().getMonth() - 1))
+    });
+    public form: FormGroup = new FormGroup({
+        'to': new FormControl(null, [Validators.required]),
+        'from': new FormControl(null, [Validators.required])
+    });
     public rowId: string;
     public report: REPORT = new Report();
     public layout: string = 'desktop';
@@ -196,7 +206,6 @@ export class ReportEditorPage implements OnInit, OnDestroy {
                                 };
                                 column.loading = false;
                             };
-                            column.handler({'to': new Date(2020, 11, 31), 'from': new Date(2020, 0, 1)});
                         } else if (column.type == 'chart') {
                             column.series.map(series => {
                                 series.handler = async (date) => {
@@ -224,11 +233,14 @@ export class ReportEditorPage implements OnInit, OnDestroy {
                                         };
                                     };
                                 };
-                                series.handler({'to': new Date(2020, 11, 31), 'from': new Date(2020, 0, 1)});
                             });
                         };
                     });
                 });
+            });
+            this.form.setValue({
+                'to': moment(this.date.to).format('YYYY-MM-DD'),
+                'from': moment(this.date.from).format('YYYY-MM-DD')
             });
         } else {
             this.toast.error(report.error.message);
@@ -433,6 +445,21 @@ export class ReportEditorPage implements OnInit, OnDestroy {
     };
 
     ngOnInit(): void {
+        this.subscriptions.form = this.form.valueChanges.subscribe(data => {
+            this.date = new DateGroup(data);
+            Object.keys(this.report.layout).map(layout => {
+                this.report.layout[layout].map(row => {
+                    row.columns.map(column => {
+                        if (column.type == 'value') {
+                            column.handler(this.date)
+                        } else if (column.type == 'chart') {
+                            column.series.map(series => series.handler(this.date));
+                        };
+                    });
+                });
+            });
+        });
+
         this.subscriptions.route = this.route.queryParams.subscribe(params => {
             this.reportId = params.reportId;
             this.load();
@@ -456,7 +483,7 @@ export class ReportEditorPage implements OnInit, OnDestroy {
                                         };
                                     });
                                     if (valid) {
-                                        item.handler({'to': new Date(2020, 11, 31), 'from': new Date(2020, 0, 1)});
+                                        item.handler(this.date);
                                     };
                                 };
                             } else if (this.report.layout[this.layout][a].columns[b].type == 'chart') {
@@ -486,7 +513,7 @@ export class ReportEditorPage implements OnInit, OnDestroy {
                                             };
                                         };
                                     };
-                                    series.handler({'to': new Date(2020, 11, 31), 'from': new Date(2020, 0, 1)});
+                                    series.handler(this.date);
                                 });
                             };
 
@@ -665,6 +692,7 @@ export class ReportEditorPage implements OnInit, OnDestroy {
     };
 
     ngOnDestroy(): void {
+        this.subscriptions.form.unsubscribe();
         this.subscriptions.route.unsubscribe();
         this.subscriptions.setup.unsubscribe();
         this.subscriptions.style.unsubscribe();

@@ -22,10 +22,10 @@
     <blox class="blox" [fill]="report.settings.board">
         <blox-row height="60">
             <blox-column width="100">
-                <form [formGroup]="form">
-                    <input matInput type="date" formControlName="from" placeholder="From Date" required>
+                <form class="filter-form" [formGroup]="form">
+                    <input matInput class="filter" type="date" format="YYYY-MM-DD" formControlName="from" placeholder="From Date" required>
                     
-                    <input matInput type="date" formControlName="to" placeholder="To Date" required>
+                    <input matInput class="filter" type="date" format="YYYY-MM-DD" formControlName="to" placeholder="To Date" required>
                 </form>
             </blox-column>
         </blox-row>
