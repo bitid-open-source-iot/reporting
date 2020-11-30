@@ -1,5 +1,5 @@
 <mat-toolbar color="primary">
-    <button mat-icon-button class="menu-toggle" (click)="history.back()">
+    <button mat-icon-button class="menu-toggle" routerLink="/reports">
         <mat-icon>
             arrow_back
         </mat-icon>
@@ -36,13 +36,13 @@
                     {{ column.label }}
                 </blox-banner>
 
-                <blox-text *ngIf="column.type == 'text'" [font]="column.font" [banner]="column.banner">
+                <blox-text *ngIf="column.type == 'text' && !column.loading" [font]="column.font" [banner]="column.banner">
                     {{ column.value }}
                 </blox-text>
 
-                <blox-image *ngIf="column.type == 'vector'" [src]="column.src"></blox-image>
+                <blox-image *ngIf="column.type == 'vector' && !column.loading" [src]="column.src"></blox-image>
 
-                <blox-chart *ngIf="column.type == 'chart'" [id]="column.id">
+                <blox-chart *ngIf="column.type == 'chart' && !column.loading" [id]="column.id">
                     <blox-series *ngFor="let item of column.series" [id]="item.id" [type]="item.type" [label]="item.label" [color]="item.color" [opacity]="item.opacity">
                         <blox-point *ngFor="let o of item.data" [date]="o.date" [value]="o.value"></blox-point>
                     </blox-series>
@@ -50,7 +50,7 @@
                     <blox-legend></blox-legend>
                 </blox-chart>
 
-                <blox-value *ngIf="column.type == 'value'" [font]="column.font" [innerHtml]="column.value"></blox-value>
+                <blox-value *ngIf="column.type == 'value' && !column.loading" [font]="column.font" [innerHtml]="column.value"></blox-value>
 
                 <mat-spinner diameter="30" *ngIf="column.loading"></mat-spinner>
             </blox-column>
