@@ -52,6 +52,7 @@ import { ChartForm } from './editor/setup/chart-form/chart-form.component';
 import { VectorForm } from './editor/setup/vector-form/vector-form.component';
 import { AddRowDialog } from './editor/add-row/add-row.dialog';
 import { SeriesEditorDialog } from './editor/setup/chart-form/editor/editor.dialog';
+import { ConfirmUpdateDialog } from './editor/confirm/confirm.dialog';
 import { ColumnSetupComponent } from './editor/setup/setup.component';
 import { ColumnStyleComponent } from './editor/style/style.component';
 import { ReportSettingsDialog } from './editor/settings/settings.dialog';
@@ -126,6 +127,7 @@ const routes: Routes = [
         ReportViewerPage,
         ReportEditorPage,
         SeriesEditorDialog,
+        ConfirmUpdateDialog,
         ColumnSetupComponent,
         ColumnStyleComponent,
         ReportSettingsDialog,

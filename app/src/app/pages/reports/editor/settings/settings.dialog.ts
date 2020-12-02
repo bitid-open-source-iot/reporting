@@ -44,7 +44,8 @@ export class ReportSettingsDialog implements OnInit, OnDestroy {
             'opacity': new FormControl(100, [Validators.required, Validators.min(0), Validators.max(100)]),
             'vertical': new FormControl('top', [Validators.required]),
             'horizontal': new FormControl('left', [Validators.required])
-        })
+        }),
+        'date': new FormControl('month', [Validators.required])
     });
     public errors: any = {
         'fill': {
@@ -76,7 +77,8 @@ export class ReportSettingsDialog implements OnInit, OnDestroy {
             'opacity': '',
             'vertical': '',
             'horizontal': ''
-        }
+        },
+        'date': ''
     };
     private subscriptions: any = { };
 

@@ -1,0 +1,21 @@
+<mat-toolbar color="primary">
+    <div class="spacer">
+        Confirm Update
+    </div>
+    
+    <button type="button" mat-icon-button (click)="close()">
+        <mat-icon>
+            close
+        </mat-icon>
+    </button>
+</mat-toolbar>
+
+<mat-content>
+    <p>
+        Do you want to update all columns with defaults?
+    </p>
+
+    <button mat-flat-button color="primary" (click)="confirm()">
+        Update All
+    </button>
+</mat-content>

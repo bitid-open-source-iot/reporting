@@ -4,9 +4,10 @@ blox-column {
     justify-content: center;
     .filter-form {
         width: 100%;
-        max-width: 600px;
+        max-width: 700px;
+        align-items: center;
         flex-direction: row;
-        justify-content: space-between;
+        justify-content: center;
         input {
             flex: 0 calc(50% - 25px);
             width: calc(50% - 25px);
@@ -15,8 +16,28 @@ blox-column {
             padding: 0px 10px;
             min-width: 0px;
             max-width: 400px;
+            margin-right: 5px;
             border-radius: 5px;
             background-color: #fff;
         }
+        button {
+            height: 43.5px;
+            border: 2px solid #000;
+        }
     }
+    mat-spinner {
+        border-radius: 100%;
+        background-color: #000 !important;
+    }
+    .group-menu {
+        top: 0px;
+        right: 0px;
+        z-index: 1000;
+        position: absolute;
+    }
+}
+.menu-header {
+    padding: 0px 10px !important;
+    font-size: 14px !important;
+    font-weight: 500 !important;
 }

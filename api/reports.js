@@ -20,6 +20,11 @@ router.post('/list', (req, res) => {
 	myModule.reports.list(req, res);
 });
 
+router.post('/load', (req, res) => {
+	var myModule = new bll.module();
+	myModule.reports.load(req, res);
+});
+
 router.post('/data', (req, res) => {
 	var myModule = new bll.module();
 	myModule.reports.data(req, res);

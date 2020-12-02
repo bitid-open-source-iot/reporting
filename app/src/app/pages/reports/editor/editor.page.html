@@ -46,7 +46,7 @@
         <mat-content class="dashboard" [style.background]="report ? report.settings.board.color : '#FFF'">
             <blox class="blox" [class]="layout" [editing]="true" [fill]="report.settings.board" cdkDropList (cdkDropListDropped)="reorder($event)">
                 <blox-row type="static" height="60">
-                    <blox-column width="100">
+                    <blox-column width="100" [fill]="{'opacity':0}">
                         <form class="filter-form" [formGroup]="form">
                             <input matInput type="date" format="YYYY-MM-DD" formControlName="from" placeholder="From Date" required>
                             

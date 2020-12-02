@@ -14,6 +14,37 @@
     <div class="container">
         <form [formGroup]="form">
             <h2>
+                date selector
+            </h2>
+        
+            <section>
+                <mat-form-field appearance="outline">
+                    <mat-label>
+                        Default Range
+                    </mat-label>
+        
+                    <mat-select formControlName="date" required>
+                        <mat-option value="day">
+                            Day
+                        </mat-option>
+                        <mat-option value="week">
+                            Week
+                        </mat-option>
+                        <mat-option value="month">
+                            Month
+                        </mat-option>
+                        <mat-option value="year">
+                            Year
+                        </mat-option>
+                    </mat-select>
+                    
+                    <mat-error *ngIf="errors.date">
+                        {{ errors.date }}
+                    </mat-error>
+                </mat-form-field>
+            </section>
+
+            <h2>
                 dashboard
             </h2>
         

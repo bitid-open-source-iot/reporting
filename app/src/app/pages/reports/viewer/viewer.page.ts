@@ -77,6 +77,7 @@ export class ReportViewerPage implements OnInit, OnDestroy {
                                 const response = await this.service.load({
                                     'date': date,
                                     'type': column.type,
+                                    'group': date.group,
                                     'inputId': column.inputId,
                                     'deviceId': column.deviceId,
                                     'expression': column.expression
@@ -102,11 +103,12 @@ export class ReportViewerPage implements OnInit, OnDestroy {
                                 column.loading = false;
                             };
                         } else if (column.type == 'chart') {
-                            column.series.map(series => {
+                            column.series.map(async series => {
                                 series.handler = async (date) => {
                                     const response = await this.service.load({
                                         'date': date,
                                         'type': column.type,
+                                        'group': date.group,
                                         'inputId': series.inputId,
                                         'deviceId': series.deviceId
                                     });
@@ -115,7 +117,7 @@ export class ReportViewerPage implements OnInit, OnDestroy {
                                             series.data = response.result.value.map(o => {
                                                 return {
                                                     'date': moment(o.date).format('YYYY-MM-DD'),
-                                                    'value': o.value
+                                                    'value': parseFloat(o.value.toFixed(response.result.analog.decimals))
                                                 };
                                             });
                                         } if (response.result.type == 'digital') {
@@ -135,6 +137,7 @@ export class ReportViewerPage implements OnInit, OnDestroy {
                                 const response = await this.service.load({
                                     'date': date,
                                     'type': 'value',
+                                    'group': date.group,
                                     'inputId': condition.inputId,
                                     'deviceId': condition.deviceId,
                                     'expression': 'last-value'
@@ -158,6 +161,8 @@ export class ReportViewerPage implements OnInit, OnDestroy {
                 'to': moment(this.date.to).format('YYYY-MM-DD'),
                 'from': moment(this.date.from).format('YYYY-MM-DD')
             });
+            
+            this.load();
         } else {
             this.toast.error(response.error.message);
             this.history.back();
@@ -166,15 +171,19 @@ export class ReportViewerPage implements OnInit, OnDestroy {
         this.loading = false;
     };
 
-    private async load() {
+    public async load() {
         this.report.layout[this.layout].map(row => {
             row.columns.map(async column => {
                 if (column.type == 'value') {
                     column.handler(this.date);
                 } else if (column.type == 'chart') {
+                    column.loading = true;
+
                     column.series.map(async series => {
                         series.handler(this.date);
                     });
+
+                    column.loading = false;
                 };
                 column.conditions.map(condition => {
                     condition.handler(this.date);
@@ -183,12 +192,23 @@ export class ReportViewerPage implements OnInit, OnDestroy {
         });
     };
 
+    public async changegrouping(column, group) {
+        column.loading = true;
+        
+        const date = JSON.parse(JSON.stringify(this.date));
+        date.group = group;
+        
+        column.series.map(async series => await series.handler(date));
+
+        column.loading = false;
+    };
+
     ngOnInit(): void {
         this.set();
 
         this.subscriptions.form = this.form.valueChanges.subscribe(data => {
             this.date = new DateGroup(data);
-            this.load();
+            this.date.process();
         });
 
         this.subscriptions.route = this.route.queryParams.subscribe(params => {

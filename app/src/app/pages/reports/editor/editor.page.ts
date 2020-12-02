@@ -21,6 +21,7 @@ import { Report, REPORT, ReportSettings } from 'src/app/utilities/report';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { OnInit, Component, OnDestroy, ViewChild } from '@angular/core';
 import { BloxMap, BloxText, BloxBlank, BloxChart, BloxGauge, BloxValue, BloxParse, BloxVector, BloxDefault, BloxUnparse, BloxComponent, BloxRow, BLOXROW } from '@bitid/blox';
+import { ConfirmUpdateDialog } from './confirm/confirm.dialog';
 
 @Component({
     selector: 'report-editor-page',
@@ -181,6 +182,7 @@ export class ReportEditorPage implements OnInit, OnDestroy {
 
                                 const response = await this.service.load({
                                     'date': date,
+                                    'group': date.group,
                                     'type': column.type,
                                     'inputId': column.inputId,
                                     'deviceId': column.deviceId,
@@ -211,6 +213,7 @@ export class ReportEditorPage implements OnInit, OnDestroy {
                                 series.handler = async (date) => {
                                     const response = await this.service.load({
                                         'date': date,
+                                        'group': date.group,
                                         'type': column.type,
                                         'inputId': series.inputId,
                                         'deviceId': series.deviceId
@@ -268,6 +271,31 @@ export class ReportEditorPage implements OnInit, OnDestroy {
         this.loading = false;
     };
 
+    private async confirm() {
+        const dialog = await this.dialog.open(ConfirmUpdateDialog, {
+            'panelClass': 'confirm-update-dialog',
+            'disableClose': true
+        });
+
+        await dialog.afterClosed().subscribe(async result => {
+            if (result) {
+                Object.keys(this.report.layout).map(key => {
+                    this.report.layout[key].map(row => {
+                        row.columns.map(column => {
+                            column.fill = this.report.settings.fill;
+                            column.font = this.report.settings.font;
+                            column.stroke = this.report.settings.stroke;
+                            column.banner = this.report.settings.banner;
+                        });
+                    });
+                });
+                this.save({
+                    'settings': this.report.settings
+                });
+            };
+        });
+    };
+
     public async settings() {
         const dialog = await this.dialog.open(ReportSettingsDialog, {
             'data': this.report.settings,
@@ -281,6 +309,7 @@ export class ReportEditorPage implements OnInit, OnDestroy {
                 this.save({
                     'settings': this.report.settings
                 });
+                this.confirm();
             };
         });
     };
@@ -447,6 +476,7 @@ export class ReportEditorPage implements OnInit, OnDestroy {
     ngOnInit(): void {
         this.subscriptions.form = this.form.valueChanges.subscribe(data => {
             this.date = new DateGroup(data);
+            this.date.process();
             Object.keys(this.report.layout).map(layout => {
                 this.report.layout[layout].map(row => {
                     row.columns.map(column => {
@@ -491,6 +521,7 @@ export class ReportEditorPage implements OnInit, OnDestroy {
                                     series.handler = async (date) => {
                                         const response = await this.service.load({
                                             'date': date,
+                                            'group': date.group,
                                             'type': this.report.layout[this.layout][a].columns[b].type,
                                             'inputId': series.inputId,
                                             'deviceId': series.deviceId

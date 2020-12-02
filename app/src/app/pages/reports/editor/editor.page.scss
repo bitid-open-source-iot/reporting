@@ -5,22 +5,32 @@ blox-column {
     display: flex;
     align-items: center;
     justify-content: center;
+    mat-spinner {
+        border-radius: 100%;
+        background-color: #000 !important;
+    }
 }
 .filter-form {
     width: 100%;
-    max-width: 600px;
+    max-width: 700px;
+    align-items: center;
     flex-direction: row;
-    justify-content: space-between;
+    justify-content: center;
     input {
         flex: 0 calc(50% - 25px);
         width: calc(50% - 25px);
         height: 40px;
-        border: none;
+        border: 2px solid #000000;
         padding: 0px 10px;
         min-width: 0px;
         max-width: 400px;
+        margin-right: 5px;
         border-radius: 5px;
         background-color: #fff;
+    }
+    button {
+        height: 43.5px;
+        border: 2px solid #000;
     }
 }
 mat-toolbar {

@@ -83,6 +83,7 @@ export interface REPORTLAYOUT {
 
 export class ReportSettings {
 
+    public date?: string = 'month';
     public fill?: BLOXFILL = new BloxFill();
     public font?: BLOXFONT = new BloxFont();
     public board?: BLOXFILL = new BloxFill();
@@ -91,6 +92,9 @@ export class ReportSettings {
     
     constructor(settings?: REPORTSETTINGS) {
         if (typeof(settings) != 'undefined' && settings !== null) {
+            if (typeof(settings.date) != 'undefined' && settings.date !== null) {
+                this.date = settings.date;
+            };
             if (typeof(settings.fill) != 'undefined' && settings.fill !== null) {
                 this.fill = new BloxFill(settings.fill);
             };
@@ -112,6 +116,7 @@ export class ReportSettings {
 }
 
 export interface REPORTSETTINGS {
+    'date'?: string;
     'fill'?: BLOXFILL;
     'font'?: BLOXFONT;
     'board'?: BLOXFILL;
