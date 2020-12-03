@@ -1,4 +1,5 @@
 import * as moment from 'moment';
+import { Report } from 'src/app/utilities/report';
 import { DateGroup } from 'src/app/date-group';
 import { ToastService } from 'src/app/services/toast/toast.service';
 import { ReportsService } from 'src/app/services/reports/reports.service';
@@ -6,7 +7,6 @@ import { ActivatedRoute } from '@angular/router';
 import { HistoryService } from 'src/app/services/history/history.service';
 import { FormErrorService } from 'src/app/services/form-error/form-error.service';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
-import { Report, ReportLayout, ReportSettings } from 'src/app/utilities/report';
 import { OnInit, Component, OnDestroy, HostListener } from '@angular/core';
 
 @Component({
@@ -74,9 +74,8 @@ export class ReportViewerPage implements OnInit, OnDestroy {
         } else {
             this.toast.error(response.error.message);
             this.history.back();
+            this.loading = false;
         };
-
-        this.loading = false;
     };
 
     public async load() {
@@ -185,6 +184,14 @@ export class ReportViewerPage implements OnInit, OnDestroy {
                                         };
                                     };
                                 });
+                            } else if (column.id == item.id.column && item.id.type == 'value' && (typeof(item.result) == 'undefined' || item.result == null)) {
+                                column.value = '❗';
+                            } else if (column.id == item.id.column && item.id.type == 'array' && (typeof(item.result) == 'undefined' || item.result == null)) {
+                                column.series.map(series => {
+                                    if (series.id == item.id.series) {
+                                        series.data = [];
+                                    };
+                                });
                             };
                         });
                     };
@@ -291,6 +298,14 @@ export class ReportViewerPage implements OnInit, OnDestroy {
                             } else {
                                 column.restore();
                             };
+                        };
+                    });
+                } else if (item.id.type == 'value' && (typeof(item.result) == 'undefined' || item.result == null)) {
+                    column.value = '❗';
+                } else if (item.id.type == 'array' && (typeof(item.result) == 'undefined' || item.result == null)) {
+                    column.series.map(series => {
+                        if (series.id == item.id.series) {
+                            series.data = [];
                         };
                     });
                 };

@@ -330,6 +330,11 @@ export class ReportEditorPage implements OnInit, OnDestroy {
                     column.font = column.default.font;
                     column.banner = column.default.banner;
                     column.stroke = column.default.stroke;
+                    if (Array.isArray(column.series)) {
+                        column.series.map(series => {
+                            series.data = [];
+                        });
+                    };
                     delete column.default;
                     return column;
                 });
@@ -340,6 +345,11 @@ export class ReportEditorPage implements OnInit, OnDestroy {
                     column.font = column.default.font;
                     column.banner = column.default.banner;
                     column.stroke = column.default.stroke;
+                    if (Array.isArray(column.series)) {
+                        column.series.map(series => {
+                            series.data = [];
+                        });
+                    };
                     delete column.default;
                     return column;
                 });
@@ -350,6 +360,11 @@ export class ReportEditorPage implements OnInit, OnDestroy {
                     column.font = column.default.font;
                     column.banner = column.default.banner;
                     column.stroke = column.default.stroke;
+                    if (Array.isArray(column.series)) {
+                        column.series.map(series => {
+                            series.data = [];
+                        });
+                    };
                     delete column.default;
                     return column;
                 });

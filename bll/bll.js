@@ -104,6 +104,7 @@ var module = function () {
 													case ('last-value'):
 														point.params = telemetry.historical.inputs.value.last({
 															'date': args.req.body.date,
+															'group': point.group,
 															'inputId': point.inputId,
 															'deviceId': point.deviceId
 														}, args.devices);
@@ -111,6 +112,7 @@ var module = function () {
 													case ('first-value'):
 														point.params = telemetry.historical.inputs.value.first({
 															'date': args.req.body.date,
+															'group': point.group,
 															'inputId': point.inputId,
 															'deviceId': point.deviceId
 														}, args.devices);
@@ -118,6 +120,7 @@ var module = function () {
 													case ('predict-value'):
 														point.params = telemetry.historical.inputs.value.predict({
 															'date': args.req.body.date,
+															'group': point.group,
 															'inputId': point.inputId,
 															'deviceId': point.deviceId
 														}, args.devices);
@@ -126,6 +129,7 @@ var module = function () {
 											} else if (point.type == 'array') {
 												point.params = telemetry.historical.inputs.data({
 													'date': args.req.body.date,
+													'group': point.group,
 													'inputId': point.inputId,
 													'deviceId': point.deviceId
 												}, args.devices);
