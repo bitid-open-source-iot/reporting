@@ -81,44 +81,44 @@ export class ColumnStyleComponent implements OnInit, OnDestroy {
         this.update.next(this.form.value);
     };
 
-    public async reset() {
-        this.form.setValue({
-            'fill': {
-                'color': '#000000',
-                'opacity': 100
-            },
-            'font': {
-                'size': 24,
-                'color': '#FFFFFF',
-                'family': 'Arial',
-                'opacity': 100,
-                'vertical': 'center',
-                'horizontal': 'center'
-            },
-            'stroke': {
-                'width': 0,
-                'style': 'solid',
-                'color': '#000000',
-                'opacity': 100
-            },
-            'banner': {
-                'size': 12,
-                'color': '#FFFFFF',
-                'family': 'Arial',
-                'opacity': 100,
-                'vertical': 'top',
-                'horizontal': 'left'
-            }
-        });
-        this.form.markAsUntouched();
-    };
-
     public async set(data) {
         this.setting = true;
         Object.keys(this.form.controls).map(key => {
             this.form.controls[key].setValue(data[key]);
         });
         this.setting = false;
+    };
+
+    public async reset(style) {
+        this.form.setValue({
+            'fill': {
+                'color': style.fill.color || '#000000',
+                'opacity': style.fill.opacity || 100
+            },
+            'font': {
+                'size': style.font.size || 24,
+                'color': style.font.color || '#FFFFFF',
+                'family': style.font.family || 'Arial',
+                'opacity': style.font.opacity || 100,
+                'vertical': style.font.vertical || 'center',
+                'horizontal': style.font.horizontal || 'center'
+            },
+            'stroke': {
+                'width': style.stroke.width || 0,
+                'style': style.stroke.style || 'solid',
+                'color': style.stroke.color || '#000000',
+                'opacity': style.stroke.opacity || 100
+            },
+            'banner': {
+                'size': style.banner.size || 12,
+                'color': style.banner.color || '#FFFFFF',
+                'family': style.banner.family || 'Arial',
+                'opacity': style.banner.opacity || 100,
+                'vertical': style.banner.vertical || 'top',
+                'horizontal': style.banner.horizontal || 'left'
+            }
+        });
+        this.form.markAsUntouched();
     };
 
     ngOnInit(): void {

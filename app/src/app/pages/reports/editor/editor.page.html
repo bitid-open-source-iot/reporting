@@ -51,6 +51,10 @@
                             <input matInput type="date" format="YYYY-MM-DD" formControlName="from" placeholder="From Date" required>
                             
                             <input matInput type="date" format="YYYY-MM-DD" formControlName="to" placeholder="To Date" required>
+
+                            <button mat-flat-button (click)="load()">
+                                GO
+                            </button>
                         </form>
                     </blox-column>
                 </blox-row>

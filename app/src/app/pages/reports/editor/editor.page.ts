@@ -17,7 +17,7 @@ import { ColumnStyleComponent } from './style/style.component';
 import { ReportSettingsDialog } from './settings/settings.dialog';
 import { ColumnConditionsComponent } from './conditions/conditions.component';
 import { CdkDragDrop, moveItemInArray } from '@angular/cdk/drag-drop';
-import { Report, REPORT, ReportSettings } from 'src/app/utilities/report';
+import { Report, REPORT, ReportLayout, ReportSettings } from 'src/app/utilities/report';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { OnInit, Component, OnDestroy, ViewChild } from '@angular/core';
 import { BloxMap, BloxText, BloxBlank, BloxChart, BloxGauge, BloxValue, BloxParse, BloxVector, BloxDefault, BloxUnparse, BloxComponent, BloxRow, BLOXROW } from '@bitid/blox';
@@ -66,7 +66,7 @@ export class ReportEditorPage implements OnInit, OnDestroy {
         this.tabs.selectedIndex = 0;
 
         this.setup.reset();
-        this.style.reset();
+        this.style.reset(this.report.settings);
         this.conditions.reset();
 
         this.sidenav.close();
@@ -110,6 +110,90 @@ export class ReportEditorPage implements OnInit, OnDestroy {
         });
     };
 
+    public async load() {
+        this.loading = true;
+        
+        let points = [];
+
+        this.report.layout[this.layout].map(row => {
+            row.columns.map(async column => {
+                if (column.type == 'value') {
+                    points.push({
+                        'id': {
+                            'row': row.id,
+                            'type': 'value',
+                            'column': column.id
+                        },
+                        'type': 'value',
+                        'group': this.date.group,
+                        'inputId': column.inputId,
+                        'deviceId': column.deviceId,
+                        'expression': column.expression
+                    });
+                } else if (column.type == 'chart') {
+                    column.series.map(series => {
+                        points.push({
+                            'id': {
+                                'row': row.id,
+                                'type': 'array',
+                                'column': column.id,
+                                'series': series.id
+                            },
+                            'type': 'array',
+                            'group': this.date.group,
+                            'inputId': series.inputId,
+                            'deviceId': series.deviceId
+                        });
+                    });
+                };
+            });
+        });
+        
+        const response = await this.service.load({
+            'date': {
+                'to': this.date.to,
+                'from': this.date.from
+            },
+            'points': points
+        });
+
+        if (response.ok) {
+            response.result.map(item => {
+                this.report.layout[this.layout].map(row => {
+                    if (row.id == item.id.row) {
+                        row.columns.map(column => {
+                            if (column.id == item.id.column && item.id.type == 'value' && typeof(item.result) != 'undefined' && item.result !== null) {
+                                if (item.type == 'analog') {
+                                    column.value = [item.result.toFixed(item.analog.decimals || 0), '<small>', item.analog.units, '</small>'].join('');
+                                } else if (item.type == 'digital') {
+                                    if (item.result == 0) {
+                                        column.value = item.digital.low;
+                                    } else if (item.result == 1) {
+                                        column.value = item.digital.high;
+                                    } else {
+                                        column.value = '❗';
+                                    };
+                                } else {
+                                    column.value = '❗';
+                                };
+                            } else if (column.id == item.id.column && item.id.type == 'array' && typeof(item.result) != 'undefined' && item.result !== null) {
+                                column.series.map(series => {
+                                    if (series.id == item.id.series) {
+                                        series.data = item.result;
+                                    };
+                                });
+                            };
+                        });
+                    };
+                });
+            });
+        } else {
+            this.toast.error(response.error.message);
+        };
+
+        this.loading = false;
+    };
+
     public CancelCopy() {
         this.copying = false;
         this.columnId = null;
@@ -141,7 +225,7 @@ export class ReportEditorPage implements OnInit, OnDestroy {
         });
     };
 
-    private async load() {
+    private async get() {
         this.loading = true;
 
         const report = await this.service.get({
@@ -155,96 +239,17 @@ export class ReportEditorPage implements OnInit, OnDestroy {
         });
 
         if (report.ok) {
-            let data = report.result;
-            data.layout.mobile = data.layout.mobile.map(row => new BloxRow(row));
-            data.layout.mobile.map(row => {
-                row.columns = BloxParse(row.columns);
-            });
-            data.layout.tablet = data.layout.tablet.map(row => new BloxRow(row));
-            data.layout.tablet.map(row => {
-                row.columns = BloxParse(row.columns);
-            });
-            data.layout.desktop = data.layout.desktop.map(row => new BloxRow(row));
-            data.layout.desktop.map(row => {
-                row = new BloxRow(row);
-                row.columns = BloxParse(row.columns);
-            });
-            this.report.role = data.role;
-            this.report.layout = data.layout;
-            this.report.settings = new ReportSettings(data.settings);
-            this.report.description = data.description;
-            Object.keys(this.report.layout).map(layout => {
-                this.report.layout[layout].map(row => {
-                    row.columns.map(column => {
-                        if (column.type == 'value') {
-                            column.handler = async (date) => {
-                                column.loading = true;
+            if (report.result.role < 2) {
+                this.toast.error(report.error.message);
+                this.history.back()
+            } else {
+                this.report = new Report(report.result);
 
-                                const response = await this.service.load({
-                                    'date': date,
-                                    'group': date.group,
-                                    'type': column.type,
-                                    'inputId': column.inputId,
-                                    'deviceId': column.deviceId,
-                                    'expression': column.expression
-                                });
-
-                                if (response.ok) {
-                                    if (response.result.type == 'analog') {
-                                        column.value = [response.result.value.toFixed(response.result.analog.decimals || 0), '<small>', response.result.analog.units, '</small>'].join('');
-                                    } else if (response.result.type == 'digital') {
-                                        if (response.result.value == 0) {
-                                            column.value = response.result.digital.low;
-                                        } else if (response.result.value == 1) {
-                                            column.value = response.result.digital.high;
-                                        } else {
-                                            column.value = '❗';
-                                        };
-                                    } else {
-                                        column.value = '❗';
-                                    };
-                                } else {
-                                    column.value = '❗';
-                                };
-                                column.loading = false;
-                            };
-                        } else if (column.type == 'chart') {
-                            column.series.map(series => {
-                                series.handler = async (date) => {
-                                    const response = await this.service.load({
-                                        'date': date,
-                                        'group': date.group,
-                                        'type': column.type,
-                                        'inputId': series.inputId,
-                                        'deviceId': series.deviceId
-                                    });
-                                    if (response.ok) {
-                                        if (response.result.type == 'analog') {
-                                            series.data = response.result.value.map(o => {
-                                                return {
-                                                    'date': moment(o.date).format('YYYY-MM-DD'),
-                                                    'value': o.value
-                                                };
-                                            });
-                                        } if (response.result.type == 'digital') {
-                                            series.data = response.result.value.map(o => {
-                                                return {
-                                                    'date': moment(o.date).format('YYYY-MM-DD'),
-                                                    'value': o.value
-                                                };
-                                            });
-                                        };
-                                    };
-                                };
-                            });
-                        };
-                    });
+                this.form.setValue({
+                    'to': moment(this.date.to).format('YYYY-MM-DD'),
+                    'from': moment(this.date.from).format('YYYY-MM-DD')
                 });
-            });
-            this.form.setValue({
-                'to': moment(this.date.to).format('YYYY-MM-DD'),
-                'from': moment(this.date.from).format('YYYY-MM-DD')
-            });
+            };
         } else {
             this.toast.error(report.error.message);
             this.history.back();
@@ -367,6 +372,78 @@ export class ReportEditorPage implements OnInit, OnDestroy {
         };
     };
 
+    public async reload(column) {
+        this.loading = true;
+        
+        let points = [];
+
+        if (column.type == 'value') {
+            points.push({
+                'id': {
+                    'type': 'value',
+                    'column': column.id
+                },
+                'type': 'value',
+                'group': this.date.group,
+                'inputId': column.inputId,
+                'deviceId': column.deviceId,
+                'expression': column.expression
+            });
+        } else if (column.type == 'chart') {
+            column.series.map(series => {
+                points.push({
+                    'id': {
+                        'type': 'array',
+                        'column': column.id,
+                        'series': series.id
+                    },
+                    'type': 'array',
+                    'group': this.date.group,
+                    'inputId': series.inputId,
+                    'deviceId': series.deviceId
+                });
+            });
+        };
+      
+        const response = await this.service.load({
+            'date': {
+                'to': this.date.to,
+                'from': this.date.from
+            },
+            'points': points
+        });
+
+        if (response.ok) {
+            response.result.map(item => {
+                if (item.id.type == 'value' && typeof(item.result) != 'undefined' && item.result !== null) {
+                    if (item.type == 'analog') {
+                        column.value = [item.result.toFixed(item.analog.decimals || 0), '<small>', item.analog.units, '</small>'].join('');
+                    } else if (item.type == 'digital') {
+                        if (item.result == 0) {
+                            column.value = item.digital.low;
+                        } else if (item.result == 1) {
+                            column.value = item.digital.high;
+                        } else {
+                            column.value = '❗';
+                        };
+                    } else {
+                        column.value = '❗';
+                    };
+                } else if (item.id.type == 'array' && typeof(item.result) != 'undefined' && item.result !== null) {
+                    column.series.map(series => {
+                        if (series.id == item.id.series) {
+                            series.data = item.result;
+                        };
+                    });
+                };
+            });
+        } else {
+            this.toast.error(response.error.message);
+        };
+
+        this.loading = false;
+    };
+
     public async extend(row: Row) {
         const limit = {
             'mobile': 2,
@@ -477,22 +554,11 @@ export class ReportEditorPage implements OnInit, OnDestroy {
         this.subscriptions.form = this.form.valueChanges.subscribe(data => {
             this.date = new DateGroup(data);
             this.date.process();
-            Object.keys(this.report.layout).map(layout => {
-                this.report.layout[layout].map(row => {
-                    row.columns.map(column => {
-                        if (column.type == 'value') {
-                            column.handler(this.date)
-                        } else if (column.type == 'chart') {
-                            column.series.map(series => series.handler(this.date));
-                        };
-                    });
-                });
-            });
         });
 
         this.subscriptions.route = this.route.queryParams.subscribe(params => {
             this.reportId = params.reportId;
-            this.load();
+            this.get();
         });
 
         this.subscriptions.setup = this.setup.change.subscribe(async setup => {
@@ -513,38 +579,12 @@ export class ReportEditorPage implements OnInit, OnDestroy {
                                         };
                                     });
                                     if (valid) {
-                                        item.handler(this.date);
+                                        this.reload(this.report.layout[this.layout][a].columns[b]);
                                     };
                                 };
                             } else if (this.report.layout[this.layout][a].columns[b].type == 'chart') {
                                 this.report.layout[this.layout][a].columns[b].series.map(async series => {
-                                    series.handler = async (date) => {
-                                        const response = await this.service.load({
-                                            'date': date,
-                                            'group': date.group,
-                                            'type': this.report.layout[this.layout][a].columns[b].type,
-                                            'inputId': series.inputId,
-                                            'deviceId': series.deviceId
-                                        });
-                                        if (response.ok) {
-                                            if (response.result.type == 'analog') {
-                                                series.data = response.result.value.map(o => {
-                                                    return {
-                                                        'date': moment(o.date).format('YYYY-MM-DD'),
-                                                        'value': o.value
-                                                    };
-                                                });
-                                            } if (response.result.type == 'digital') {
-                                                series.data = response.result.value.map(o => {
-                                                    return {
-                                                        'date': moment(o.date).format('YYYY-MM-DD'),
-                                                        'value': o.value
-                                                    };
-                                                });
-                                            };
-                                        };
-                                    };
-                                    series.handler(this.date);
+                                    this.reload(this.report.layout[this.layout][a].columns[b]);
                                 });
                             };
 

@@ -58,7 +58,7 @@
 
                 <mat-spinner diameter="30" *ngIf="column.loading"></mat-spinner>
 
-                <button class="group-menu" mat-icon-button [matMenuTriggerFor]="group">
+                <button class="group-menu" mat-icon-button [matMenuTriggerFor]="group" *ngIf="column.type == 'chart' && !column.loading">
                     <mat-icon [style.color]="column.font.color">
                         more_vert
                     </mat-icon>
@@ -68,16 +68,16 @@
                     <h3 class="menu-header">
                         Group By
                     </h3>
-                    <button mat-menu-item (click)="changegrouping(column, 'minute')">
+                    <button mat-menu-item (click)="reload(column, 'minute')">
                         Minute
                     </button>
-                    <button mat-menu-item (click)="changegrouping(column, 'hour')">
+                    <button mat-menu-item (click)="reload(column, 'hour')">
                         Hour
                     </button>
-                    <button mat-menu-item (click)="changegrouping(column, 'day')">
+                    <button mat-menu-item (click)="reload(column, 'day')">
                         Day
                     </button>
-                    <button mat-menu-item (click)="changegrouping(column, 'month')">
+                    <button mat-menu-item (click)="reload(column, 'month')">
                         Month
                     </button>
                 </mat-menu>

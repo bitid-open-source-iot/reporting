@@ -63,100 +63,8 @@ export class ReportViewerPage implements OnInit, OnDestroy {
         });
 
         if (response.ok) {
-            this.report.role = response.result.role;
-            this.report.layout = new ReportLayout(response.result.layout);
-            this.report.settings = new ReportSettings(response.result.settings);
-            this.report.description = response.result.description;
-            Object.keys(this.report.layout).map(layout => {
-                this.report.layout[layout].map(row => {
-                    row.columns.map(column => {
-                        if (column.type == 'value') {
-                            column.handler = async (date) => {
-                                column.loading = true;
+            this.report = new Report(response.result);
 
-                                const response = await this.service.load({
-                                    'date': date,
-                                    'type': column.type,
-                                    'group': date.group,
-                                    'inputId': column.inputId,
-                                    'deviceId': column.deviceId,
-                                    'expression': column.expression
-                                });
-
-                                if (response.ok) {
-                                    if (response.result.type == 'analog') {
-                                        column.value = [response.result.value.toFixed(response.result.analog.decimals || 0), '<small>', response.result.analog.units, '</small>'].join('');
-                                    } else if (response.result.type == 'digital') {
-                                        if (response.result.value == 0) {
-                                            column.value = response.result.digital.low;
-                                        } else if (response.result.value == 1) {
-                                            column.value = response.result.digital.high;
-                                        } else {
-                                            column.value = '❗';
-                                        };
-                                    } else {
-                                        column.value = '❗';
-                                    };
-                                } else {
-                                    column.value = '❗';
-                                };
-                                column.loading = false;
-                            };
-                        } else if (column.type == 'chart') {
-                            column.series.map(async series => {
-                                series.handler = async (date) => {
-                                    const response = await this.service.load({
-                                        'date': date,
-                                        'type': column.type,
-                                        'group': date.group,
-                                        'inputId': series.inputId,
-                                        'deviceId': series.deviceId
-                                    });
-                                    if (response.ok) {
-                                        if (response.result.type == 'analog') {
-                                            series.data = response.result.value.map(o => {
-                                                return {
-                                                    'date': moment(o.date).format('YYYY-MM-DD'),
-                                                    'value': parseFloat(o.value.toFixed(response.result.analog.decimals))
-                                                };
-                                            });
-                                        } if (response.result.type == 'digital') {
-                                            series.data = response.result.value.map(o => {
-                                                return {
-                                                    'date': moment(o.date).format('YYYY-MM-DD'),
-                                                    'value': o.value
-                                                };
-                                            });
-                                        };
-                                    };
-                                };
-                            });
-                        };
-                        column.conditions.map(condition => {
-                            condition.handler = async (date) => {
-                                const response = await this.service.load({
-                                    'date': date,
-                                    'type': 'value',
-                                    'group': date.group,
-                                    'inputId': condition.inputId,
-                                    'deviceId': condition.deviceId,
-                                    'expression': 'last-value'
-                                });
-
-                                if (response.ok) {
-                                    column.fill = condition.fill;
-                                    column.font = condition.font;
-                                    column.stroke = condition.stroke;
-                                    column.banner = condition.banner;
-                                } else {
-                                    column.restore();
-                                };
-                            };
-                        });
-                    });
-                });
-            });
-            
             this.form.setValue({
                 'to': moment(this.date.to).format('YYYY-MM-DD'),
                 'from': moment(this.date.from).format('YYYY-MM-DD')
@@ -172,35 +80,226 @@ export class ReportViewerPage implements OnInit, OnDestroy {
     };
 
     public async load() {
+        this.loading = true;
+        
+        let points = [];
+        
         this.report.layout[this.layout].map(row => {
             row.columns.map(async column => {
                 if (column.type == 'value') {
-                    column.handler(this.date);
-                } else if (column.type == 'chart') {
-                    column.loading = true;
-
-                    column.series.map(async series => {
-                        series.handler(this.date);
+                    points.push({
+                        'id': {
+                            'row': row.id,
+                            'type': 'value',
+                            'column': column.id
+                        },
+                        'type': 'value',
+                        'group': this.date.group,
+                        'inputId': column.inputId,
+                        'deviceId': column.deviceId,
+                        'expression': column.expression
                     });
-
-                    column.loading = false;
+                } else if (column.type == 'chart') {
+                    column.series.map(series => {
+                        points.push({
+                            'id': {
+                                'row': row.id,
+                                'type': 'array',
+                                'column': column.id,
+                                'series': series.id
+                            },
+                            'type': 'array',
+                            'group': this.date.group,
+                            'inputId': series.inputId,
+                            'deviceId': series.deviceId
+                        });
+                    });
                 };
                 column.conditions.map(condition => {
-                    condition.handler(this.date);
+                    points.push({
+                        'id': {
+                            'row': row.id,
+                            'type': 'condition',
+                            'column': column.id,
+                            'condition': condition.id
+                        },
+                        'type': 'value',
+                        'group': this.date.group,
+                        'inputId': condition.inputId,
+                        'deviceId': condition.deviceId,
+                        'expression': 'last-value'
+                    });
                 });
             });
         });
+        
+        const response = await this.service.load({
+            'date': {
+                'to': this.date.to,
+                'from': this.date.from
+            },
+            'points': points
+        });
+
+        if (response.ok) {
+            response.result.map(item => {
+                this.report.layout[this.layout].map(row => {
+                    if (row.id == item.id.row) {
+                        row.columns.map(column => {
+                            if (column.id == item.id.column && item.id.type == 'value' && typeof(item.result) != 'undefined' && item.result !== null) {
+                                if (item.type == 'analog') {
+                                    column.value = [item.result.toFixed(item.analog.decimals || 0), '<small>', item.analog.units, '</small>'].join('');
+                                } else if (item.type == 'digital') {
+                                    if (item.result == 0) {
+                                        column.value = item.digital.low;
+                                    } else if (item.result == 1) {
+                                        column.value = item.digital.high;
+                                    } else {
+                                        column.value = '❗';
+                                    };
+                                } else {
+                                    column.value = '❗';
+                                };
+                            } else if (column.id == item.id.column && item.id.type == 'array' && typeof(item.result) != 'undefined' && item.result !== null) {
+                                column.series.map(series => {
+                                    if (series.id == item.id.series) {
+                                        series.data = item.result;
+                                    };
+                                });
+                            } else if (column.id == item.id.column && item.id.type == 'condition' && typeof(item.result) != 'undefined' && item.result !== null) {
+                                column.restore();
+                                column.conditions.map(condition => {
+                                    if (condition.id == item.id.condition) {
+                                        if (item.type == 'analog' && item.result >= condition.analog.min && item.result <= condition.analog.max) {
+                                            column.fill = condition.fill;
+                                            column.font = condition.font;
+                                            column.stroke = condition.stroke;
+                                            column.banner = condition.banner;
+                                        } else if (item.type == 'digital' && item.result == condition.digital.value) {
+                                            column.fill = condition.fill;
+                                            column.font = condition.font;
+                                            column.stroke = condition.stroke;
+                                            column.banner = condition.banner;
+                                        } else {
+                                            column.restore();
+                                        };
+                                    };
+                                });
+                            };
+                        });
+                    };
+                });
+            });
+        } else {
+            this.toast.error(response.error.message);
+        };
+
+        this.loading = false;
     };
 
-    public async changegrouping(column, group) {
-        column.loading = true;
+    public async reload(column, group) {
+        this.loading = true;
         
-        const date = JSON.parse(JSON.stringify(this.date));
-        date.group = group;
-        
-        column.series.map(async series => await series.handler(date));
+        let points = [];
 
-        column.loading = false;
+        if (column.type == 'value') {
+            points.push({
+                'id': {
+                    'type': 'value',
+                    'column': column.id
+                },
+                'type': 'value',
+                'group': group,
+                'inputId': column.inputId,
+                'deviceId': column.deviceId,
+                'expression': column.expression
+            });
+        } else if (column.type == 'chart') {
+            column.series.map(series => {
+                points.push({
+                    'id': {
+                        'type': 'array',
+                        'column': column.id,
+                        'series': series.id
+                    },
+                    'type': 'array',
+                    'group': group,
+                    'inputId': series.inputId,
+                    'deviceId': series.deviceId
+                });
+            });
+        };
+        column.conditions.map(condition => {
+            points.push({
+                'id': {
+                    'type': 'condition',
+                    'column': column.id,
+                    'condition': condition.id
+                },
+                'type': 'value',
+                'group': group,
+                'inputId': condition.inputId,
+                'deviceId': condition.deviceId,
+                'expression': 'last-value'
+            });
+        });
+
+        const response = await this.service.load({
+            'date': {
+                'to': this.date.to,
+                'from': this.date.from
+            },
+            'points': points
+        });
+
+        if (response.ok) {
+            response.result.map(item => {
+                if (item.id.type == 'value' && typeof(item.result) != 'undefined' && item.result !== null) {
+                    if (item.type == 'analog') {
+                        column.value = [item.result.toFixed(item.analog.decimals || 0), '<small>', item.analog.units, '</small>'].join('');
+                    } else if (item.type == 'digital') {
+                        if (item.result == 0) {
+                            column.value = item.digital.low;
+                        } else if (item.result == 1) {
+                            column.value = item.digital.high;
+                        } else {
+                            column.value = '❗';
+                        };
+                    } else {
+                        column.value = '❗';
+                    };
+                } else if (item.id.type == 'array' && typeof(item.result) != 'undefined' && item.result !== null) {
+                    column.series.map(series => {
+                        if (series.id == item.id.series) {
+                            series.data = item.result;
+                        };
+                    });
+                } else if (item.id.type == 'condition' && typeof(item.result) != 'undefined' && item.result !== null) {
+                    column.restore();
+                    column.conditions.map(condition => {
+                        if (condition.id == item.id.condition) {
+                            if (item.type == 'analog' && item.result >= condition.analog.min && item.result <= condition.analog.max) {
+                                column.fill = condition.fill;
+                                column.font = condition.font;
+                                column.stroke = condition.stroke;
+                                column.banner = condition.banner;
+                            } else if (item.type == 'digital' && item.result == condition.digital.value) {
+                                column.fill = condition.fill;
+                                column.font = condition.font;
+                                column.stroke = condition.stroke;
+                                column.banner = condition.banner;
+                            } else {
+                                column.restore();
+                            };
+                        };
+                    });
+                };
+            });
+        } else {
+            this.toast.error(response.error.message);
+        };
+
+        this.loading = false;
     };
 
     ngOnInit(): void {
