@@ -2,12 +2,13 @@ import { FormErrorService } from 'src/app/services/form-error/form-error.service
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { ReportSettings, REPORTSETTINGS } from 'src/app/utilities/report';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
-import { Inject, OnInit, Component, OnDestroy } from '@angular/core';
+import { Inject, OnInit, Component, OnDestroy, ViewEncapsulation } from '@angular/core';
 
 @Component({
     selector: 'report-settings-dialog',
     styleUrls: ['./settings.dialog.scss'],
-    templateUrl: './settings.dialog.html'
+    templateUrl: './settings.dialog.html',
+    encapsulation: ViewEncapsulation.None
 })
 
 export class ReportSettingsDialog implements OnInit, OnDestroy {

@@ -1,3 +1,18 @@
-form {
-    padding: 10px 0px;
+.report-settings-dialog .mat-dialog-container {
+    top: 0px;
+    left: 0px;
+    right: 0px;
+    bottom: 0px;
+    z-index: 5000;
+    padding: 0px;
+    position: fixed;
+    border-radius: 0px;
+    form {
+        padding: 10px 0px;
+    }
+    mat-toolbar {
+        font-size: 16px !important;
+        font-weight: 400 !important;
+        text-transform: uppercase !important;
+    }
 }

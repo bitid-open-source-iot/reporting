@@ -304,7 +304,7 @@ export class ReportEditorPage implements OnInit, OnDestroy {
     public async settings() {
         const dialog = await this.dialog.open(ReportSettingsDialog, {
             'data': this.report.settings,
-            'panelClass': 'fullscreen-dialog',
+            'panelClass': 'report-settings-dialog',
             'disableClose': true
         });
 
