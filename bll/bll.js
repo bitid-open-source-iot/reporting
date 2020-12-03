@@ -97,6 +97,11 @@ var module = function () {
 								if (device.deviceId == point.deviceId) {
 									device.inputs.map(input => {
 										if (input.inputId == point.inputId) {
+											if (input.type == 'analog' && ['CI1', 'CI2', 'CI3', 'CI4', 'CI5', 'CI6', 'CI7', 'CI8'].includes(input.analog.key)) {
+												point.counter = true;
+											} else {
+												point.counter = false;
+											};
 											point.valid = true;
 											point.config = input;
 											if (point.type == 'value') {
