@@ -64,7 +64,15 @@ var module = function () {
 			args.req.body.inputId = [];
 			args.req.body.deviceId = [];
 
-			args.req.body.points.map(point => {
+			args.req.body.points.filter(point => {
+				if (point.type == 'array' && point.deviceId && point.inputId) {
+					return true;
+				} else if (point.type == 'value' && point.deviceId && point.inputId && point.expression) {
+					return true;
+				} else {
+					return false;
+				};
+			}).map(point => {
 				let ifound = false;
 				args.req.body.inputId.map(id => {
 					if (id == point.inputId) {
