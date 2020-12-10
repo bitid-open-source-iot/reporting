@@ -86,48 +86,54 @@ export class ReportViewerPage implements OnInit, OnDestroy {
         this.report.layout[this.layout].map(row => {
             row.columns.map(async column => {
                 if (column.type == 'value') {
-                    points.push({
-                        'id': {
-                            'row': row.id,
-                            'type': 'value',
-                            'column': column.id
-                        },
-                        'type': 'value',
-                        'group': this.date.group,
-                        'inputId': column.inputId,
-                        'deviceId': column.deviceId,
-                        'expression': column.expression
-                    });
-                } else if (column.type == 'chart') {
-                    column.series.map(series => {
+                    if (column.inputId && column.deviceId && column.expression) {
                         points.push({
                             'id': {
                                 'row': row.id,
-                                'type': 'array',
-                                'column': column.id,
-                                'series': series.id
+                                'type': 'value',
+                                'column': column.id
                             },
-                            'type': 'array',
+                            'type': 'value',
                             'group': this.date.group,
-                            'inputId': series.inputId,
-                            'deviceId': series.deviceId
+                            'inputId': column.inputId,
+                            'deviceId': column.deviceId,
+                            'expression': column.expression
                         });
+                    };
+                } else if (column.type == 'chart') {
+                    column.series.map(series => {
+                        if (series.inputId && series.deviceId) {
+                            points.push({
+                                'id': {
+                                    'row': row.id,
+                                    'type': 'array',
+                                    'column': column.id,
+                                    'series': series.id
+                                },
+                                'type': 'array',
+                                'group': this.date.group,
+                                'inputId': series.inputId,
+                                'deviceId': series.deviceId
+                            });
+                        };
                     });
                 };
                 column.conditions.map(condition => {
-                    points.push({
-                        'id': {
-                            'row': row.id,
-                            'type': 'condition',
-                            'column': column.id,
-                            'condition': condition.id
-                        },
-                        'type': 'value',
-                        'group': this.date.group,
-                        'inputId': condition.inputId,
-                        'deviceId': condition.deviceId,
-                        'expression': 'last-value'
-                    });
+                    if (condition.inputId && condition.deviceId) {
+                        points.push({
+                            'id': {
+                                'row': row.id,
+                                'type': 'condition',
+                                'column': column.id,
+                                'condition': condition.id
+                            },
+                            'type': 'value',
+                            'group': this.date.group,
+                            'inputId': condition.inputId,
+                            'deviceId': condition.deviceId,
+                            'expression': 'last-value'
+                        });
+                    };
                 });
             });
         });
@@ -210,45 +216,51 @@ export class ReportViewerPage implements OnInit, OnDestroy {
         let points = [];
 
         if (column.type == 'value') {
-            points.push({
-                'id': {
-                    'type': 'value',
-                    'column': column.id
-                },
-                'type': 'value',
-                'group': group,
-                'inputId': column.inputId,
-                'deviceId': column.deviceId,
-                'expression': column.expression
-            });
-        } else if (column.type == 'chart') {
-            column.series.map(series => {
+            if (column.inputId && column.deviceId && column.expression) {
                 points.push({
                     'id': {
-                        'type': 'array',
-                        'column': column.id,
-                        'series': series.id
+                        'type': 'value',
+                        'column': column.id
                     },
-                    'type': 'array',
+                    'type': 'value',
                     'group': group,
-                    'inputId': series.inputId,
-                    'deviceId': series.deviceId
+                    'inputId': column.inputId,
+                    'deviceId': column.deviceId,
+                    'expression': column.expression
                 });
+            };
+        } else if (column.type == 'chart') {
+            column.series.map(series => {
+                if (series.inputId && series.deviceId) {
+                    points.push({
+                        'id': {
+                            'type': 'array',
+                            'column': column.id,
+                            'series': series.id
+                        },
+                        'type': 'array',
+                        'group': group,
+                        'inputId': series.inputId,
+                        'deviceId': series.deviceId
+                    });
+                };
             });
         };
         column.conditions.map(condition => {
-            points.push({
-                'id': {
-                    'type': 'condition',
-                    'column': column.id,
-                    'condition': condition.id
-                },
-                'type': 'value',
-                'group': group,
-                'inputId': condition.inputId,
-                'deviceId': condition.deviceId,
-                'expression': 'last-value'
-            });
+            if (condition.inputId && condition.deviceId) {
+                points.push({
+                    'id': {
+                        'type': 'condition',
+                        'column': column.id,
+                        'condition': condition.id
+                    },
+                    'type': 'value',
+                    'group': group,
+                    'inputId': condition.inputId,
+                    'deviceId': condition.deviceId,
+                    'expression': 'last-value'
+                });
+            };
         });
 
         const response = await this.service.load({

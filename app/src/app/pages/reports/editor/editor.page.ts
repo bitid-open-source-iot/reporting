@@ -118,32 +118,36 @@ export class ReportEditorPage implements OnInit, OnDestroy {
         this.report.layout[this.layout].map(row => {
             row.columns.map(async column => {
                 if (column.type == 'value') {
-                    points.push({
-                        'id': {
-                            'row': row.id,
-                            'type': 'value',
-                            'column': column.id
-                        },
-                        'type': 'value',
-                        'group': this.date.group,
-                        'inputId': column.inputId,
-                        'deviceId': column.deviceId,
-                        'expression': column.expression
-                    });
-                } else if (column.type == 'chart') {
-                    column.series.map(series => {
+                    if (column.inputId && column.deviceId && column.expression) {
                         points.push({
                             'id': {
                                 'row': row.id,
-                                'type': 'array',
-                                'column': column.id,
-                                'series': series.id
+                                'type': 'value',
+                                'column': column.id
                             },
-                            'type': 'array',
+                            'type': 'value',
                             'group': this.date.group,
-                            'inputId': series.inputId,
-                            'deviceId': series.deviceId
+                            'inputId': column.inputId,
+                            'deviceId': column.deviceId,
+                            'expression': column.expression
                         });
+                    };
+                } else if (column.type == 'chart') {
+                    column.series.map(series => {
+                        if (series.inputId && series.deviceId) {
+                            points.push({
+                                'id': {
+                                    'row': row.id,
+                                    'type': 'array',
+                                    'column': column.id,
+                                    'series': series.id
+                                },
+                                'type': 'array',
+                                'group': this.date.group,
+                                'inputId': series.inputId,
+                                'deviceId': series.deviceId
+                            });
+                        };
                     });
                 };
             });
@@ -393,30 +397,34 @@ export class ReportEditorPage implements OnInit, OnDestroy {
         let points = [];
 
         if (column.type == 'value') {
-            points.push({
-                'id': {
-                    'type': 'value',
-                    'column': column.id
-                },
-                'type': 'value',
-                'group': this.date.group,
-                'inputId': column.inputId,
-                'deviceId': column.deviceId,
-                'expression': column.expression
-            });
-        } else if (column.type == 'chart') {
-            column.series.map(series => {
+            if (column.inputId && column.deviceId && column.expression) {
                 points.push({
                     'id': {
-                        'type': 'array',
-                        'column': column.id,
-                        'series': series.id
+                        'type': 'value',
+                        'column': column.id
                     },
-                    'type': 'array',
+                    'type': 'value',
                     'group': this.date.group,
-                    'inputId': series.inputId,
-                    'deviceId': series.deviceId
+                    'inputId': column.inputId,
+                    'deviceId': column.deviceId,
+                    'expression': column.expression
                 });
+            };
+        } else if (column.type == 'chart') {
+            column.series.map(series => {
+                if (series.inputId && series.deviceId) {
+                    points.push({
+                        'id': {
+                            'type': 'array',
+                            'column': column.id,
+                            'series': series.id
+                        },
+                        'type': 'array',
+                        'group': this.date.group,
+                        'inputId': series.inputId,
+                        'deviceId': series.deviceId
+                    });
+                };
             });
         };
       
