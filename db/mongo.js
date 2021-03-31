@@ -1,11 +1,11 @@
-var Q = require('q');
-var mongo = require('mongodb').MongoClient;
+const Q = require('q');
+const mongo = require('mongodb').MongoClient;
 
 exports.call = (args) => {
 	var deferred = Q.defer();
 
 	var db = __databases['reporting'];
-	if (typeof(args.database) != 'undefined' && args.database != null && args.database != '') {
+	if (typeof (args.database) != 'undefined' && args.database != null && args.database != '') {
 		db = __databases[args.database];
 	};
 	var collection = db.collection(args.collection);
