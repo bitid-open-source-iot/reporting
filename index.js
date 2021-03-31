@@ -4,7 +4,6 @@ const cors = require('cors');
 const http = require('http');
 const auth = require('./lib/auth');
 const chalk = require('chalk');
-const parser = require('body-parser');
 const express = require('express');
 const responder = require('./lib/responder');
 const healthcheck = require('@bitid/health-check');
@@ -24,12 +23,12 @@ try {
             try {
                 var app = express();
                 app.use(cors());
-                app.use(parser.urlencoded({
+                app.use(express.urlencoded({
                     'limit': '50mb',
                     'extended': true,
                     'parameterLimit': 50000
                 }));
-                app.use(parser.json({
+                app.use(express.json({
                     'limit': '50mb'
                 }));
 

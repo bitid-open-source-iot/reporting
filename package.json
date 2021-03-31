@@ -2,7 +2,7 @@
   "name": "reporting",
   "version": "1.0.0",
   "description": "",
-  "main": "reporting.js",
+  "main": "index.js",
   "scripts": {
     "test": "./node_modules/.bin/mocha --reporter spec"
   },
