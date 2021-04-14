@@ -400,6 +400,21 @@ var module = function () {
 				});
 		},
 
+		changeowner: (req, res) => {
+			var args = {
+				'req': req,
+				'res': res
+			};
+
+			var dal = new dalModule.module();
+			dal.reports.changeowner(args)
+				.then(args => {
+					__responder.success(req, res, args.result);
+				}, err => {
+					__responder.error(req, res, err);
+				});
+		},
+
 		updatesubscriber: (req, res) => {
 			var args = {
 				'req': req,
@@ -518,6 +533,21 @@ var module = function () {
 
 			var dal = new dalModule.module();
 			dal.schedule.unsubscribe(args)
+				.then(args => {
+					__responder.success(req, res, args.result);
+				}, err => {
+					__responder.error(req, res, err);
+				});
+		},
+
+		changeowner: (req, res) => {
+			var args = {
+				'req': req,
+				'res': res
+			};
+
+			var dal = new dalModule.module();
+			dal.reports.changeowner(args)
 				.then(args => {
 					__responder.success(req, res, args.result);
 				}, err => {

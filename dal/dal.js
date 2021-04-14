@@ -497,6 +497,84 @@ var module = function () {
 			return deferred.promise;
 		},
 
+		changeowner: (args) => {
+			var deferred = Q.defer();
+
+			var params = {
+				'bitid.auth.users': {
+					$elemMatch: {
+						'role': {
+							$gte: 5
+						},
+						'email': format.email(args.req.body.header.email)
+					}
+				},
+				'_id': ObjectId(args.req.body.reportId)
+			};
+
+			var update = {
+				$set: {
+					'bitid.auth.users.$.role': 4
+				}
+			};
+
+			db.call({
+				'params': params,
+				'update': update,
+				'operation': 'update',
+				'collection': 'tblReports'
+			})
+				.then(result => {
+					var deferred = Q.defer();
+
+					if (result.nModified == 1) {
+						var params = {
+							'bitid.auth.users': {
+								$elemMatch: {
+									'email': format.email(args.req.body.email)
+								}
+							},
+							'_id': ObjectId(args.req.body.reportId)
+						};
+
+						var update = {
+							$set: {
+								'bitid.auth.users.$.role': 5
+							}
+						};
+
+						deferred.resolve({
+							'params': params,
+							'update': update,
+							'operation': 'update',
+							'collection': 'tblReports'
+						});
+					} else {
+						var err = new ErrorResponse();
+						err.error.code = 401;
+						err.error.errors[0].code = 401;
+						err.error.errors[0].reason = 'Owner change fail!';
+						err.error.errors[0].message = 'Owner change fail!';
+						deferred.reject(err);
+					};
+
+					return deferred.promise;
+				}, null)
+				.then(db.call, null)
+				.then(result => {
+					args.result = result;
+					deferred.resolve(args);
+				}, error => {
+					var err = new ErrorResponse()
+					err.error.errors[0].code = error.code;
+					err.error.errors[0].reason = error.description;
+					err.error.errors[0].message = error.description;
+					deferred.reject(err);
+				});
+
+			return deferred.promise;
+		},
+
 		unsubscribe: (args) => {
 			var deferred = Q.defer();
 
@@ -1010,6 +1088,84 @@ var module = function () {
 					err.error.errors[0].code = error.code;
 					err.error.errors[0].reason = error.message;
 					err.error.errors[0].message = error.message;
+					deferred.reject(err);
+				});
+
+			return deferred.promise;
+		},
+
+		changeowner: (args) => {
+			var deferred = Q.defer();
+
+			var params = {
+				'bitid.auth.users': {
+					$elemMatch: {
+						'role': {
+							$gte: 5
+						},
+						'email': format.email(args.req.body.header.email)
+					}
+				},
+				'_id': ObjectId(args.req.body.scheduleId)
+			};
+
+			var update = {
+				$set: {
+					'bitid.auth.users.$.role': 4
+				}
+			};
+
+			db.call({
+				'params': params,
+				'update': update,
+				'operation': 'update',
+				'collection': 'tblSchedule'
+			})
+				.then(result => {
+					var deferred = Q.defer();
+
+					if (result.nModified == 1) {
+						var params = {
+							'bitid.auth.users': {
+								$elemMatch: {
+									'email': format.email(args.req.body.email)
+								}
+							},
+							'_id': ObjectId(args.req.body.scheduleId)
+						};
+
+						var update = {
+							$set: {
+								'bitid.auth.users.$.role': 5
+							}
+						};
+
+						deferred.resolve({
+							'params': params,
+							'update': update,
+							'operation': 'update',
+							'collection': 'tblSchedule'
+						});
+					} else {
+						var err = new ErrorResponse();
+						err.error.code = 401;
+						err.error.errors[0].code = 401;
+						err.error.errors[0].reason = 'Owner change fail!';
+						err.error.errors[0].message = 'Owner change fail!';
+						deferred.reject(err);
+					};
+
+					return deferred.promise;
+				}, null)
+				.then(db.call, null)
+				.then(result => {
+					args.result = result;
+					deferred.resolve(args);
+				}, error => {
+					var err = new ErrorResponse()
+					err.error.errors[0].code = error.code;
+					err.error.errors[0].reason = error.description;
+					err.error.errors[0].message = error.description;
 					deferred.reject(err);
 				});
 

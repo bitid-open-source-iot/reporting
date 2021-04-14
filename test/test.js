@@ -1,12 +1,13 @@
-var Q = require('q');
-var chai = require('chai');
-var fetch = require('node-fetch');
-var expect = require('chai').expect;
-var should = require('chai').should();
-var config = require('./config.json');
-var chaiSubset = require('chai-subset');
-chai.use(chaiSubset);
+const Q = require('q');
+const chai = require('chai');
+const fetch = require('node-fetch');
+const expect = require('chai').expect;
+const should = require('chai').should();
+const config = require('./config.json');
+const subset = require('chai-subset');
+chai.use(subset);
 
+var email = config.email;
 var reportId = null;
 
 describe('Reports', function () {
@@ -129,7 +130,55 @@ describe('Reports', function () {
             });
     });
 
-    it('/reporting/reports/updatesubscriber', function (done) {
+    if (!config.authenticate) {
+        it('/reporting/reports/change-owner', function (done) {
+            this.timeout(5000);
+
+            tools.api.reports.changeowner(config.share)
+                .then(result => {
+                    try {
+                        result.should.containSubset({
+                            'updated': 1
+                        });
+                        done();
+                    } catch (e) {
+                        done(e);
+                    };
+                }, err => {
+                    try {
+                        done(err);
+                    } catch (e) {
+                        done(e);
+                    };
+                });
+        });
+
+        it('/reporting/reports/change-owner', function (done) {
+            this.timeout(5000);
+
+            config.email = config.share;
+            tools.api.reports.changeowner(email)
+                .then(result => {
+                    try {
+                        config.email = email;
+                        result.should.containSubset({
+                            'updated': 1
+                        });
+                        done();
+                    } catch (e) {
+                        done(e);
+                    };
+                }, err => {
+                    try {
+                        done(err);
+                    } catch (e) {
+                        done(e);
+                    };
+                });
+        });
+    };
+
+    it('/reporting/reports/update-subscriber', function (done) {
         this.timeout(5000);
 
         tools.api.reports.updatesubscriber()
@@ -317,7 +366,7 @@ var tools = {
 
                 tools.post('/reporting/reports/share', {
                     'role': 4,
-                    'email': 'shared@email.com',
+                    'email': config.share,
                     'reportId': reportId
                 })
                     .then(deferred.resolve, deferred.resolve);
@@ -349,7 +398,18 @@ var tools = {
                 var deferred = Q.defer();
 
                 tools.post('/reporting/reports/unsubscribe', {
-                    'email': 'shared@email.com',
+                    'email': config.share,
+                    'reportId': reportId
+                })
+                    .then(deferred.resolve, deferred.resolve);
+
+                return deferred.promise;
+            },
+            changeowner: (email) => {
+                var deferred = Q.defer();
+
+                tools.post('/reporting/reports/change-owner', {
+                    'email': email,
                     'reportId': reportId
                 })
                     .then(deferred.resolve, deferred.resolve);
@@ -359,9 +419,9 @@ var tools = {
             updatesubscriber: () => {
                 var deferred = Q.defer();
 
-                tools.post('/reporting/reports/updatesubscriber', {
+                tools.post('/reporting/reports/update-subscriber', {
                     'role': 2,
-                    'email': 'shared@email.com',
+                    'email': config.share,
                     'reportId': reportId
                 })
                     .then(deferred.resolve, deferred.resolve);
