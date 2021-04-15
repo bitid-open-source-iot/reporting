@@ -331,16 +331,16 @@ var module = function () {
 					'serverDate': new Date()
 				}
 			};
-			if (typeof (args.req.body.layout) != 'undefined' && args.req.body.layout != null && args.req.body.layout != '') {
+			if (typeof (args.req.body.layout) != 'undefined' && args.req.body.layout != null) {
 				update.$set.layout = args.req.body.layout;
 			};
-			if (typeof (args.req.body.settings) != 'undefined' && args.req.body.settings != null && args.req.body.settings != '') {
+			if (typeof (args.req.body.settings) != 'undefined' && args.req.body.settings != null) {
 				update.$set.settings = args.req.body.settings;
 			};
-			if (typeof (args.req.body.description) != 'undefined') {
+			if (typeof (args.req.body.description) != 'undefined' && args.req.body.description != null) {
 				update.$set.description = args.req.body.description;
 			};
-			if (typeof (args.req.body.organizationOnly) != 'undefined') {
+			if (typeof (args.req.body.organizationOnly) != 'undefined' && args.req.body.organizationOnly != null) {
 				update.$set['bitid.auth.organizationOnly'] = args.req.body.organizationOnly;
 			};
 
