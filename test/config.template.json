@@ -3,6 +3,7 @@
 	"email": "xxx@xxx.co.za",
 	"appId": "xxx",
 	"share": "abc@xxx.co.za",
+	"websocket": "ws://127.0.0.1:2002",
 	"reporting": "http://127.0.0.1:2000",
 	"authenticate": false
 }
