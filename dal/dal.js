@@ -72,7 +72,8 @@ var module = function () {
 				'collection': 'tblReports'
 			})
 				.then(result => {
-					args.result = result[0];
+					args.report = result[0];
+					args.result = args.report;
 					deferred.resolve(args);
 				}, error => {
 					var err = new ErrorResponse();
@@ -87,7 +88,7 @@ var module = function () {
 
 		list: (args) => {
 			var deferred = Q.defer();
-			
+
 			var match = {
 				'bitid.auth.users.email': format.email(args.req.body.header.email)
 			};
@@ -155,7 +156,7 @@ var module = function () {
 							'mobile': {
 								$cond: {
 									if: {
-										$gt: [ '$views.mobile', 0]
+										$gt: ['$views.mobile', 0]
 									},
 									then: true,
 									else: false
@@ -164,7 +165,7 @@ var module = function () {
 							'tablet': {
 								$cond: {
 									if: {
-										$gt: [ '$views.tablet', 0]
+										$gt: ['$views.tablet', 0]
 									},
 									then: true,
 									else: false
@@ -173,7 +174,7 @@ var module = function () {
 							'desktop': {
 								$cond: {
 									if: {
-										$gt: [ '$views.desktop', 0]
+										$gt: ['$views.desktop', 0]
 									},
 									then: true,
 									else: false
@@ -200,6 +201,7 @@ var module = function () {
 			})
 				.then(result => {
 					args.result = result;
+					args.reports = result;
 					deferred.resolve(args);
 				}, error => {
 					var err = new ErrorResponse();
@@ -262,13 +264,13 @@ var module = function () {
 			// 	}, null)
 			// 	.then(db.call, null)
 			// 	.then(result => {
-					deferred.resolve(args);
-				// }, error => {
-				// 	dalReports.errorResponse.error.errors[0].code = err.code || dalReports.errorResponse.error.errors[0].code;
-				// 	dalReports.errorResponse.error.errors[0].reason = err.description || 'Audit Report Error';
-				// 	dalReports.errorResponse.hiddenErrors.push(err.error);
-				// 	deferred.reject(dalReports.errorResponse);
-				// });
+			deferred.resolve(args);
+			// }, error => {
+			// 	dalReports.errorResponse.error.errors[0].code = err.code || dalReports.errorResponse.error.errors[0].code;
+			// 	dalReports.errorResponse.error.errors[0].reason = err.description || 'Audit Report Error';
+			// 	dalReports.errorResponse.hiddenErrors.push(err.error);
+			// 	deferred.reject(dalReports.errorResponse);
+			// });
 
 			return deferred.promise;
 		},
@@ -420,7 +422,7 @@ var module = function () {
 				inputId = {
 					$in: args.req.body.inputId.map(id => ObjectId(id))
 				};
-			} else if (typeof(args.req.body.inputId) == 'string' && args.req.body.inputId.length == 24) {
+			} else if (typeof (args.req.body.inputId) == 'string' && args.req.body.inputId.length == 24) {
 				inputId = ObjectId(args.req.body.inputId);
 			};
 
@@ -429,7 +431,7 @@ var module = function () {
 				deviceId = {
 					$in: args.req.body.deviceId.map(id => ObjectId(id))
 				};
-			} else if (typeof(args.req.body.deviceId) == 'string' && args.req.body.deviceId.length == 24) {
+			} else if (typeof (args.req.body.deviceId) == 'string' && args.req.body.deviceId.length == 24) {
 				deviceId = ObjectId(args.req.body.deviceId);
 			};
 

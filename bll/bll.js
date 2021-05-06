@@ -17,6 +17,11 @@ var module = function () {
 			tools.insertOwnerIfNoneExists(args)
 				.then(dal.reports.add, null)
 				.then(args => {
+					args.req.body.users.map(user => {
+						__socket.send(user.email, 'reports:add', {
+							reportId: args.result._id
+						});
+					});
 					__responder.success(req, res, args.result);
 				}, err => {
 					__responder.error(req, res, err);
@@ -346,9 +351,13 @@ var module = function () {
 				'res': res
 			};
 
+			args.req.body.filter = ['users'];
+
 			var dal = new dalModule.module();
-			dal.reports.share(args)
+			dal.reports.get(args)
+				.then(dal.reports.share, null)
 				.then(args => {
+					args.report.bitid.auth.users.map(user => __socket.send(user.email, 'reports:share', args.req.body));
 					__responder.success(req, res, args.result);
 				}, err => {
 					__responder.error(req, res, err);
@@ -361,9 +370,13 @@ var module = function () {
 				'res': res
 			};
 
+			args.req.body.filter = ['users'];
+
 			var dal = new dalModule.module();
-			dal.reports.update(args)
+			dal.reports.get(args)
+				.then(dal.reports.update, null)
 				.then(args => {
+					args.report.bitid.auth.users.map(user => __socket.send(user.email, 'reports:update', args.req.body));
 					__responder.success(req, res, args.result);
 				}, err => {
 					__responder.error(req, res, err);
@@ -376,9 +389,13 @@ var module = function () {
 				'res': res
 			};
 
+			args.req.body.filter = ['users'];
+
 			var dal = new dalModule.module();
-			dal.reports.delete(args)
+			dal.reports.get(args)
+				.then(dal.reports.delete, null)
 				.then(args => {
+					args.report.bitid.auth.users.map(user => __socket.send(user.email, 'reports:delete', args.req.body));
 					__responder.success(req, res, args.result);
 				}, err => {
 					__responder.error(req, res, err);
@@ -391,9 +408,13 @@ var module = function () {
 				'res': res
 			};
 
+			args.req.body.filter = ['users'];
+
 			var dal = new dalModule.module();
-			dal.reports.unsubscribe(args)
+			dal.reports.get(args)
+				.then(dal.reports.unsubscribe, null)
 				.then(args => {
+					args.report.bitid.auth.users.map(user => __socket.send(user.email, 'reports:unsubscribe', args.req.body));
 					__responder.success(req, res, args.result);
 				}, err => {
 					__responder.error(req, res, err);
@@ -406,9 +427,13 @@ var module = function () {
 				'res': res
 			};
 
+			args.req.body.filter = ['users'];
+
 			var dal = new dalModule.module();
-			dal.reports.changeowner(args)
+			dal.reports.get(args)
+				.then(dal.reports.changeowner, null)
 				.then(args => {
+					args.report.bitid.auth.users.map(user => __socket.send(user.email, 'reports:change-owner', args.req.body));
 					__responder.success(req, res, args.result);
 				}, err => {
 					__responder.error(req, res, err);
@@ -421,9 +446,13 @@ var module = function () {
 				'res': res
 			};
 
+			args.req.body.filter = ['users'];
+
 			var dal = new dalModule.module();
-			dal.reports.updatesubscriber(args)
+			dal.reports.get(args)
+				.then(dal.reports.updatesubscriber, null)
 				.then(args => {
+					args.report.bitid.auth.users.map(user => __socket.send(user.email, 'reports:update-subscriber', args.req.body));
 					__responder.success(req, res, args.result);
 				}, err => {
 					__responder.error(req, res, err);
