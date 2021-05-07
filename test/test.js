@@ -5,10 +5,33 @@ const expect = require('chai').expect;
 const should = require('chai').should();
 const config = require('./config.json');
 const subset = require('chai-subset');
+const WebSocketClient = require('websocket').client;
 chai.use(subset);
 
 var email = config.email;
+var socket = null;
+var client = new WebSocketClient();
 var reportId = null;
+
+describe('WebSocket', function () {
+    it('Connect', function (done) {
+        this.timeout(5000);
+
+        client.on('connect', connection => {
+            socket = connection;
+            done();
+        });
+
+        client.connect([config.websocket, '/reporting/reports/socket?email', config.email, '&token=', JSON.stringify(config.token), '&appId=', config.appId].join(''));
+    });
+
+    it('Disconnect', function (done) {
+        this.timeout(5000);
+        
+        socket.close();
+        done();
+    });
+});
 
 describe('Reports', function () {
     it('/reporting/reports/add', function (done) {
