@@ -5,11 +5,9 @@ const http = require('http');
 const auth = require('./lib/auth');
 const chalk = require('chalk');
 const express = require('express');
-const wsserver = require('./lib/web-socket-server');
-const websocket = new wsserver.module();
 const responder = require('./lib/responder');
 const healthcheck = require('@bitid/health-check');
-// const SocketServer = require('./lib/socket-server');
+const SocketServer = require('./lib/socket-server');
 const ErrorResponse = require('./lib/error-response');
 
 global.__base = __dirname + '/';
@@ -96,16 +94,10 @@ try {
 
                 var server = http.createServer(app);
                 server.listen(args.settings.localwebserver.port, () => {
-                    // global.__socket = new SocketServer(server);
-                });
-
-                websocket.start({
-                    'port': __settings.websocket.port,
-                    'authentication': __settings.authentication
-                });
-                console.log('websocket server up on port: ', __settings.websocket.port);
+                    global.__socket = new SocketServer(server);
                 
-                deferred.resolve(args);
+                    deferred.resolve(args);
+                });
             } catch (e) {
                 __logger.error('initAPI catch error: ' + e);
                 deferred.reject(e)
