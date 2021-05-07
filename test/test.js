@@ -22,6 +22,11 @@ describe('WebSocket', function () {
             done();
         });
 
+        client.on('connectFailed', error => {
+            console.error('connection failed: ', error);
+            done();
+        });
+
         client.connect([config.websocket, '/reporting/reports/socket?email', config.email, '&token=', JSON.stringify(config.token), '&appId=', config.appId].join(''));
     });
 
